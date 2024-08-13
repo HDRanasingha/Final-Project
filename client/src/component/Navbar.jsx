@@ -8,51 +8,54 @@ import { Link } from "react-router-dom";
 import { setLogout } from "../redux/state";
 
 const Navbar = () => {
-  const [dropdown, setDropdownMenu] = useState(false);
-
+  const [dropdownMenu, setDropdownMenu] = useState(false);
   const user = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
 
-  
-
   return (
-    <div className="navbar">
-      <a href="/">
-        <img src="/assets/logo.png" alt="logo" />
-      </a>
-      <div className="navbar_search">
-        <input type="text" placeholder="Search..." />
-        <IconButton>
-          <Search sx={{ color: variables.pinkred }} />
-        </IconButton>
-      </div>
-      <button
-        className="navbar_right_account"
-        onClick={() => setDropdownMenu(!dropdown)}
-      >
-        <Menu sx={{ color: variables.darkgrey }} />
-        {!user ? (
-          <Person sx={{ color: variables.darkgrey }} />
-        ) : (
-          <img
-            src={`http://localhost:3001/${user.profileImagePath.replace(
-              "public",
-              ""
-            )}`}
-            alt="profile photo"
-            style={{ objectFit: "cover", borderRadius: "50%" }}
-          />
+    <>
+      <div className="navbar">
+        <a href="/">
+          <img src="/assets/logo.png" alt="logo" />
+        </a>
+        <div className="navbar_search">
+          <input type="text" placeholder="Search..." />
+          <IconButton>
+            <Search sx={{ color: variables.pinkred }} />
+          </IconButton>
+        </div>
+        <button
+          className="navbar_right_account"
+          onClick={() => setDropdownMenu(!dropdownMenu)}
+        >
+          <Menu sx={{ color: variables.darkgrey }} />
+          {!user ? (
+            <Person sx={{ color: variables.darkgrey }} />
+          ) : (
+            <img
+              src={`http://localhost:3001/${user.profileImagePath.replace(
+                "public",
+                ""
+              )}`}
+              alt="profile photo"
+              style={{ objectFit: "cover", borderRadius: "50%" }}
+            />
+          )}
+        </button>
+
+        {dropdownMenu && !user && (
+          <div className="navbar_right_accountmenu">
+            <Link to="/login">Log In</Link>
+            <Link to="/register">Sign Up</Link>
+          </div>
         )}
-      </button>
-      {dropdown && (
-        <div className="navbar_right_accountmenu">
-          <Link to="">Recipies</Link>
-          <Link to="">Courses</Link>
-          <Link to="">Food & Beverage</Link>
-          <Link to="">Resturents</Link>
-          {user && (
-              <Link
+        {dropdownMenu && user && (
+          <div className="navbar_right_accountmenu">
+            <Link to="">Recipies</Link>
+            <Link to="">Courses</Link>
+            <Link to="">Food & Beverage</Link>
+            <Link to="">Resturents</Link>
+            <Link
               to="/login"
               onClick={() => {
                 dispatch(setLogout());
@@ -60,10 +63,15 @@ const Navbar = () => {
             >
               Log Out
             </Link>
-          )}
+          </div>
+        )}
+      </div>
+      {!user && (
+        <div className="slide">
+          <img src="/assets/slide01.jpeg" alt="Cover Before Login" className="cover-image" />
         </div>
       )}
-    </div>
+    </>
   );
 };
 
