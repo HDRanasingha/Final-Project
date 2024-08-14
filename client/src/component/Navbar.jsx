@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "../styles/Navbar.scss";
 import { Link } from "react-router-dom";
 import { setLogout } from "../redux/state";
+import Footer from "./Footer";
 
 const Navbar = () => {
   const [dropdownMenu, setDropdownMenu] = useState(false);
@@ -67,9 +68,17 @@ const Navbar = () => {
         )}
       </div>
       {!user && (
-        <div className="slide">
-          <img src="/assets/slide01.jpeg" alt="Cover Before Login" className="cover-image" />
-        </div>
+        <>
+          <div className="slide">
+            <img src="/assets/slide01.jpeg" alt="Cover Before Login" className="cover-image" />
+            <div className="slide-text">
+              <h1>Welcome to Cookery Paradise!</h1>
+              <p>Welcome to our site! We specialize in delivering exceptional resources for food enthusiasts, from diverse recipes and detailed cooking courses to insightful food and beverage reviews. Explore our comprehensive guides and discover the best restaurants to satisfy your culinary cravings. Join us on a flavorful journey to enhance your dining experience!</p>
+            <button className="slide-button">GET IN TOUCH</button>
+            </div>
+          </div>
+          <Footer />
+        </>
       )}
     </>
   );
