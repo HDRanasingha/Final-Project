@@ -1,34 +1,46 @@
 @import "./variables.scss";
 @import "./breakpoints.scss";
 
+/* Navbar Styles */
 .navbar {
-  padding: 10px 60px;
+  padding: 15px 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: white;
+  border-bottom: 1px solid $lightgrey;
   position: relative;
+  z-index: 1000;
 
   @include sm {
     padding: 10px 20px;
   }
 
-  img {
-    width: 100px;
+  &__logo img {
+    width: 120px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 
-  &_search {
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     border: 1px solid $grey;
     border-radius: 30px;
-    height: 50px;
-    padding: 0px 20px;
-    display: flex;
-    gap: 40px;
-    align-items: center;
+    padding: 10px 20px;
+    height: 45px;
+    transition: all 0.3s ease-in-out;
 
     input {
       border: none;
       outline: none;
+      width: 100%;
+      font-size: 1rem;
     }
 
     &:hover {
@@ -40,119 +52,163 @@
     }
   }
 
-  &_right {
+  &__account-btn {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid $grey;
+    border-radius: 30px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-    .host {
+    &:hover {
+      @include shadow;
+    }
+
+    .navbar__profile-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    right: 60px;
+    top: 80px;
+    width: 220px;
+    background-color: white;
+    border: 1px solid $lightgrey;
+    border-radius: 12px;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    animation: fadeIn 0.3s ease-in-out;
+
+    @include sm {
+      right: 20px;
+    }
+
+    a {
+      padding: 10px 15px;
       text-decoration: none;
       color: $blue;
-      font-weight: 700;
-      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s, color 0.3s;
 
       &:hover {
         color: $pinkred;
-      }
-
-      @include sm {
-        display: none;
-      }
-    }
-
-    &_account {
-      height: 50px;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      border: 1px solid $grey;
-      border-radius: 30px;
-      display: flex;
-      gap: 10px;
-      background-color: white;
-      cursor: pointer;
-
-      &:hover {
-        @include shadow;
-      }
-
-      img {
-        width: 40px;
-        height: 40px;
-      }
-    }
-
-    &_accountmenu {
-      position: absolute;
-      background-color: white;
-      right: 60px;
-      top: 80px;
-      display: flex;
-      flex-direction: column;
-      width: 200px;
-      padding: 10px 0;
-      border: 1px solid $lightgrey;
-      border-radius: 20px;
-      @include shadow;
-      z-index: 9999;
-
-      @include sm {
-        right: 20px;
-      }
-
-      a {
-        width: 100%;
-        padding: 8px 15px;
-        text-decoration: none;
-        color: $blue;
-        font-weight: 700;
-
-        &:hover {
-          color: $pinkred;
-          background-color: rgba(217, 213, 213, 0.2);
-        }
+        background-color: rgba(217, 213, 213, 0.2);
       }
     }
   }
 }
 
-.slide {
+/* Hero Section */
+.hero {
+  position: relative;
   text-align: center;
   margin-top: 20px;
+  overflow: hidden;
 
-  .cover-image {
+  &__container {
+    max-width: 100%;
+    position: relative;
+  }
+
+  &__image {
     width: 100%;
     max-height: 500px;
     object-fit: cover;
+    filter: brightness(80%);
   }
-  .slide-text {
+
+  &__text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    max-width: 80%;
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
+      font-weight: 700;
       margin: 0;
     }
 
     p {
-      padding: 50px 0;
+      margin-top: 10px;
       font-size: 1.2rem;
-      margin: 0;
+      line-height: 1.5;
     }
-    .slide-button {
-      font-size: large;
-      padding: 0.75rem 1.5rem;
+
+    .hero__cta {
+      margin-top: 20px;
+      font-size: 1rem;
+      padding: 12px 24px;
       background-color: rgb(154, 132, 5);
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       color: white;
       cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.2s;
 
-      
+      &:hover {
+        background-color: darken(rgb(154, 132, 5), 10%);
+        transform: scale(1.05);
+      }
     }
+  }
 }
+
+/* Features Section */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+
+  .feature {
+    text-align: center;
+    max-width: 500px;
+
+    img {
+      width: 10%;
+      height: auto;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #666;
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

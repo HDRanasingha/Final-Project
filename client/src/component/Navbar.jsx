@@ -1,87 +1,131 @@
+import React, { useState } from "react";
 import { IconButton } from "@mui/material";
 import { Search, Person, Menu } from "@mui/icons-material";
-import variables from "../styles/variables.scss";
-import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import "../styles/Navbar.scss";
 import { Link } from "react-router-dom";
 import { setLogout } from "../redux/state";
 import Footer from "./Footer";
+import "../styles/Navbar.scss";
 
 const Navbar = () => {
-  const [dropdownMenu, setDropdownMenu] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   return (
     <>
-      <div className="navbar">
-        <a href="/">
-          <img src="/assets/logo.png" alt="logo" />
-        </a>
-        <div className="navbar_search">
+      {/* Navbar Section */}
+      <nav className="navbar">
+        <Link to="/" className="navbar__logo">
+          <img src="/assets/logo.png" alt="Flower SCM Logo" />
+        </Link>
+
+        {/* Search Bar */}
+        <div className="navbar__search">
           <input type="text" placeholder="Search..." />
           <IconButton>
-            <Search sx={{ color: variables.pinkred }} />
+            <Search sx={{ color: "#E91E63" }} />
           </IconButton>
         </div>
+
+        {/* Account Button */}
         <button
-          className="navbar_right_account"
-          onClick={() => setDropdownMenu(!dropdownMenu)}
+          className="navbar__account-btn"
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
-          <Menu sx={{ color: variables.darkgrey }} />
+          <Menu sx={{ color: "#333" }} />
           {!user ? (
-            <Person sx={{ color: variables.darkgrey }} />
+            <Person sx={{ color: "#333" }} />
           ) : (
             <img
               src={`http://localhost:3001/${user.profileImagePath.replace(
                 "public",
                 ""
               )}`}
-              alt="profile photo"
-              style={{ objectFit: "cover", borderRadius: "50%" }}
+              alt="Profile"
+              className="navbar__profile-photo"
             />
           )}
         </button>
 
-        {dropdownMenu && !user && (
-          <div className="navbar_right_accountmenu">
-            <Link to="/login">Log In</Link>
-            <Link to="/register">Sign Up</Link>
+        {/* Dropdown Menu */}
+        {isDropdownOpen && (
+          <div className="navbar__dropdown">
+            {!user ? (
+              <>
+                <Link to="/login">Log In</Link>
+                <Link to="/register">Sign Up</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/customers">Customers</Link>
+                <Link to="/growers">Growers</Link>
+                <Link to="/suppliers">Suppliers</Link>
+                <Link to="/sellers">Sellers</Link>
+                <Link to="/chatbot">ChatBot</Link>
+                <Link
+                  to="/login"
+                  onClick={() => dispatch(setLogout())}
+                >
+                  Log Out
+                </Link>
+              </>
+            )}
           </div>
         )}
-        {dropdownMenu && user && (
-          <div className="navbar_right_accountmenu">
-            <Link to="">Recipies</Link>
-            <Link to="">Courses</Link>
-            <Link to="">Food & Beverage</Link>
-            <Link to="">Resturents</Link>
-            <Link
-              to="/login"
-              onClick={() => {
-                dispatch(setLogout());
-              }}
-            >
-              Log Out
-            </Link>
-          </div>
-        )}
-      </div>
+      </nav>
+
+      {/* Hero Section (Visible Before Registration) */}
       {!user && (
-        <>
-          <div className="slide">
-            <img src="/assets/slide01.jpeg" alt="Cover Before Login" className="cover-image" />
-            <div className="slide-text">
-              <h1>Welcome to Cookery Paradise!</h1>
-              <p>Welcome to our site! We specialize in delivering exceptional resources for food enthusiasts, from diverse recipes and detailed cooking courses to insightful food and beverage reviews. Explore our comprehensive guides and discover the best restaurants to satisfy your culinary cravings. Join us on a flavorful journey to enhance your dining experience!</p>
-            <button className="slide-button">GET IN TOUCH</button>
+        <div className="hero">
+          <header className="hero__header">
+            <div className="hero__container">
+              <img
+                src="/assets/landing1.jpeg"
+                alt="Flower SCM"
+                className="hero__image"
+              />
+              <div className="hero__text">
+                <h1>Revolutionizing the Fresh Flower Supply Chain</h1>
+                <p>
+                  Connecting Growers, Suppliers, Sellers, and Customers to ensure
+                  <strong> real-time inventory management</strong>, optimized
+                  logistics, and seamless communication—reducing waste and
+                  maximizing freshness.
+                </p>
+                <button className="hero__cta">Learn More</button>
+              </div>
             </div>
-          </div>
-          <Footer />
-        </>
+          </header>
+
+          {/* Features Section */}
+          <section className="features">
+            <div className="feature">
+              <h3>Real-Time Inventory</h3>
+              <img src="/assets/inventory.jpeg" alt="Real-Time Inventory" />
+              <p>Manage your inventory live and never run out of stock.</p>
+            </div>
+            <div className="feature">
+              <h3>Streamlined Communication</h3>
+              <img src="/assets/comunication.png" alt="Streamlined Communication" />
+              <p>Seamless chat integration with suppliers and buyers.</p>
+            </div>
+            <div className="feature">
+              <h3>Optimized Logistics</h3>
+              <img src="/assets/logic.jpeg" alt="Optimized Logistics" />
+              <p>Reduce delays with AI-driven smart routing.</p>
+            </div>
+          </section>
+        </div>
       )}
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 };
 
 export default Navbar;
+
+
+

@@ -21,7 +21,7 @@ app.use('/auth', authRoutes);
 const PORT = 3001;
 mongoose
 .connect(process.env.MONGO_URL, {
-    dbName:"cookery_paradise",
+    dbName:"Flower_SCM",
 useNewUrlParser: true,
 useUnifiedTopology: true,
 })

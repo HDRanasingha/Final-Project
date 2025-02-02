@@ -17,7 +17,7 @@ const Footer = () => {
                 <ul>
                     <li>Home</li>
                     <li>About us</li>
-                    <li>Delivery</li>
+                    <li>Terms and conditions</li>
                     <li>privacy policy</li>
                 </ul>
             
@@ -27,7 +27,7 @@ const Footer = () => {
                 <h2>GET IN TOUCH</h2>
                 <ul>
                     <li>Phone: +123456789</li>
-                    <li>contact@Cookeryparadise.com</li>
+                    <li>contact@FlowerSCM.com</li>
                         </ul>
                         <img src="/assets/linkedin_icon.png" alt="linkedin" />
                         <img src="/assets/facebook_icon.png" alt="facebook" />
@@ -37,7 +37,7 @@ const Footer = () => {
         </div>
       <hr/>
       
-      <p className='footer-copyright'>Copyright 2024 @ CookeryParadise.com-All Right Reserved</p>
+      <p className='footer-copyright'>Copyright 2024 @ FlowerSCM.com-All Right Reserved</p>
       
     </div>
   )
