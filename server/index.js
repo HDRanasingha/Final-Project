@@ -17,6 +17,9 @@ app.use('/auth', authRoutes);
 
 
 
+
+
+
 /*MONGOOSE SETUP*/
 const PORT = 3001;
 mongoose

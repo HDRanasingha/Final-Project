@@ -62,6 +62,7 @@ const Navbar = () => {
                 <Link to="/growers">Growers</Link>
                 <Link to="/suppliers">Suppliers</Link>
                 <Link to="/sellers">Sellers</Link>
+                <Link to="/orders">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
                 <Link
                   to="/login"
@@ -119,8 +120,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Footer */}
-      <Footer />
+     
     </>
   );
 };
