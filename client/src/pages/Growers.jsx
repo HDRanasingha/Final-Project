@@ -8,9 +8,9 @@ import Footer from '../component/Footer';
 const GrowersPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [flowers, setFlowers] = useState([]);
-  const [newFlower, setNewFlower] = useState({ name: "", stock: 1, price: 1000, img: null });
+  const [newFlower, setNewFlower] = useState({ name: "", stock: 1, price: 1000, description: "", img: null });
   const [imagePreview, setImagePreview] = useState("");
-  const [editFlower, setEditFlower] = useState(null); // Flower being edited
+  const [editFlower, setEditFlower] = useState(null);
   const navigate = useNavigate();
 
   // ✅ Fetch flowers from backend
@@ -20,7 +20,7 @@ const GrowersPage = () => {
       .catch((err) => console.error("Error fetching flowers:", err));
   }, []);
 
-  // ✅ Handle input changes
+  // ✅ Handle input changes (Fix for description)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (editFlower) {
@@ -39,43 +39,32 @@ const GrowersPage = () => {
     }
   };
 
-  // ✅ Increase/decrease stock and price
-  const increaseValue = (field) => {
-    setNewFlower((prev) => ({ ...prev, [field]: prev[field] + 1 }));
-  };
-
-  const decreaseValue = (field) => {
-    setNewFlower((prev) => ({
-      ...prev,
-      [field]: prev[field] > 1 ? prev[field] - 1 : 1,
-    }));
-  };
-
-  // ✅ Submit new flower to backend
+  // ✅ Submit new flower to backend (Fix: Include description)
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name", newFlower.name);
     formData.append("stock", newFlower.stock);
     formData.append("price", newFlower.price);
+    formData.append("description", newFlower.description); // ✅ Added description
     formData.append("img", newFlower.img);
-    formData.append("growerId", "65b9ff3cdab5f4b02174a68f"); // Example Grower ID
+    formData.append("growerId", "65b9ff3cdab5f4b02174a68f");
 
     try {
       await axios.post("http://localhost:3001/api/flowers/add", formData);
-      window.location.reload(); // Refresh to fetch updated flowers
+      window.location.reload();
     } catch (error) {
       console.error("Error adding flower:", error);
     }
   };
 
-  // ✅ Handle Edit Button Click (Load Flower Details into Form)
+  // ✅ Handle Edit Button Click
   const handleEditClick = (flower) => {
     setEditFlower(flower);
     setShowForm(true);
   };
 
-  // ✅ Submit Edited Flower to Backend
+  // ✅ Submit Edited Flower (Fix: Include description)
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -100,11 +89,16 @@ const GrowersPage = () => {
     }
   };
 
+  // ✅ Handle Card Click (Navigate to Flower Details)
+  const handleCardClick = (flowerId) => {
+    navigate(`/flower/${flowerId}`);
+  };
+
   return (
     <div className="growers-page">
       <Navbar />
-      
-      {/* Hero Section with Description */}
+
+      {/* Hero Section */}
       <div className="hero-section">
         <img src="/assets/test.jpg" alt="Flower Field" className="hero-image" />
         <div className="hero-text">
@@ -116,18 +110,23 @@ const GrowersPage = () => {
           </p>
         </div>
       </div>
-      
+
       <div className="inventory-section">
         <h2>Manage Flower Inventory</h2>
         <div className="flower-list">
           {flowers.map(flower => (
-            <div className="flower-card" key={flower._id}>
+            <div 
+              className="flower-card" 
+              key={flower._id} 
+              onClick={() => handleCardClick(flower._id)} 
+              style={{ cursor: "pointer" }} // Makes it look clickable
+            >
               <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
               <h3>{flower.name}</h3>
               <p>Stock: {flower.stock} Bunches</p>
               <p>Price: Rs. {flower.price}</p>
-              <button className="edit-btn" onClick={() => handleEditClick(flower)}>Edit</button>
-              <button className="remove-btn" onClick={() => handleRemove(flower._id)}>Remove</button>
+              <button className="edit-btn" onClick={(e) => { e.stopPropagation(); handleEditClick(flower); }}>Edit</button>
+              <button className="remove-btn" onClick={(e) => { e.stopPropagation(); handleRemove(flower._id); }}>Remove</button>
             </div>
           ))}
         </div>
@@ -137,12 +136,12 @@ const GrowersPage = () => {
           <button className="add-new-btn" onClick={() => { setEditFlower(null); setShowForm(true); }}>➕ Add New Flower</button>
           <button className="view-orders-btn" onClick={() => navigate('/growers/orders')}>📦 View Orders</button>
         </div>
-        
+
         {showForm && (
           <div className="add-flower-form">
             <h3>{editFlower ? "Edit Flower" : "Add New Flower"}</h3>
             <form onSubmit={editFlower ? handleEditSubmit : handleSubmit}>
-              
+
               <div className="input-group">
                 <label>Flower Name:</label>
                 <input type="text" name="name" value={editFlower ? editFlower.name : newFlower.name} onChange={handleInputChange} required />
@@ -151,6 +150,11 @@ const GrowersPage = () => {
               <div className="input-group">
                 <label> Quantity (Bunches):</label>
                 <input type="number" name="stock" value={editFlower ? editFlower.stock : newFlower.stock} onChange={handleInputChange} required />
+              </div>
+
+              <div className="input-group">
+                <label> Description:</label>
+                <textarea name="description" value={editFlower ? editFlower.description : newFlower.description} onChange={handleInputChange} required />
               </div>
 
               <div className="input-group">
@@ -174,11 +178,14 @@ const GrowersPage = () => {
           </div>
         )}
       </div>
+
       <Footer />
     </div>
   );
 };
 
 export default GrowersPage;
+
+
 
 

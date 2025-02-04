@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import Customers from './pages/Customers';
 import GrowersDashboard from './pages/Growers';
+import FlowerDetailsPage from './pages/FlowerDetailsPage';
 
 
 
@@ -18,7 +19,10 @@ function App() {
         <Route path="/register" element={< RegisterPage/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/customers" element={<Customers/>} />
-        <Route path="*" element={<GrowersDashboard/>} />
+        <Route path="/growers" element={<GrowersDashboard/>} />
+        <Route path="/flower/:id" element={<FlowerDetailsPage/>} />
+
+        
         
         
         

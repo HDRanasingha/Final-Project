@@ -15,16 +15,22 @@ const flowerSchema = new mongoose.Schema({
         required: true,
         default: 1000,
     },
+    description: {
+        type: String, // New description field
+        required: false,
+        default: "",
+    },
     img: {
-        type: String, // Store image path (consider using cloud storage for real-world apps)
+        type: String,
         required: true,
     },
     growerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Referencing the User model
+        ref: "User",
         required: true,
     }
 }, { timestamps: true });
 
 const Flower = mongoose.model("Flower", flowerSchema);
 module.exports = Flower;
+
