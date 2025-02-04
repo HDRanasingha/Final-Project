@@ -5,13 +5,15 @@ const dotenv = require('dotenv').config();
 const cors = require('cors');
 
 const authRoutes = require('./routes/auth.js');
+const flowerRoutes = require('./routes/flower.js');
+
 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/auth', authRoutes);
-
+app.use('/api/flowers', flowerRoutes);
 
 
 

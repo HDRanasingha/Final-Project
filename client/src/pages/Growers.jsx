@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../component/Navbar';
 import "../styles/Growers.scss";
@@ -9,16 +10,27 @@ const GrowersPage = () => {
   const [flowers, setFlowers] = useState([]);
   const [newFlower, setNewFlower] = useState({ name: "", stock: 1, price: 1000, img: null });
   const [imagePreview, setImagePreview] = useState("");
-
+  const [editFlower, setEditFlower] = useState(null); // Flower being edited
   const navigate = useNavigate();
 
-  // Handle text inputs
+  // ✅ Fetch flowers from backend
+  useEffect(() => {
+    axios.get('http://localhost:3001/api/flowers/all')
+      .then((res) => setFlowers(res.data))
+      .catch((err) => console.error("Error fetching flowers:", err));
+  }, []);
+
+  // ✅ Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewFlower({ ...newFlower, [name]: value });
+    if (editFlower) {
+      setEditFlower({ ...editFlower, [name]: value });
+    } else {
+      setNewFlower({ ...newFlower, [name]: value });
+    }
   };
 
-  // Handle image upload
+  // ✅ Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -27,7 +39,7 @@ const GrowersPage = () => {
     }
   };
 
-  // Handle increase/decrease for stock and price
+  // ✅ Increase/decrease stock and price
   const increaseValue = (field) => {
     setNewFlower((prev) => ({ ...prev, [field]: prev[field] + 1 }));
   };
@@ -39,16 +51,53 @@ const GrowersPage = () => {
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  // ✅ Submit new flower to backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newFlower.img) {
-      const imageUrl = URL.createObjectURL(newFlower.img);
-      setFlowers([...flowers, { ...newFlower, id: flowers.length + 1, img: imageUrl }]);
+    const formData = new FormData();
+    formData.append("name", newFlower.name);
+    formData.append("stock", newFlower.stock);
+    formData.append("price", newFlower.price);
+    formData.append("img", newFlower.img);
+    formData.append("growerId", "65b9ff3cdab5f4b02174a68f"); // Example Grower ID
+
+    try {
+      await axios.post("http://localhost:3001/api/flowers/add", formData);
+      window.location.reload(); // Refresh to fetch updated flowers
+    } catch (error) {
+      console.error("Error adding flower:", error);
     }
-    setNewFlower({ name: "", stock: 1, price: 1000, img: null });
-    setImagePreview("");
-    setShowForm(false);
+  };
+
+  // ✅ Handle Edit Button Click (Load Flower Details into Form)
+  const handleEditClick = (flower) => {
+    setEditFlower(flower);
+    setShowForm(true);
+  };
+
+  // ✅ Submit Edited Flower to Backend
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:3001/api/flowers/edit/${editFlower._id}`, editFlower);
+      setEditFlower(null);
+      setShowForm(false);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating flower:", error);
+    }
+  };
+
+  // ✅ Remove flower
+  const handleRemove = async (id) => {
+    if (window.confirm("Are you sure you want to delete this flower?")) {
+      try {
+        await axios.delete(`http://localhost:3001/api/flowers/delete/${id}`);
+        setFlowers(flowers.filter(flower => flower._id !== id));
+      } catch (error) {
+        console.error("Error deleting flower:", error);
+      }
+    }
   };
 
   return (
@@ -72,63 +121,54 @@ const GrowersPage = () => {
         <h2>Manage Flower Inventory</h2>
         <div className="flower-list">
           {flowers.map(flower => (
-            <div className="flower-card" key={flower.id}>
-              <img src={flower.img} alt={flower.name} />
+            <div className="flower-card" key={flower._id}>
+              <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
               <h3>{flower.name}</h3>
               <p>Stock: {flower.stock} Bunches</p>
               <p>Price: Rs. {flower.price}</p>
-              <button className="edit-btn">Edit</button>
-              <button className="remove-btn">Remove</button>
+              <button className="edit-btn" onClick={() => handleEditClick(flower)}>Edit</button>
+              <button className="remove-btn" onClick={() => handleRemove(flower._id)}>Remove</button>
             </div>
           ))}
         </div>
 
         {/* Buttons Section */}
         <div className="button-group">
-          <button className="add-new-btn" onClick={() => setShowForm(true)}>➕ Add New Flower</button>
+          <button className="add-new-btn" onClick={() => { setEditFlower(null); setShowForm(true); }}>➕ Add New Flower</button>
           <button className="view-orders-btn" onClick={() => navigate('/growers/orders')}>📦 View Orders</button>
         </div>
         
         {showForm && (
           <div className="add-flower-form">
-            <h3>Add New Flower</h3>
-            <form onSubmit={handleSubmit}>
+            <h3>{editFlower ? "Edit Flower" : "Add New Flower"}</h3>
+            <form onSubmit={editFlower ? handleEditSubmit : handleSubmit}>
               
               <div className="input-group">
                 <label>Flower Name:</label>
-                <input type="text" name="name" placeholder="Enter Flower Name" value={newFlower.name} onChange={handleInputChange} required />
+                <input type="text" name="name" value={editFlower ? editFlower.name : newFlower.name} onChange={handleInputChange} required />
               </div>
 
-              {/* Stock Quantity Field with Buttons */}
               <div className="input-group">
                 <label> Quantity (Bunches):</label>
-                <div className="counter">
-                  <button type="button" className="decrease" onClick={() => decreaseValue('stock')}>-</button>
-                  <input type="number" name="stock" value={newFlower.stock} readOnly />
-                  <button type="button" className="increase" onClick={() => increaseValue('stock')}>+</button>
-                </div>
+                <input type="number" name="stock" value={editFlower ? editFlower.stock : newFlower.stock} onChange={handleInputChange} required />
               </div>
 
-              {/* Price Field with Buttons */}
               <div className="input-group">
                 <label> Price (Rs.):</label>
-                <div className="counter">
-                  <button type="button" className="decrease" onClick={() => decreaseValue('price')}>-</button>
-                  <input type="number" name="price" value={newFlower.price} onChange={handleInputChange} required />
-                  <button type="button" className="increase" onClick={() => increaseValue('price')}>+</button>
-                </div>
+                <input type="number" name="price" value={editFlower ? editFlower.price : newFlower.price} onChange={handleInputChange} required />
               </div>
 
-              {/* Image Upload with Preview */}
-              <div className="input-group">
-                <label>📷 Upload Image:</label>
-                <input type="file" name="img" accept="image/*" onChange={handleImageChange} required />
-                {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
-              </div>
+              {!editFlower && (
+                <div className="input-group">
+                  <label>📷 Upload Image:</label>
+                  <input type="file" name="img" accept="image/*" onChange={handleImageChange} required />
+                  {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+                </div>
+              )}
 
               <div className="form-buttons">
-                <button type="submit"> Add</button>
-                <button type="button" className="cancel-btn" onClick={() => setShowForm(false)}> Cancel</button>
+                <button type="submit">{editFlower ? "Update" : "Add"}</button>
+                <button type="button" className="cancel-btn" onClick={() => { setShowForm(false); setEditFlower(null); }}>Cancel</button>
               </div>
             </form>
           </div>
@@ -140,6 +180,5 @@ const GrowersPage = () => {
 };
 
 export default GrowersPage;
-
 
 
