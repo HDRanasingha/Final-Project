@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../component/Navbar';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../component/Navbar";
 import "../styles/Growers.scss";
-import Footer from '../component/Footer';
+import Footer from "../component/Footer";
 
 const GrowersPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [flowers, setFlowers] = useState([]);
-  const [newFlower, setNewFlower] = useState({ name: "", stock: 1, price: 1000, description: "", img: null });
+  const [newFlower, setNewFlower] = useState({
+    name: "",
+    stock: 1,
+    price: 1000,
+    description: "",
+    img: null,
+  });
   const [imagePreview, setImagePreview] = useState("");
   const [editFlower, setEditFlower] = useState(null);
   const navigate = useNavigate();
 
   // ✅ Fetch flowers from backend
   useEffect(() => {
-    axios.get('http://localhost:3001/api/flowers/all')
+    axios
+      .get("http://localhost:3001/api/flowers/all")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error("Error fetching flowers:", err));
   }, []);
@@ -68,7 +75,10 @@ const GrowersPage = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:3001/api/flowers/edit/${editFlower._id}`, editFlower);
+      await axios.put(
+        `http://localhost:3001/api/flowers/edit/${editFlower._id}`,
+        editFlower
+      );
       setEditFlower(null);
       setShowForm(false);
       window.location.reload();
@@ -82,7 +92,7 @@ const GrowersPage = () => {
     if (window.confirm("Are you sure you want to delete this flower?")) {
       try {
         await axios.delete(`http://localhost:3001/api/flowers/delete/${id}`);
-        setFlowers(flowers.filter(flower => flower._id !== id));
+        setFlowers(flowers.filter((flower) => flower._id !== id));
       } catch (error) {
         console.error("Error deleting flower:", error);
       }
@@ -104,9 +114,10 @@ const GrowersPage = () => {
         <div className="hero-text">
           <h1>🌱 Empowering Growers</h1>
           <p>
-            Growers play a vital role in the floral supply chain by cultivating and nurturing 
-            high-quality flowers. Our platform enables growers to manage inventory efficiently, 
-            connect with suppliers, and optimize sales for maximum profit.
+            Growers play a vital role in the floral supply chain by cultivating
+            and nurturing high-quality flowers. Our platform enables growers to
+            manage inventory efficiently, connect with suppliers, and optimize
+            sales for maximum profit.
           </p>
         </div>
       </div>
@@ -114,65 +125,142 @@ const GrowersPage = () => {
       <div className="inventory-section">
         <h2>Manage Flower Inventory</h2>
         <div className="flower-list">
-          {flowers.map(flower => (
-            <div 
-              className="flower-card" 
-              key={flower._id} 
-              onClick={() => handleCardClick(flower._id)} 
+          {flowers.map((flower) => (
+            <div
+              className="flower-card"
+              key={flower._id}
+              onClick={() => handleCardClick(flower._id)}
               style={{ cursor: "pointer" }} // Makes it look clickable
             >
-              <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
+              <img
+                src={`http://localhost:3001${flower.img}`}
+                alt={flower.name}
+              />
               <h3>{flower.name}</h3>
               <p>Stock: {flower.stock} Bunches</p>
               <p>Price: Rs. {flower.price}</p>
-              <button className="edit-btn" onClick={(e) => { e.stopPropagation(); handleEditClick(flower); }}>Edit</button>
-              <button className="remove-btn" onClick={(e) => { e.stopPropagation(); handleRemove(flower._id); }}>Remove</button>
+              <button
+                className="edit-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditClick(flower);
+                }}
+              >
+                Edit
+              </button>
+              <button
+                className="remove-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(flower._id);
+                }}
+              >
+                Remove
+              </button>
             </div>
           ))}
         </div>
 
         {/* Buttons Section */}
         <div className="button-group">
-          <button className="add-new-btn" onClick={() => { setEditFlower(null); setShowForm(true); }}>➕ Add New Flower</button>
-          <button className="view-orders-btn" onClick={() => navigate('/growers/orders')}>📦 View Orders</button>
+          <button
+            className="add-new-btn"
+            onClick={() => {
+              setEditFlower(null);
+              setShowForm(true);
+            }}
+          >
+            ➕ Add New Flower
+          </button>
+          <button
+            className="view-orders-btn"
+            onClick={() => navigate("/growers/orders")}
+          >
+            📦 View Orders
+          </button>
         </div>
 
         {showForm && (
           <div className="add-flower-form">
             <h3>{editFlower ? "Edit Flower" : "Add New Flower"}</h3>
             <form onSubmit={editFlower ? handleEditSubmit : handleSubmit}>
-
               <div className="input-group">
                 <label>Flower Name:</label>
-                <input type="text" name="name" value={editFlower ? editFlower.name : newFlower.name} onChange={handleInputChange} required />
+                <input
+                  type="text"
+                  name="name"
+                  value={editFlower ? editFlower.name : newFlower.name}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
               <div className="input-group">
                 <label> Quantity (Bunches):</label>
-                <input type="number" name="stock" value={editFlower ? editFlower.stock : newFlower.stock} onChange={handleInputChange} required />
+                <input
+                  type="number"
+                  name="stock"
+                  value={editFlower ? editFlower.stock : newFlower.stock}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
               <div className="input-group">
                 <label> Description:</label>
-                <textarea name="description" value={editFlower ? editFlower.description : newFlower.description} onChange={handleInputChange} required />
+                <textarea
+                  name="description"
+                  value={
+                    editFlower ? editFlower.description : newFlower.description
+                  }
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
               <div className="input-group">
                 <label> Price (Rs.):</label>
-                <input type="number" name="price" value={editFlower ? editFlower.price : newFlower.price} onChange={handleInputChange} required />
+                <input
+                  type="number"
+                  name="price"
+                  value={editFlower ? editFlower.price : newFlower.price}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
 
               {!editFlower && (
                 <div className="input-group">
                   <label>📷 Upload Image:</label>
-                  <input type="file" name="img" accept="image/*" onChange={handleImageChange} required />
-                  {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+                  <input
+                    type="file"
+                    name="img"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    required
+                  />
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="image-preview"
+                    />
+                  )}
                 </div>
               )}
 
               <div className="form-buttons">
                 <button type="submit">{editFlower ? "Update" : "Add"}</button>
-                <button type="button" className="cancel-btn" onClick={() => { setShowForm(false); setEditFlower(null); }}>Cancel</button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditFlower(null);
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -185,7 +273,3 @@ const GrowersPage = () => {
 };
 
 export default GrowersPage;
-
-
-
-

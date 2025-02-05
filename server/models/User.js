@@ -46,6 +46,7 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Seller", // Assuming a Seller model exists
       },
+     
     ],
   },
   { timestamps: true }

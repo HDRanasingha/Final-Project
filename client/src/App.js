@@ -7,6 +7,8 @@ import Customers from './pages/Customers';
 import GrowersDashboard from './pages/Growers';
 import FlowerDetailsPage from './pages/FlowerDetailsPage';
 import WishlistPage from './pages/WishlistPage';
+import SellerPage from './pages/SellersPage';
+
 
 
 
@@ -22,7 +24,9 @@ function App() {
         <Route path="/customers" element={<Customers/>} />
         <Route path="/growers" element={<GrowersDashboard/>} />
         <Route path="/flower/:id" element={<FlowerDetailsPage/>} />
-        <Route path="/wishlist" element={<WishlistPage/>} />
+        <Route path="/wishlist" element={<WishlistPage/>}/>
+        <Route path="/sellers" element={<SellerPage/>}/>
+       
 
         
         
