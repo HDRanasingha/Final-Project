@@ -1,63 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Navbar from '../component/Navbar';
-
-import Footer from '../component/Footer';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import outline and filled heart icons
+import Navbar from "../component/Navbar";
+import Footer from "../component/Footer";
+import "../styles/Customers.scss";
 
 const CustomerPage = () => {
   const [flowers, setFlowers] = useState([]);
-  const customerId = "65c0abcd1234ef56789012ab"; // Example customer ID
+  const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate();
 
-  // ✅ Fetch flowers from backend
   useEffect(() => {
-    axios.get('http://localhost:3001/api/customers/flowers')
+    axios
+      .get("http://localhost:3001/api/flowers/all")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error("Error fetching flowers:", err));
   }, []);
 
-  // ✅ Add to Wishlist
-  const addToWishlist = async (flowerId) => {
-    try {
-      await axios.post('http://localhost:3001/api/customers/wishlist/add', { customerId, flowerId });
-      alert("Added to wishlist!");
-    } catch (error) {
-      console.error("Error adding to wishlist:", error);
-    }
+  const handleCardClick = (flowerId) => {
+    navigate(`/flower/${flowerId}`);
   };
 
-  // ✅ Buy Flower
-  const buyFlower = async (flowerId) => {
-    const quantity = prompt("Enter quantity:");
-    if (!quantity || isNaN(quantity) || quantity <= 0) return;
-    
-    try {
-      await axios.post('http://localhost:3001/api/customers/buy', { customerId, flowerId, quantity });
-      alert("Purchase successful!");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error purchasing flower:", error);
-      alert("Purchase failed: " + error.response.data.message);
+  const handleWishlistToggle = (flowerId, e) => {
+    e.stopPropagation(); // Prevent card click event
+
+    if (wishlist.includes(flowerId)) {
+      setWishlist(wishlist.filter((id) => id !== flowerId));
+    } else {
+      setWishlist([...wishlist, flowerId]);
+      navigate("/wishlist"); // Navigate to wishlist page
     }
   };
 
   return (
     <div className="customer-page">
       <Navbar />
-      
       <div className="hero-section">
-        <h1>💐 Growers' Flowers</h1>
-        <p>Explore high-quality flowers grown by our trusted growers!</p>
+        <h1>Fresh Flowers for You</h1>
+        <p>Browse and order from a variety of fresh flowers directly from growers.</p>
       </div>
 
       <div className="flower-list">
-        {flowers.map(flower => (
-          <div className="flower-card" key={flower._id}>
+        {flowers.map((flower) => (
+          <div className="flower-card" key={flower._id} onClick={() => handleCardClick(flower._id)}>
+            {/* Wishlist Icon at Top Left */}
+            <div className="wishlist-container" onClick={(e) => handleWishlistToggle(flower._id, e)}>
+              {wishlist.includes(flower._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
+            </div>
             <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
             <h3>{flower.name}</h3>
             <p>Stock: {flower.stock} Bunches</p>
             <p>Price: Rs. {flower.price}</p>
-            <button className="wishlist-btn" onClick={() => addToWishlist(flower._id)}>❤️ Add to Wishlist</button>
-            <button className="buy-btn" onClick={() => buyFlower(flower._id)}>🛒 Buy Now</button>
+
+            <button onClick={() => handleCardClick(flower._id)}>View Details</button>
           </div>
         ))}
       </div>
@@ -68,3 +64,5 @@ const CustomerPage = () => {
 };
 
 export default CustomerPage;
+
+
