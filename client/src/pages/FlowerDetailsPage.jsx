@@ -16,6 +16,12 @@ const FlowerDetailsPage = () => {
       .catch(err => console.error("Error fetching flower details:", err));
   }, [id]);
 
+  useEffect(() => {
+    axios.get(`http://localhost:3001/api/flowers/${id}`)
+      .then(res => setFlower(res.data))
+      .catch(err => console.error("Error fetching flower details:", err));
+  }, [id]);
+
   if (!flower) return <p>Loading flower details...</p>;
 
   const handleBuyNow = () => {

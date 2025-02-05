@@ -8,6 +8,7 @@ import GrowersDashboard from './pages/Growers';
 import FlowerDetailsPage from './pages/FlowerDetailsPage';
 import WishlistPage from './pages/WishlistPage';
 import SellerPage from './pages/SellersPage';
+import ProductDetailPage from './pages/Productdetailspage';
 
 
 
@@ -26,7 +27,7 @@ function App() {
         <Route path="/flower/:id" element={<FlowerDetailsPage/>} />
         <Route path="/wishlist" element={<WishlistPage/>}/>
         <Route path="/sellers" element={<SellerPage/>}/>
-       
+        <Route path="/product/:id" element={<ProductDetailPage/>} />
 
         
         

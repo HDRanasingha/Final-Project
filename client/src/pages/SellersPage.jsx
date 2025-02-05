@@ -2,165 +2,163 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
+import "../styles/SellerPage.scss";
 import Footer from "../component/Footer";
 
 
-const SellerPage = () => {
-  const [flowers, setFlowers] = useState([]);
+const SellersPage = () => {
   const [showForm, setShowForm] = useState(false);
-  const [newFlower, setNewFlower] = useState({
+  const [products, setProducts] = useState([]);
+  const [newProduct, setNewProduct] = useState({
     name: "",
     stock: 1,
     price: 1000,
     description: "",
     img: null,
   });
-  const [editFlower, setEditFlower] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [editProduct, setEditProduct] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch products from backend
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/sellers/flowers")
-      .then((res) => setFlowers(res.data))
-      .catch((err) => console.error("Error fetching flowers:", err));
+      .get("http://localhost:3001/api/products/all")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (editFlower) {
-      setEditFlower({ ...editFlower, [name]: value });
+    if (editProduct) {
+      setEditProduct({ ...editProduct, [name]: value });
     } else {
-      setNewFlower({ ...newFlower, [name]: value });
+      setNewProduct({ ...newProduct, [name]: value });
     }
   };
 
+  // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setNewFlower({ ...newFlower, img: file });
+      setNewProduct({ ...newProduct, img: file });
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
+  // Submit new product to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("name", newFlower.name);
-    formData.append("stock", newFlower.stock);
-    formData.append("price", newFlower.price);
-    formData.append("description", newFlower.description);
-    formData.append("img", newFlower.img);
+    formData.append("name", newProduct.name);
+    formData.append("stock", newProduct.stock);
+    formData.append("price", newProduct.price);
+    formData.append("description", newProduct.description);
+    formData.append("img", newProduct.img);
+    formData.append("sellerId", "65b9ff3cdab5f4b02174a68f");
 
     try {
-      await axios.post("http://localhost:3001/api/sellers/add-flower", formData);
+      await axios.post("http://localhost:3001/api/products/add", formData);
       window.location.reload();
     } catch (error) {
-      console.error("Error adding flower:", error);
+      console.error("Error adding product:", error);
     }
   };
 
-  const handleEditClick = (flower) => {
-    setEditFlower(flower);
+  // Handle Edit Button Click
+  const handleEditClick = (product) => {
+    setEditProduct(product);
     setShowForm(true);
   };
 
+  // Submit Edited Product
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:3001/api/sellers/edit-flower/${editFlower._id}`,
-        editFlower
+        `http://localhost:3001/api/products/edit/${editProduct._id}`,
+        editProduct
       );
-      setEditFlower(null);
+      setEditProduct(null);
       setShowForm(false);
       window.location.reload();
     } catch (error) {
-      console.error("Error updating flower:", error);
+      console.error("Error updating product:", error);
     }
   };
 
+  // Remove product
   const handleRemove = async (id) => {
-    if (window.confirm("Are you sure you want to delete this flower?")) {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/sellers/delete-flower/${id}`);
-        setFlowers(flowers.filter((flower) => flower._id !== id));
+        await axios.delete(`http://localhost:3001/api/products/delete/${id}`);
+        setProducts(products.filter((product) => product._id !== id));
       } catch (error) {
-        console.error("Error deleting flower:", error);
+        console.error("Error deleting product:", error);
       }
     }
   };
 
-  const handleViewOrders = () => {
-    navigate("/seller/orders");
-  };
-
   return (
-    <div className="seller-page">
+    <div className="sellers-page">
       <Navbar />
-
       <div className="hero-section">
-        <h1>📦 Seller Dashboard</h1>
-        <p>Manage your flower inventory and track customer orders.</p>
+        <img src="/assets/seller.jpeg" alt="Marketplace" className="hero-image" />
+        <div className="hero-text">
+          <h1>🛒 Seller Marketplace</h1>
+          <p>
+            Sellers can list high-quality products for customers, manage stock, and track sales. Optimize your business with real-time insights.
+          </p>
+        </div>
       </div>
 
       <div className="inventory-section">
-        <h2>Your Flower Listings</h2>
-        <div className="flower-list">
-          {flowers.map((flower) => (
-            <div className="flower-card" key={flower._id}>
-              <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
-              <h3>{flower.name}</h3>
-              <p>Stock: {flower.stock} Bunches</p>
-              <p>Price: Rs. {flower.price}</p>
-              <button className="edit-btn" onClick={() => handleEditClick(flower)}>
-                ✏️ Edit
-              </button>
-              <button className="remove-btn" onClick={() => handleRemove(flower._id)}>
-                ❌ Remove
-              </button>
+        <h2>Manage Product Inventory</h2>
+        <div className="product-list">
+          {products.map((product) => (
+            <div className="product-card" key={product._id}>
+              <img src={`http://localhost:3001${product.img}`} alt={product.name} />
+              <h3>{product.name}</h3>
+              <p>Stock: {product.stock}</p>
+              <p>Price: Rs. {product.price}</p>
+              <button className="edit-btn" onClick={() => handleEditClick(product)}>Edit</button>
+              <button className="remove-btn" onClick={() => handleRemove(product._id)}>Remove</button>
             </div>
           ))}
         </div>
 
-        <div className="button-group">
-          <button className="add-btn" onClick={() => setShowForm(true)}>➕ Add New Flower</button>
-          <button className="view-orders-btn" onClick={handleViewOrders}>📦 View Orders</button>
-        </div>
-
-        {showForm && (
-          <div className="add-flower-form">
-            <h3>{editFlower ? "Edit Flower" : "Add New Flower"}</h3>
-            <form onSubmit={editFlower ? handleEditSubmit : handleSubmit}>
-              <label>Flower Name:</label>
-              <input type="text" name="name" value={editFlower ? editFlower.name : newFlower.name} onChange={handleInputChange} required />
-
-              <label>Quantity (Bunches):</label>
-              <input type="number" name="stock" value={editFlower ? editFlower.stock : newFlower.stock} onChange={handleInputChange} required />
-
-              <label>Description:</label>
-              <textarea name="description" value={editFlower ? editFlower.description : newFlower.description} onChange={handleInputChange} required />
-
-              <label>Price (Rs.):</label>
-              <input type="number" name="price" value={editFlower ? editFlower.price : newFlower.price} onChange={handleInputChange} required />
-
-              {!editFlower && (
-                <>
-                  <label>Upload Image:</label>
-                  <input type="file" accept="image/*" onChange={handleImageChange} required />
-                  {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
-                </>
-              )}
-
-              <button type="submit">{editFlower ? "Update Flower" : "Add Flower"}</button>
-            </form>
-          </div>
-        )}
+        <button className="add-new-btn" onClick={() => setShowForm(true)}>➕ Add New Product</button>
       </div>
+
+      {showForm && (
+        <div className="add-product-form">
+          <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
+          <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
+            <label>Product Name:</label>
+            <input type="text" name="name" value={editProduct ? editProduct.name : newProduct.name} onChange={handleInputChange} required />
+            <label>Stock:</label>
+            <input type="number" name="stock" value={editProduct ? editProduct.stock : newProduct.stock} onChange={handleInputChange} required />
+            <label>Description:</label>
+            <textarea name="description" value={editProduct ? editProduct.description : newProduct.description} onChange={handleInputChange} required />
+            <label>Price (Rs.):</label>
+            <input type="number" name="price" value={editProduct ? editProduct.price : newProduct.price} onChange={handleInputChange} required />
+            {!editProduct && (
+              <>
+                <label>📷 Upload Image:</label>
+                <input type="file" name="img" accept="image/*" onChange={handleImageChange} required />
+                {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+              </>
+            )}
+            <button type="submit">{editProduct ? "Update" : "Add"}</button>
+            <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+          </form>
+        </div>
+      )}
 
       <Footer />
     </div>
   );
 };
 
-export default SellerPage;
+export default SellersPage;
