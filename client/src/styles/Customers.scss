@@ -6,7 +6,8 @@
   }
 
   .flower-list,
-  .seller-list {
+  .product-list,
+  .item-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -15,7 +16,8 @@
   }
 
   .flower-card,
-  .product-card {
+  .product-card,
+  .item-card {
     background: white;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -25,7 +27,7 @@
     transition: transform 0.3s ease;
     cursor: pointer;
     position: relative;
-    
+
     &:hover {
       transform: scale(1.05);
     }
@@ -78,12 +80,9 @@
     }
   }
 
-  .seller-list {
-    margin-top: 3rem;
-  }
-
   .flower-list h2,
-  .seller-list h2 {
+  .product-list h2,
+  .item-list h2 {
     width: 100%;
     text-align: center;
     margin-bottom: 2rem;
@@ -92,4 +91,29 @@
     text-transform: uppercase;
     font-weight: bold;
   }
+
+  .flower-list {
+    margin-top: 3rem;
+  }
+
+  .product-list {
+    margin-top: 3rem;
+  }
+
+  .item-list {
+    margin-top: 3rem;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .hero-section p {
+    color: #777;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
 }
+

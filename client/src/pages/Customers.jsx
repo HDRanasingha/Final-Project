@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaRegHeart, FaHeart } from "react-icons/fa"; 
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/Customers.scss";
@@ -10,6 +10,7 @@ const CustomerPage = () => {
   const [flowers, setFlowers] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [products, setProducts] = useState([]); // For sellers' products
+  const [items, setItems] = useState([]); // For supplier's items
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +25,12 @@ const CustomerPage = () => {
       .get("http://localhost:3001/api/products/all")
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Error fetching products:", err));
+
+    // Fetch items for suppliers
+    axios
+      .get("http://localhost:3001/api/items/all")
+      .then((res) => setItems(res.data))
+      .catch((err) => console.error("Error fetching items:", err));
   }, []);
 
   const handleCardClick = (flowerId) => {
@@ -56,6 +63,21 @@ const CustomerPage = () => {
     }
   };
 
+  const handleItemCardClick = (itemId) => {
+    navigate(`/item/${itemId}`);
+  };
+
+  const handleItemWishlistToggle = (itemId, e) => {
+    e.stopPropagation(); // Prevent card click event
+
+    if (wishlist.includes(itemId)) {
+      setWishlist(wishlist.filter((id) => id !== itemId));
+    } else {
+      setWishlist([...wishlist, itemId]);
+      navigate("/wishlist"); // Navigate to wishlist page
+    }
+  };
+
   return (
     <div className="customer-page">
       <Navbar />
@@ -80,7 +102,7 @@ const CustomerPage = () => {
         ))}
       </div>
 
-      <div className="seller-list">
+      <div className="product-list">
         <h2>Sellers' Products</h2>
         {products.map((product) => (
           <div className="product-card" key={product._id} onClick={() => handleProductCardClick(product._id)}>
@@ -96,11 +118,28 @@ const CustomerPage = () => {
         ))}
       </div>
 
+      <div className="item-list">
+        <h2>Supplier's Items</h2>
+        {items.map((item) => (
+          <div className="item-card" key={item._id} onClick={() => handleItemCardClick(item._id)}>
+            <div className="wishlist-container" onClick={(e) => handleItemWishlistToggle(item._id, e)}>
+              {wishlist.includes(item._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
+            </div>
+            <img src={`http://localhost:3001${item.img}`} alt={item.name} />
+            <h3>{item.name}</h3>
+            <p>Stock: {item.stock} Bunches</p>
+            <p>Price: Rs. {item.price}</p>
+            <button onClick={() => handleItemCardClick(item._id)}>View Details</button>
+          </div>
+        ))}
+      </div>
+
       <Footer />
     </div>
   );
 };
 
 export default CustomerPage;
+
 
 
