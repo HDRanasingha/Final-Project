@@ -112,7 +112,7 @@ const SupplierPage = () => {
       <div className="hero-section">
         <img src="/assets/supplier.jpg" alt="Supplier Image" className="hero-image" />
         <div className="hero-text">
-          <h1>🌱 Empowering Suppliers</h1>
+          <h1> Empowering Suppliers</h1>
           <p>
             Suppliers provide essential products that sustain the floral supply chain.
             Our platform helps suppliers manage inventory efficiently, connect with growers,

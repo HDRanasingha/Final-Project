@@ -3,61 +3,47 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
-
+import "../styles/ItemDetailsPage.scss";
 
 const ItemDetailsPage = () => {
+  const { id } = useParams(); // Get product ID from URL
   const [item, setItem] = useState(null);
-  const { itemId } = useParams();
-  const navigate = useNavigate();
 
-  // ✅ Fetch item details from backend
   useEffect(() => {
-    axios
-      .get(`http://localhost:3001/api/items/${itemId}`)
-      .then((res) => setItem(res.data))
-      .catch((err) => console.error("Error fetching item details:", err));
-  }, [itemId]);
+    axios.get(`http://localhost:3001/api/items/${id}`)
+      .then(res => setItem(res.data))
+      .catch(err => console.error("Error fetching product details:", err));
+  }, [id]);
 
-  // ✅ Handle Edit Button Click
-  const handleEditClick = () => {
-    navigate(`/suppliers/edit-item/${item._id}`);
+  const handleAddToWishlist = () => {
+    alert(`${item.name} added to Wishlist!`);
+    // Implement logic to store in wishlist
   };
 
+  const handleBuyNow = () => {
+    alert(`Proceeding to buy ${item.name}!`);
+    // Redirect to checkout page
+  };
+
+  if (!item) return <p>Loading...</p>;
+
   return (
-    <div className="item-details-page">
+    <div className="item-details">
       <Navbar />
-
-      <div className="item-details-section">
-        {item ? (
-          <>
-            <img
-              src={`http://localhost:3001${item.img}`}
-              alt={item.name}
-              className="item-image"
-            />
-            <div className="item-info">
-              <h2>{item.name}</h2>
-              <p>{item.description}</p>
-              <p>Stock: {item.stock} Bunches</p>
-              <p>Price: Rs. {item.price}</p>
-              <div className="button-group">
-                <button className="edit-btn" onClick={handleEditClick}>
-                  Edit Item
-                </button>
-                <button className="back-btn" onClick={() => navigate(-1)}>
-                  Go Back
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <p>Loading item details...</p>
-        )}
+      <div className="item-container">
+        <img src={`http://localhost:3001${item.img}`} alt={item.name} />
+        <div className="item-info">
+          <h1>{item.name}</h1>
+          <p>{item.description}</p>
+          <p>Price: Rs. {item.price}</p>
+          <p>Stock: {item.stock}</p>
+          <button onClick={handleBuyNow} className="buy-now-btn">🛒 Buy Now</button>
+          <button onClick={handleAddToWishlist} className="wishlist-btn">❤️ Add to Wishlist</button>
+        </div>
       </div>
-
       <Footer />
     </div>
   );
 };
 
-export default ItemDetailsPage;
+export default  ItemDetailsPage;

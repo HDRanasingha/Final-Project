@@ -1,0 +1,91 @@
+.item-details {
+    font-family: "Poppins", sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  
+    .item-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+  
+      img {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      }
+  
+      .item-info {
+        flex: 1;
+        padding: 20px;
+  
+        h1 {
+          font-size: 2rem;
+          margin-bottom: 10px;
+        }
+  
+        p {
+          font-size: 1.1rem;
+          color: #555;
+          margin-bottom: 10px;
+        }
+  
+        .price {
+          font-size: 1.3rem;
+          font-weight: bold;
+          color: #28a745;
+        }
+  
+        .stock {
+          font-size: 1.1rem;
+          font-weight: bold;
+          color: #dc3545;
+        }
+  
+        .buy-now-btn,
+        .wishlist-btn {
+          display: inline-block;
+          padding: 10px 15px;
+          font-size: 1rem;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: background 0.3s ease-in-out;
+  
+          &.buy-now-btn {
+            background-color: #007bff;
+            color: white;
+  
+            &:hover {
+              background-color: #0056b3;
+            }
+          }
+  
+          &.wishlist-btn {
+            background-color: #dc3545;
+            color: white;
+            margin-left: 10px;
+  
+            &:hover {
+              background-color: #a71d2a;
+            }
+          }
+        }
+      }
+    }
+  }
+  

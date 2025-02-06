@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const Item = require('../models/Item');
-const fs = require('fs'); 
+const fs = require('fs');
 
 // ✅ Multer Setup for Image Uploads
 const storage = multer.diskStorage({
@@ -18,14 +18,14 @@ const upload = multer({ storage });
 // ✅ Add a new item
 router.post('/add', upload.single('img'), async (req, res) => {
     try {
-        const { name, stock, price, description } = req.body;
+        const { name, stock, price, description, supplierId } = req.body;
 
-        if (!name || !stock || !price || !req.file) {
+        if (!name || !stock || !price || !req.file || !supplierId) {
             return res.status(400).json({ success: false, message: "All fields except description are required" });
         }
 
         const imgPath = `/uploads/${req.file.filename}`;
-        const newItem = new Item({ name, stock, price, description, img: imgPath });
+        const newItem = new Item({ name, stock, price, description, img: imgPath, supplierId });
 
         await newItem.save();
         res.status(201).json({ success: true, message: "Item added successfully", item: newItem });
@@ -39,63 +39,64 @@ router.post('/add', upload.single('img'), async (req, res) => {
 // ✅ Get all items
 router.get('/all', async (req, res) => {
     try {
-        const items = await Item.find();
+        const items = await Item.find().populate("supplierId", "companyName contact");
         res.status(200).json(items);
     } catch (error) {
         res.status(500).json({ success: false, message: "Error fetching items", error: error.message });
     }
 });
 
+// ✅ Get a single item by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id).populate("supplierId", "companyName contact");
+        if (!item) {
+            return res.status(404).json({ success: false, message: "Item not found" });
+        }
+        res.status(200).json(item);
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching item", error: error.message });
+    }
+});
 
-
-// ✅ Edit item details
-router.put('/edit/:id', upload.single('img'), async (req, res) => {
+// ✅ Edit an item
+router.put('/edit/:id', async (req, res) => {
     try {
         const { name, stock, price, description } = req.body;
-        const item = await Item.findById(req.params.id);
+        const updatedItem = await Item.findByIdAndUpdate(req.params.id, { name, stock, price, description }, { new: true });
 
-        if (!item) return res.status(404).json({ success: false, message: "Item not found" });
-
-        let imgPath = item.img;
-        if (req.file) {
-            if (item.img && fs.existsSync(`public${item.img}`)) {
-                fs.unlinkSync(`public${item.img}`);
-            }
-            imgPath = `/uploads/${req.file.filename}`;
+        if (!updatedItem) {
+            return res.status(404).json({ success: false, message: "Item not found" });
         }
-
-        item.name = name || item.name;
-        item.stock = stock || item.stock;
-        item.price = price || item.price;
-        item.description = description || item.description;
-        item.img = imgPath;
-
-        await item.save();
-        res.status(200).json({ success: true, message: "Item updated successfully", item });
+        res.status(200).json({ success: true, message: "Item updated successfully", item: updatedItem });
 
     } catch (error) {
         res.status(500).json({ success: false, message: "Error updating item", error: error.message });
     }
 });
 
-// ✅ Remove an item
+// ✅ Delete an item
 router.delete('/delete/:id', async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);
-        if (!item) return res.status(404).json({ success: false, message: "Item not found" });
+        if (!item) {
+            return res.status(404).json({ success: false, message: "Item not found" });
+        }
 
-        if (item.img && fs.existsSync(`public${item.img}`)) {
-            fs.unlinkSync(`public${item.img}`);
+        // Delete image file
+        if (item.img) {
+            const imagePath = `public${item.img}`;
+            fs.unlink(imagePath, (err) => {
+                if (err) console.error("Error deleting image:", err);
+            });
         }
 
         await Item.findByIdAndDelete(req.params.id);
-        res.status(200).json({ success: true, message: "Item removed successfully" });
+        res.status(200).json({ success: true, message: "Item deleted successfully" });
 
     } catch (error) {
-        res.status(500).json({ success: false, message: "Error removing item", error: error.message });
+        res.status(500).json({ success: false, message: "Error deleting item", error: error.message });
     }
 });
 
 module.exports = router;
-
-
