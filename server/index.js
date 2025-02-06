@@ -11,6 +11,7 @@ const itemRoutes = require('./routes/item.js');
 
 
 
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
@@ -18,6 +19,7 @@ app.use('/auth', authRoutes);
 app.use('/api/flowers', flowerRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/items', itemRoutes);
+
 
 
 

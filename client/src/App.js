@@ -6,11 +6,11 @@ import LoginPage from './pages/LoginPage';
 import Customers from './pages/Customers';
 import GrowersDashboard from './pages/Growers';
 import FlowerDetailsPage from './pages/FlowerDetailsPage';
-import WishlistPage from './pages/WishlistPage';
 import SellerPage from './pages/SellersPage';
 import ProductDetailPage from './pages/Productdetailspage';
 import SupplierPage from './pages/SupplierPage';
 import ItemDetailsPage from './pages/ItemDetailsPage';
+import WishlistPage from './pages/WishlistPage';
 
 
 
@@ -27,11 +27,11 @@ function App() {
         <Route path="/customers" element={<Customers/>} />
         <Route path="/growers" element={<GrowersDashboard/>} />
         <Route path="/flower/:id" element={<FlowerDetailsPage/>} />
-        <Route path="/wishlist" element={<WishlistPage/>}/>
         <Route path="/sellers" element={<SellerPage/>}/>
         <Route path="/product/:id" element={<ProductDetailPage/>} />
         <Route path="/item/:id" element={<ItemDetailsPage/>} />
         <Route path="/suppliers" element={<SupplierPage/>} />
+        <Route path="/wishlist" element={<WishlistPage/>} />
 
 
         
