@@ -10,6 +10,7 @@ import WishlistPage from './pages/WishlistPage';
 import SellerPage from './pages/SellersPage';
 import ProductDetailPage from './pages/Productdetailspage';
 import SupplierPage from './pages/SupplierPage';
+import ItemDetailsPage from './pages/ItemDetailsPage';
 
 
 
@@ -29,7 +30,7 @@ function App() {
         <Route path="/wishlist" element={<WishlistPage/>}/>
         <Route path="/sellers" element={<SellerPage/>}/>
         <Route path="/product/:id" element={<ProductDetailPage/>} />
-        
+        <Route path="/item/:id" element={<ItemDetailsPage/>} />
         <Route path="/suppliers" element={<SupplierPage/>} />
 
 

@@ -5,7 +5,6 @@ import Navbar from "../component/Navbar";
 import "../styles/SellerPage.scss";
 import Footer from "../component/Footer";
 
-
 const SellersPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [products, setProducts] = useState([]);
@@ -99,8 +98,8 @@ const SellersPage = () => {
       }
     }
   };
-   // ✅ Handle Card Click (Navigate to Flower Details)
-   const handleCardClick = (productId) => {
+  // ✅ Handle Card Click (Navigate to Flower Details)
+  const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
   };
 
@@ -108,11 +107,16 @@ const SellersPage = () => {
     <div className="sellers-page">
       <Navbar />
       <div className="hero-section">
-        <img src="/assets/seller.jpeg" alt="Marketplace" className="hero-image" />
+        <img
+          src="/assets/seller.jpeg"
+          alt="Marketplace"
+          className="hero-image"
+        />
         <div className="hero-text">
           <h1>🛒 Seller Marketplace</h1>
           <p>
-            Sellers can list high-quality products for customers, manage stock, and track sales. Optimize your business with real-time insights.
+            Sellers can list high-quality products for customers, manage stock,
+            and track sales. Optimize your business with real-time insights.
           </p>
         </div>
       </div>
@@ -154,16 +158,17 @@ const SellersPage = () => {
               </button>
             </div>
           ))}
-         
         </div>
 
-        <button className="add-new-btn" onClick={() => setShowForm(true)}>➕ Add New Product</button>
+        <button className="add-new-btn" onClick={() => setShowForm(true)}>
+          ➕ Add New Product
+        </button>
         <button
-            className="view-orders-btn"
-            onClick={() => navigate("/sellers/orders")}
-          >
-            📦 View Orders
-          </button>
+          className="view-orders-btn"
+          onClick={() => navigate("/sellers/orders")}
+        >
+          📦 View Orders
+        </button>
       </div>
 
       {showForm && (
@@ -171,22 +176,61 @@ const SellersPage = () => {
           <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
           <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
             <label>Product Name:</label>
-            <input type="text" name="name" value={editProduct ? editProduct.name : newProduct.name} onChange={handleInputChange} required />
+            <input
+              type="text"
+              name="name"
+              value={editProduct ? editProduct.name : newProduct.name}
+              onChange={handleInputChange}
+              required
+            />
             <label>Stock:</label>
-            <input type="number" name="stock" value={editProduct ? editProduct.stock : newProduct.stock} onChange={handleInputChange} required />
+            <input
+              type="number"
+              name="stock"
+              value={editProduct ? editProduct.stock : newProduct.stock}
+              onChange={handleInputChange}
+              required
+            />
             <label>Description:</label>
-            <textarea name="description" value={editProduct ? editProduct.description : newProduct.description} onChange={handleInputChange} required />
+            <textarea
+              name="description"
+              value={
+                editProduct ? editProduct.description : newProduct.description
+              }
+              onChange={handleInputChange}
+              required
+            />
             <label>Price (Rs.):</label>
-            <input type="number" name="price" value={editProduct ? editProduct.price : newProduct.price} onChange={handleInputChange} required />
+            <input
+              type="number"
+              name="price"
+              value={editProduct ? editProduct.price : newProduct.price}
+              onChange={handleInputChange}
+              required
+            />
             {!editProduct && (
               <>
                 <label>📷 Upload Image:</label>
-                <input type="file" name="img" accept="image/*" onChange={handleImageChange} required />
-                {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+                <input
+                  type="file"
+                  name="img"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="image-preview"
+                  />
+                )}
               </>
             )}
             <button type="submit">{editProduct ? "Update" : "Add"}</button>
-            <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)}>
+              Cancel
+            </button>
           </form>
         </div>
       )}

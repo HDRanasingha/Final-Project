@@ -7,6 +7,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.js');
 const flowerRoutes = require('./routes/flower.js');
 const productRoutes = require('./routes/product.js');
+const itemRoutes = require('./routes/item.js');
 
 
 
@@ -16,6 +17,7 @@ app.use(express.static('public'));
 app.use('/auth', authRoutes);
 app.use('/api/flowers', flowerRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/items', itemRoutes);
 
 
 
