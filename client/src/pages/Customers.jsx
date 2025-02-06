@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import outline and filled heart icons
+import { FaRegHeart, FaHeart } from "react-icons/fa"; 
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/Customers.scss";
@@ -9,13 +9,21 @@ import "../styles/Customers.scss";
 const CustomerPage = () => {
   const [flowers, setFlowers] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [products, setProducts] = useState([]); // For sellers' products
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch flowers for customers
     axios
       .get("http://localhost:3001/api/flowers/all")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error("Error fetching flowers:", err));
+
+    // Fetch products for sellers
+    axios
+      .get("http://localhost:3001/api/products/all")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
   const handleCardClick = (flowerId) => {
@@ -33,6 +41,21 @@ const CustomerPage = () => {
     }
   };
 
+  const handleProductCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const handleProductWishlistToggle = (productId, e) => {
+    e.stopPropagation(); // Prevent card click event
+
+    if (wishlist.includes(productId)) {
+      setWishlist(wishlist.filter((id) => id !== productId));
+    } else {
+      setWishlist([...wishlist, productId]);
+      navigate("/wishlist"); // Navigate to wishlist page
+    }
+  };
+
   return (
     <div className="customer-page">
       <Navbar />
@@ -42,9 +65,9 @@ const CustomerPage = () => {
       </div>
 
       <div className="flower-list">
+        <h2>Growers Flowers</h2>
         {flowers.map((flower) => (
           <div className="flower-card" key={flower._id} onClick={() => handleCardClick(flower._id)}>
-            {/* Wishlist Icon at Top Left */}
             <div className="wishlist-container" onClick={(e) => handleWishlistToggle(flower._id, e)}>
               {wishlist.includes(flower._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
             </div>
@@ -52,8 +75,23 @@ const CustomerPage = () => {
             <h3>{flower.name}</h3>
             <p>Stock: {flower.stock} Bunches</p>
             <p>Price: Rs. {flower.price}</p>
-
             <button onClick={() => handleCardClick(flower._id)}>View Details</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="seller-list">
+        <h2>Sellers' Products</h2>
+        {products.map((product) => (
+          <div className="product-card" key={product._id} onClick={() => handleProductCardClick(product._id)}>
+            <div className="wishlist-container" onClick={(e) => handleProductWishlistToggle(product._id, e)}>
+              {wishlist.includes(product._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
+            </div>
+            <img src={`http://localhost:3001${product.img}`} alt={product.name} />
+            <h3>{product.name}</h3>
+            <p>Stock: {product.stock} Bunches</p>
+            <p>Price: Rs. {product.price}</p>
+            <button onClick={() => handleProductCardClick(product._id)}>View Details</button>
           </div>
         ))}
       </div>

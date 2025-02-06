@@ -23,7 +23,6 @@ app.use('/api/products', productRoutes);
 
 
 
-
 /*MONGOOSE SETUP*/
 const PORT = 3001;
 mongoose
