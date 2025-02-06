@@ -139,6 +139,40 @@
         &:hover {
           background: #218838;
         }
+        .view-orders-btn {
+          display: block;
+          width: 200px;
+          margin: 20px auto;
+          padding: 10px;
+          background: #007bff;
+          color: white;
+          text-align: center;
+          font-size: 1rem;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background 0.3s ease-in-out;}
+      }
+    }
+
+    .view-orders-btn {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out;
+
+      &:hover {
+        background: #0056b3;
       }
     }
   

@@ -99,6 +99,10 @@ const SellersPage = () => {
       }
     }
   };
+   // ✅ Handle Card Click (Navigate to Flower Details)
+   const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   return (
     <div className="sellers-page">
@@ -114,21 +118,52 @@ const SellersPage = () => {
       </div>
 
       <div className="inventory-section">
-        <h2>Manage Product Inventory</h2>
+        <h2>Manage Flower Inventory</h2>
         <div className="product-list">
           {products.map((product) => (
-            <div className="product-card" key={product._id}>
-              <img src={`http://localhost:3001${product.img}`} alt={product.name} />
+            <div
+              className="product-card"
+              key={product._id}
+              onClick={() => handleCardClick(product._id)}
+              style={{ cursor: "pointer" }} // Makes it look clickable
+            >
+              <img
+                src={`http://localhost:3001${product.img}`}
+                alt={product.name}
+              />
               <h3>{product.name}</h3>
-              <p>Stock: {product.stock}</p>
+              <p>Stock: {product.stock} Bunches</p>
               <p>Price: Rs. {product.price}</p>
-              <button className="edit-btn" onClick={() => handleEditClick(product)}>Edit</button>
-              <button className="remove-btn" onClick={() => handleRemove(product._id)}>Remove</button>
+              <button
+                className="edit-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditClick(product);
+                }}
+              >
+                Edit
+              </button>
+              <button
+                className="remove-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemove(product._id);
+                }}
+              >
+                Remove
+              </button>
             </div>
           ))}
+         
         </div>
 
         <button className="add-new-btn" onClick={() => setShowForm(true)}>➕ Add New Product</button>
+        <button
+            className="view-orders-btn"
+            onClick={() => navigate("/sellers/orders")}
+          >
+            📦 View Orders
+          </button>
       </div>
 
       {showForm && (
