@@ -6,13 +6,20 @@ import Footer from "../component/Footer";
 import "../styles/ItemDetailsPage.scss";
 
 const ItemDetailsPage = () => {
-  const { id } = useParams(); // Get product ID from URL
+  const { id } = useParams(); // Get item ID from URL
   const [item, setItem] = useState(null);
+  const [quantity, setQuantity] = useState(1); // Default quantity is 1
+  const [totalPrice, setTotalPrice] = useState(0); // State to store the total price
+  const navigate = useNavigate(); // To navigate to different pages
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/api/items/${id}`)
-      .then(res => setItem(res.data))
-      .catch(err => console.error("Error fetching product details:", err));
+    axios
+      .get(`http://localhost:3001/api/items/${id}`)
+      .then((res) => {
+        setItem(res.data);
+        setTotalPrice(res.data.price); // Set initial total price
+      })
+      .catch((err) => console.error("Error fetching item details:", err));
   }, [id]);
 
   const handleAddToWishlist = () => {
@@ -21,8 +28,14 @@ const ItemDetailsPage = () => {
   };
 
   const handleBuyNow = () => {
-    alert(`Proceeding to buy ${item.name}!`);
-    // Redirect to checkout page
+    // Redirect to cart page
+    navigate("/cart");
+  };
+
+  const handleQuantityChange = (e) => {
+    const newQuantity = Math.max(1, Number(e.target.value)); // Ensure quantity doesn't go below 1
+    setQuantity(newQuantity);
+    setTotalPrice(item.price * newQuantity); // Update total price
   };
 
   if (!item) return <p>Loading...</p>;
@@ -37,6 +50,17 @@ const ItemDetailsPage = () => {
           <p>{item.description}</p>
           <p>Price: Rs. {item.price}</p>
           <p>Stock: {item.stock}</p>
+          <div className="quantity-container">
+            <label>Quantity: </label>
+            <input
+              type="number"
+              value={quantity}
+              onChange={handleQuantityChange}
+              min="1"
+              max={item.stock}
+            />
+          </div>
+          <p>Total Price: Rs. {totalPrice}</p>
           <button onClick={handleBuyNow} className="buy-now-btn">🛒 Buy Now</button>
           <button onClick={handleAddToWishlist} className="wishlist-btn">❤️ Add to Wishlist</button>
         </div>
@@ -46,4 +70,5 @@ const ItemDetailsPage = () => {
   );
 };
 
-export default  ItemDetailsPage;
+export default ItemDetailsPage;
+

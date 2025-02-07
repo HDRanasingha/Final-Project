@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { IconButton } from "@mui/material";
-import { Search, Person, Menu } from "@mui/icons-material";
+import { Search, Person, Menu, ShoppingCart } from "@mui/icons-material"; // Import cart icon
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { setLogout } from "../redux/state";
-import Footer from "./Footer";
 import "../styles/Navbar.scss";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const location = useLocation(); // Get current route
 
   return (
     <>
@@ -28,15 +28,20 @@ const Navbar = () => {
           </IconButton>
         </div>
 
+        {/* Cart Icon - Links to Cart Page */}
+        <Link to="/cart" className="navbar__cart">
+          <IconButton>
+            <ShoppingCart sx={{ color: "#333" }} />
+          </IconButton>
+        </Link>
+
         {/* Account Button */}
         <button
           className="navbar__account-btn"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <Menu sx={{ color: "#333" }} />
-          {!user ? (
-            <Person sx={{ color: "#333" }} />
-          ) : (
+          {user?.profileImagePath ? (
             <img
               src={`http://localhost:3001/${user.profileImagePath.replace(
                 "public",
@@ -45,6 +50,8 @@ const Navbar = () => {
               alt="Profile"
               className="navbar__profile-photo"
             />
+          ) : (
+            <Person sx={{ color: "#333" }} />
           )}
         </button>
 
@@ -76,8 +83,8 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Hero Section (Visible Before Registration) */}
-      {!user && (
+      {/* Hero Section (Only visible on the Home Page) */}
+      {location.pathname === "/" && (
         <div className="hero">
           <header className="hero__header">
             <div className="hero__container">
@@ -119,13 +126,9 @@ const Navbar = () => {
           </section>
         </div>
       )}
-
-     
     </>
   );
 };
 
 export default Navbar;
-
-
 
