@@ -28,6 +28,11 @@ const ItemDetailsPage = () => {
   };
 
   const handleBuyNow = () => {
+    // Add item to cart (localStorage or API can be used)
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    storedCart.push({ ...item, quantity });
+    localStorage.setItem("cart", JSON.stringify(storedCart));
+
     // Redirect to cart page
     navigate("/cart");
   };
@@ -71,4 +76,3 @@ const ItemDetailsPage = () => {
 };
 
 export default ItemDetailsPage;
-

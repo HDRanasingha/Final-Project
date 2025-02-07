@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { IconButton } from "@mui/material";
-import { Search, Person, Menu, ShoppingCart } from "@mui/icons-material"; // Import cart icon
+import React, { useState, useEffect } from "react";
+import { IconButton, Badge } from "@mui/material";
+import { Search, Person, Menu, ShoppingCart } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { setLogout } from "../redux/state";
@@ -8,13 +8,31 @@ import "../styles/Navbar.scss";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const location = useLocation(); // Get current route
+  const location = useLocation();
+
+  // Load cart items count from localStorage
+  useEffect(() => {
+    if (user) {
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      const totalItems = storedCart.reduce((acc, item) => acc + item.quantity, 0);
+      setCartCount(totalItems);
+    } else {
+      setCartCount(0); // Reset cart count when user is logged out
+    }
+  }, [user]); // Listen for changes in the user state
+
+  const handleLogout = () => {
+    // Clear the cart from localStorage when the user logs out
+    localStorage.removeItem("cart");
+    setCartCount(0); // Reset cart count
+    dispatch(setLogout());
+  };
 
   return (
     <>
-      {/* Navbar Section */}
       <nav className="navbar">
         <Link to="/" className="navbar__logo">
           <img src="/assets/logo.png" alt="Flower SCM Logo" />
@@ -28,10 +46,12 @@ const Navbar = () => {
           </IconButton>
         </div>
 
-        {/* Cart Icon - Links to Cart Page */}
+        {/* Cart Icon with Item Count */}
         <Link to="/cart" className="navbar__cart">
           <IconButton>
-            <ShoppingCart sx={{ color: "#333" }} />
+            <Badge badgeContent={cartCount} color="error">
+              <ShoppingCart sx={{ color: "#333" }} />
+            </Badge>
           </IconButton>
         </Link>
 
@@ -71,10 +91,7 @@ const Navbar = () => {
                 <Link to="/sellers">Sellers</Link>
                 <Link to="/wishlist">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
-                <Link
-                  to="/login"
-                  onClick={() => dispatch(setLogout())}
-                >
+                <Link to="/login" onClick={handleLogout}>
                   Log Out
                 </Link>
               </>
@@ -83,16 +100,12 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Hero Section (Only visible on the Home Page) */}
+      {/* Hero Section (Only on Home Page) */}
       {location.pathname === "/" && (
         <div className="hero">
           <header className="hero__header">
             <div className="hero__container">
-              <img
-                src="/assets/landing1.jpeg"
-                alt="Flower SCM"
-                className="hero__image"
-              />
+              <img src="/assets/landing1.jpeg" alt="Flower SCM" className="hero__image" />
               <div className="hero__text">
                 <h1>Revolutionizing the Fresh Flower Supply Chain</h1>
                 <p>
@@ -131,4 +144,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
 
