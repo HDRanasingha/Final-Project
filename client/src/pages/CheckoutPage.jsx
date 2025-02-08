@@ -13,17 +13,16 @@ const CheckoutPage = () => {
     address: "",
     phone: "",
     paymentMethod: "cash",
-    area: "", // Add an area field
+    area: "",
   });
 
   const navigate = useNavigate();
 
   const deliveryFees = {
-    "Colombo": 200,
-    "Kandy": 250,
-    "Galle": 300,
-    "Jaffna": 350,
-    // Add more areas and delivery fees as needed
+    Colombo: 200,
+    Kandy: 250,
+    Galle: 300,
+    Jaffna: 350,
   };
 
   useEffect(() => {
@@ -40,7 +39,10 @@ const CheckoutPage = () => {
   }, [formData.area]);
 
   const calculateTotal = (cartItems) => {
-    const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalAmount = cartItems.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
     setTotal(totalAmount);
   };
 
@@ -54,17 +56,24 @@ const CheckoutPage = () => {
       return;
     }
 
+    // Generate a unique Order ID
+    const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
+
     const orderData = {
+      orderId,
       items: cart,
-      total: total + deliveryFee, // Add the delivery fee to the total
+      total: total + deliveryFee,
       customer: formData,
+      status: "Processing", // Initial order status
     };
 
-    console.log("Order Placed:", orderData);
+    // Save order in localStorage
+    localStorage.setItem("order", JSON.stringify(orderData));
+
     alert("Your order has been placed successfully!");
 
-    localStorage.removeItem("cart"); // Clear cart after order
-    navigate("/order-success"); // Redirect to order success page
+    localStorage.removeItem("cart"); // Clear cart
+    navigate(`/track-order/${orderId}`); // Redirect to track order page
   };
 
   return (
@@ -89,32 +98,26 @@ const CheckoutPage = () => {
 
           <div className="checkout-form">
             <h3>Billing Details</h3>
+            
             <label>Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
+            <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
 
             <label>Address:</label>
-            <input
-              type="text"
+            <textarea
               name="address"
               value={formData.address}
               onChange={handleInputChange}
+              rows="3"
+              style={{ resize: "none", overflowY: "hidden" }}
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
               required
             />
 
             <label>Phone:</label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-            />
+            <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
 
             <label>Area:</label>
             <select name="area" value={formData.area} onChange={handleInputChange} required>
@@ -144,3 +147,5 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+
+

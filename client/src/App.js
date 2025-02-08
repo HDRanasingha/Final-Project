@@ -13,6 +13,8 @@ import ItemDetailsPage from './pages/ItemDetailsPage';
 import WishlistPage from './pages/WishlistPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import TrackOrderPage from './pages/TrackOrderPage';
+import OrdersPage from './pages/OrdersPage';
 
 
 
@@ -36,8 +38,10 @@ function App() {
         <Route path="/wishlist" element={<WishlistPage/>} />
         <Route path="/cart" element={<CartPage/>} />
         <Route path="/checkout" element={<CheckoutPage/>} />
-
-
+        <Route path="/track-order/:orderId" element={<TrackOrderPage />} />
+        <Route path="/suppliers/orders" element={<OrdersPage />} />
+        
+        
         
         
         
