@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Ensure axios is installed and imported
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/CheckoutPage.scss";
@@ -15,6 +16,7 @@ const CheckoutPage = () => {
     paymentMethod: "cash",
     area: "",
   });
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const navigate = useNavigate();
 
@@ -50,9 +52,9 @@ const CheckoutPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!formData.name || !formData.address || !formData.phone || !formData.area) {
-      alert("Please fill in all required fields.");
+      setErrorMessage("Please fill in all required fields.");
       return;
     }
 
@@ -67,13 +69,21 @@ const CheckoutPage = () => {
       status: "Processing", // Initial order status
     };
 
-    // Save order in localStorage
-    localStorage.setItem("order", JSON.stringify(orderData));
+    try {
+      // Send the order data to the server (you should have an API endpoint that handles this)
+      await axios.post("http://localhost:3001/api/orders", orderData);
 
-    alert("Your order has been placed successfully!");
+      alert("Your order has been placed successfully!");
 
-    localStorage.removeItem("cart"); // Clear cart
-    navigate(`/track-order/${orderId}`); // Redirect to track order page
+      // Clear the cart and order data from localStorage
+      localStorage.removeItem("cart");
+
+      // Redirect to home page or another page
+      navigate("/customers");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      setErrorMessage("There was an issue with your order. Please try again.");
+    }
   };
 
   return (
@@ -138,6 +148,8 @@ const CheckoutPage = () => {
             <button className="place-order-button" onClick={handlePlaceOrder}>
               Place Order
             </button>
+
+            {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
           </div>
         </div>
       </div>
@@ -147,5 +159,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
-

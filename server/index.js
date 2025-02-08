@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.js');
 const flowerRoutes = require('./routes/flower.js');
 const productRoutes = require('./routes/product.js');
 const itemRoutes = require('./routes/item.js');
+const orderRoutes = require('./routes/order.js');
 
 
 
@@ -19,6 +20,7 @@ app.use('/auth', authRoutes);
 app.use('/api/flowers', flowerRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/orders', orderRoutes);
 
 
 
