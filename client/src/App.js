@@ -15,6 +15,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import OrdersPage from './pages/OrdersPage';
+import PaymentGatewayPage from './pages/PaymentGatewayPage';
 
 
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage/>} />
         <Route path="/track-order/:orderId" element={<TrackOrderPage />} />
         <Route path="/suppliers/orders" element={<OrdersPage />} />
+        <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         
         
         

@@ -69,20 +69,35 @@ const CheckoutPage = () => {
       status: "Processing", // Initial order status
     };
 
-    try {
-      // Send the order data to the server (you should have an API endpoint that handles this)
-      await axios.post("http://localhost:3001/api/orders", orderData);
+    if (formData.paymentMethod === "card") {
+      try {
+        // Create a Stripe Checkout session
+        const { data } = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
+          totalPrice: total + deliveryFee,
+        });
 
-      alert("Your order has been placed successfully!");
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } catch (error) {
+        console.error("Error creating Stripe Checkout session:", error);
+        setErrorMessage("There was an issue with your payment. Please try again.");
+      }
+    } else {
+      try {
+        // Send the order data to the server (you should have an API endpoint that handles this)
+        await axios.post("http://localhost:3001/api/orders", orderData);
 
-      // Clear the cart and order data from localStorage
-      localStorage.removeItem("cart");
+        alert("Your order has been placed successfully!");
 
-      // Redirect to home page or another page
-      navigate("/customers");
-    } catch (error) {
-      console.error("Error placing order:", error);
-      setErrorMessage("There was an issue with your order. Please try again.");
+        // Clear the cart and order data from localStorage
+        localStorage.removeItem("cart");
+
+        // Redirect to home page or another page
+        navigate("/customers");
+      } catch (error) {
+        console.error("Error placing order:", error);
+        setErrorMessage("There was an issue with your order. Please try again.");
+      }
     }
   };
 
