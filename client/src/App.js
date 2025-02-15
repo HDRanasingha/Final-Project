@@ -18,6 +18,8 @@ import OrdersPage from './pages/OrdersPage';
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
 import SucsessPage from './pages/SucsessPage';
 import CancelPage from './pages/CancelPage';
+import GrowersOrdersPage from './pages/GrowersOrderPage';
+import GrowersOrderPage from './pages/GrowersOrderPage';
 
 
 
@@ -46,7 +48,7 @@ function App() {
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         <Route path="/payment-success" element={<SucsessPage/>}/>
         <Route path="/payment-cancel" element={<CancelPage/>}/>
-        
+        <Route path="/growers/orders" element={<GrowersOrderPage />} />
         
         
         
