@@ -11,7 +11,7 @@ router.post('/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       line_items: [{
         price_data: {
-          currency: 'usd',
+          currency: 'LKR',
           product_data: { name: 'Fresh Flower' },
           unit_amount: totalPrice * 100,
         },

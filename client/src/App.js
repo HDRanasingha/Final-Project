@@ -16,6 +16,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import OrdersPage from './pages/OrdersPage';
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
+import SucsessPage from './pages/SucsessPage';
+import CancelPage from './pages/CancelPage';
 
 
 
@@ -42,6 +44,8 @@ function App() {
         <Route path="/track-order/:orderId" element={<TrackOrderPage />} />
         <Route path="/suppliers/orders" element={<OrdersPage />} />
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
+        <Route path="/payment-success" element={<SucsessPage/>}/>
+        <Route path="/payment-cancel" element={<CancelPage/>}/>
         
         
         
