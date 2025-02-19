@@ -1,4 +1,5 @@
-import  { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import './App.css';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
@@ -18,49 +19,65 @@ import OrdersPage from './pages/OrdersPage';
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
 import SucsessPage from './pages/SucsessPage';
 import CancelPage from './pages/CancelPage';
-import GrowersOrdersPage from './pages/GrowersOrderPage';
 import GrowersOrderPage from './pages/GrowersOrderPage';
-
-
-
-
+import AdminPage from './pages/AdminPage';
 
 function App() {
+  const user = useSelector((state) => state.user);
+
+  // Function to determine user dashboard based on role
+  const getUserDashboard = () => {
+    if (!user) return <Navigate to="/" />; // Redirect to home if no user
+    switch (user.role) {
+      case "customer":
+        return <Customers />;
+      case "grower":
+        return <GrowersDashboard />;
+      case "seller":
+        return <SellerPage />;
+      case "supplier":
+        return <SupplierPage />;
+      default:
+        return <Navigate to="/" />;
+    }
+  };
+
   return (
-    <div >
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/register" element={< RegisterPage/>} />
+        {/* Public Routes */}
+        <Route path="/" element={!user ? <HomePage /> : getUserDashboard()} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/customers" element={<Customers/>} />
-        <Route path="/growers" element={<GrowersDashboard/>} />
-        <Route path="/flower/:id" element={<FlowerDetailsPage/>} />
-        <Route path="/sellers" element={<SellerPage/>}/>
-        <Route path="/product/:id" element={<ProductDetailPage/>} />
-        <Route path="/item/:id" element={<ItemDetailsPage/>} />
-        <Route path="/suppliers" element={<SupplierPage/>} />
-        <Route path="/wishlist" element={<WishlistPage/>} />
-        <Route path="/cart" element={<CartPage/>} />
-        <Route path="/checkout" element={<CheckoutPage/>} />
+
+        {/* Role-Based Routes (Accessible Only If Logged In) */}
+        {user && (
+          <>
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/growers" element={<GrowersDashboard />} />
+            <Route path="/sellers" element={<SellerPage />} />
+            <Route path="/suppliers" element={<SupplierPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </>
+        )}
+
+        {/* Common Routes */}
+        <Route path="/flower/:id" element={<FlowerDetailsPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
+        <Route path="/item/:id" element={<ItemDetailsPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/track-order/:orderId" element={<TrackOrderPage />} />
         <Route path="/suppliers/orders" element={<OrdersPage />} />
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
-        <Route path="/payment-success" element={<SucsessPage/>}/>
-        <Route path="/payment-cancel" element={<CancelPage/>}/>
+        <Route path="/payment-success" element={<SucsessPage />} />
+        <Route path="/payment-cancel" element={<CancelPage />} />
         <Route path="/growers/orders" element={<GrowersOrderPage />} />
-        
-        
-        
-        
-        
-       
       </Routes>
-      
-      </BrowserRouter>
-
-    </div>
+    </BrowserRouter>
   );
 }
 
 export default App;
+

@@ -85,7 +85,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                
                 <Link to="/wishlist">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
                 <Link to="/login" onClick={handleLogout}>
@@ -97,8 +96,8 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Hero Section (Only on Home Page) */}
-      {location.pathname === "/" && (
+      {/* Hero Section (Only on Home Page & Before Login) */}
+      {location.pathname === "/" && !user && (
         <div className="hero">
           <header className="hero__header">
             <div className="hero__container">
@@ -141,6 +140,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 
 

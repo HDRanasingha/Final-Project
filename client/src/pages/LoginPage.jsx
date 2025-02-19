@@ -40,7 +40,7 @@ const LoginPage = () => {
         // Redirect based on user role
         switch (loggedIn.user.role) {
           case "admin":
-            navigate("/admin/dashboard");
+            navigate("/admin");
             break;
           case "supplier":
             navigate("/suppliers");
