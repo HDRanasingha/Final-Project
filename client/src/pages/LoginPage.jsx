@@ -1,44 +1,72 @@
 import React, { useState } from "react";
-import "../styles/Login.scss"
-import  {setLogin} from "../redux/state"
-import {useDispatch} from "react-redux"
-import {useNavigate} from "react-router-dom"
+import "../styles/Login.scss";
+import { setLogin } from "../redux/state";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // For displaying errors
+  const [loading, setLoading] = useState(false); // For loading state
 
-  const dispatch = useDispatch()
-
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    try{
-      const response = await fetch ("http://localhost:3001/auth/login",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({email,password})
-      })
+    e.preventDefault();
 
-      /*Get data after fetching */
-      const loggedIn = await response.json()
-      if (loggedIn) {
+    setLoading(true); // Start loading
+
+    try {
+      const response = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const loggedIn = await response.json();
+
+      if (response.ok) {
         dispatch(
           setLogin({
             user: loggedIn.user,
-            token: loggedIn.token
+            token: loggedIn.token,
           })
-        )
-        navigate("/")
+        );
+
+        // Redirect based on user role
+        switch (loggedIn.user.role) {
+          case "admin":
+            navigate("/admin/dashboard");
+            break;
+          case "supplier":
+            navigate("/suppliers");
+            break;
+          case "grower":
+            navigate("/growers");
+            break;
+          case "seller":
+            navigate("/sellers");
+            break;
+          case "user":
+          default:
+            navigate("/customers");
+            break;
+        }
+      } else {
+        setErrorMessage(loggedIn.message || "Login failed, please try again.");
       }
-
-    }catch(err){
-      console.log("Login failed",err.message)
+    } catch (err) {
+      setErrorMessage("An error occurred, please try again later.");
+      console.log("Login failed", err.message);
+    } finally {
+      setLoading(false); // Stop loading
     }
-  }
+  };
 
-  
   return (
     <div className="login">
       <div className="login_content">
@@ -57,9 +85,12 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">LOG IN</button>
+          {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "LOG IN"}
+          </button>
         </form>
-        <a href="/register">Don't have an account? Sign In Here</a>
+        <a href="/register">Don't have an account? Sign Up Here</a>
       </div>
     </div>
   );

@@ -85,10 +85,7 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link to="/customers">Customers</Link>
-                <Link to="/growers">Growers</Link>
-                <Link to="/suppliers">Suppliers</Link>
-                <Link to="/sellers">Sellers</Link>
+                
                 <Link to="/wishlist">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
                 <Link to="/login" onClick={handleLogout}>
