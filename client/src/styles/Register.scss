@@ -78,6 +78,32 @@
           box-shadow: 0 0 10px 3px rgba(255, 255, 255);
         }
       }
+
+      /* Style the role select dropdown */
+      select {
+        width: 100%;
+        padding: 7px 15px;
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        outline: none;
+        text-align: center;
+        appearance: none;
+        cursor: pointer;
+
+        &:focus {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        option {
+          color: black;
+        }
+
+        /* Add a custom arrow icon */
+        background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zY3JlZW5zY2FwZSIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTEwMCAxMDBoLTExMHYtNDEgaC01MFYyMEgxMDB6IiBzdHJva2U9InRyYW5zZm9ybSIgZmlsbD0ibm9uZSIgZmlsbC1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIgLz48L3N2Zz4=') no-repeat right center;
+        background-size: 15px;
+      }
     }
 
     a {

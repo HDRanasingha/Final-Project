@@ -23,30 +23,34 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    role: {
+      type: String,
+      enum: ['admin', 'user', 'supplier', 'grower', 'seller'],
+      default: 'user', // Default role is 'user'
+    },
     customers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer", // Assuming a Customer model exists
+        ref: "Customer",
       },
     ],
     growers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Grower", // Assuming a Grower model exists
+        ref: "Grower",
       },
     ],
     suppliers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Supplier", // Assuming a Supplier model exists
+        ref: "Supplier",
       },
     ],
     sellers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Seller", // Assuming a Seller model exists
+        ref: "Seller",
       },
-     
     ],
   },
   { timestamps: true }
