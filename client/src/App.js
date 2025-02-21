@@ -22,6 +22,8 @@ import CancelPage from './pages/CancelPage';
 import GrowersOrderPage from './pages/GrowersOrderPage';
 import AdminPage from './pages/AdminPage';
 import AboutUs from './pages/AboutUs';
+import TermsAndConditions from './pages/TermsAndConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 
 function App() {
@@ -77,6 +79,8 @@ function App() {
         <Route path="/payment-cancel" element={<CancelPage />} />
         <Route path="/growers/orders" element={<GrowersOrderPage />} />
         <Route path="/about-us" element={<AboutUs/>} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   );
