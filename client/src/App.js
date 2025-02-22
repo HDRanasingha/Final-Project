@@ -4,7 +4,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-import Customers from './pages/Customers';
+
 import GrowersDashboard from './pages/Growers';
 import FlowerDetailsPage from './pages/FlowerDetailsPage';
 import SellerPage from './pages/SellersPage';
@@ -33,8 +33,7 @@ function App() {
   const getUserDashboard = () => {
     if (!user) return <Navigate to="/" />; // Redirect to home if no user
     switch (user.role) {
-      case "customer":
-        return <Customers />;
+      
       case "grower":
         return <GrowersDashboard />;
       case "seller":
@@ -57,7 +56,7 @@ function App() {
         {/* Role-Based Routes (Accessible Only If Logged In) */}
         {user && (
           <>
-            <Route path="/customers" element={<Customers />} />
+            
             <Route path="/growers" element={<GrowersDashboard />} />
             <Route path="/sellers" element={<SellerPage />} />
             <Route path="/suppliers" element={<SupplierPage />} />
