@@ -21,10 +21,21 @@ const GrowersPage = () => {
 
   // ✅ Fetch flowers from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/flowers/all")
-      .then((res) => setFlowers(res.data))
-      .catch((err) => console.error("Error fetching flowers:", err));
+    const fetchFlowers = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        const res = await axios.get("http://localhost:3001/api/flowers/all", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFlowers(res.data);
+      } catch (err) {
+        console.error("Error fetching flowers:", err);
+      }
+    };
+
+    fetchFlowers();
   }, []);
 
   // ✅ Handle input changes (Fix for description)
@@ -55,10 +66,14 @@ const GrowersPage = () => {
     formData.append("price", newFlower.price);
     formData.append("description", newFlower.description); // ✅ Added description
     formData.append("img", newFlower.img);
-    formData.append("growerId", "65b9ff3cdab5f4b02174a68f");
 
     try {
-      await axios.post("http://localhost:3001/api/flowers/add", formData);
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      await axios.post("http://localhost:3001/api/flowers/add", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       window.location.reload();
     } catch (error) {
       console.error("Error adding flower:", error);
@@ -75,9 +90,15 @@ const GrowersPage = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
       await axios.put(
         `http://localhost:3001/api/flowers/edit/${editFlower._id}`,
-        editFlower
+        editFlower,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setEditFlower(null);
       setShowForm(false);
@@ -91,7 +112,12 @@ const GrowersPage = () => {
   const handleRemove = async (id) => {
     if (window.confirm("Are you sure you want to delete this flower?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/flowers/delete/${id}`);
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        await axios.delete(`http://localhost:3001/api/flowers/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setFlowers(flowers.filter((flower) => flower._id !== id));
       } catch (error) {
         console.error("Error deleting flower:", error);

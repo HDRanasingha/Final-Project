@@ -16,7 +16,7 @@ const CustomerPage = () => {
   useEffect(() => {
     // Fetch flowers for customers
     axios
-      .get("http://localhost:3001/api/flowers/all")
+      .get("http://localhost:3001/api/flowers/all-flowers")
       .then((res) => setFlowers(res.data))
       .catch((err) => console.error("Error fetching flowers:", err));
 
@@ -140,6 +140,3 @@ const CustomerPage = () => {
 };
 
 export default CustomerPage;
-
-
-
