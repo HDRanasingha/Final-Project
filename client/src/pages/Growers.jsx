@@ -52,7 +52,11 @@ const GrowersPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setNewFlower({ ...newFlower, img: file });
+      if (editFlower) {
+        setEditFlower({ ...editFlower, img: file });
+      } else {
+        setNewFlower({ ...newFlower, img: file });
+      }
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -86,14 +90,23 @@ const GrowersPage = () => {
     setShowForm(true);
   };
 
-  // ✅ Submit Edited Flower (Fix: Include description)
+  // ✅ Submit Edited Flower (Fix: Include description and image)
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", editFlower.name);
+    formData.append("stock", editFlower.stock);
+    formData.append("price", editFlower.price);
+    formData.append("description", editFlower.description); // ✅ Added description
+    if (editFlower.img instanceof File) {
+      formData.append("img", editFlower.img);
+    }
+
     try {
       const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
       await axios.put(
         `http://localhost:3001/api/flowers/edit/${editFlower._id}`,
-        editFlower,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -255,25 +268,23 @@ const GrowersPage = () => {
                 />
               </div>
 
-              {!editFlower && (
-                <div className="input-group">
-                  <label>📷 Upload Image:</label>
-                  <input
-                    type="file"
-                    name="img"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
+              <div className="input-group">
+                <label>📷 Upload Image:</label>
+                <input
+                  type="file"
+                  name="img"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required={!editFlower}
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="image-preview"
                   />
-                  {imagePreview && (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="image-preview"
-                    />
-                  )}
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="form-buttons">
                 <button type="submit">{editFlower ? "Update" : "Add"}</button>

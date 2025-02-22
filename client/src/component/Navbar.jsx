@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IconButton, Badge } from "@mui/material";
 import { Search, Person, Menu, ShoppingCart } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
 import "../styles/Navbar.scss";
 
@@ -12,6 +12,7 @@ const Navbar = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Load cart items count from localStorage
   useEffect(() => {
@@ -29,6 +30,7 @@ const Navbar = () => {
     localStorage.removeItem("cart");
     setCartCount(0); // Reset cart count
     dispatch(setLogout());
+    navigate('/'); // Redirect to home page
   };
 
   return (
@@ -87,7 +89,7 @@ const Navbar = () => {
               <>
                 <Link to="/wishlist">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
-                <Link to="/login" onClick={handleLogout}>
+                <Link to="/" onClick={handleLogout}>
                   Log Out
                 </Link>
               </>
@@ -140,7 +142,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
