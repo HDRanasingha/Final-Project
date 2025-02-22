@@ -55,8 +55,7 @@ const SellersPage = () => {
     formData.append("price", newProduct.price);
     formData.append("description", newProduct.description);
     formData.append("img", newProduct.img);
-    formData.append("sellerId", "65b9ff3cdab5f4b02174a68f");
-
+    
     try {
       await axios.post("http://localhost:3001/api/products/add", formData);
       window.location.reload();
