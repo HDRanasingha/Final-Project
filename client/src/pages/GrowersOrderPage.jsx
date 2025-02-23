@@ -6,6 +6,26 @@ import "../styles/GrowersOrders.scss";
 
 const GrowersOrderPage = () => {
   const [orders, setOrders] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  console.log(user?._id);
+  const listerId = user._id;
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/orders", {
+        params: {
+          listerId,
+        },
+      })
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setOrders(res.data);
+        } else {
+          console.error("Invalid data format:", res.data);
+        }
+      })
+      .catch((err) => console.error("Error fetching orders:", err));
+  }, []);
 
   useEffect(() => {
     axios

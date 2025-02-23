@@ -10,7 +10,7 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
     profileImage: null,
-    role: "user", // Default role is 'user'
+    role: "Grower", // Default role is 'user'
   });
 
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -97,7 +97,7 @@ const RegisterPage = () => {
           {!passwordMatch && <p style={{ color: "red" }}>Passwords do not match!</p>}
 
           <select name="role" value={formData.role} onChange={handleChange} required>
-            <option value="user">User</option>
+            
             <option value="admin">Admin</option>
             <option value="supplier">Supplier</option>
             <option value="grower">Grower</option>

@@ -28,12 +28,7 @@ const userSchema = new mongoose.Schema(
       enum: ['admin', 'user', 'supplier', 'grower', 'seller'],
       default: 'user', // Default role is 'user'
     },
-    customers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Customer",
-      },
-    ],
+    
     growers: [
       {
         type: mongoose.Schema.Types.ObjectId,

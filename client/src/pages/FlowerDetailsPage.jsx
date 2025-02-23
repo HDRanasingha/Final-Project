@@ -9,6 +9,7 @@ const FlowerDetailsPage = () => {
   const { id } = useParams(); // Get flower ID from URL
   const navigate = useNavigate(); // Hook for navigation
   const [flower, setFlower] = useState(null);
+  
   const [quantity, setQuantity] = useState(1); // Default quantity is 1
   const [totalPrice, setTotalPrice] = useState(0); // State for total price
 
@@ -36,6 +37,8 @@ const FlowerDetailsPage = () => {
     // Navigate to cart page
     navigate("/cart");
   };
+
+ 
 
   const handleAddToWishlist = () => {
     console.log("Added to Wishlist:", flower.name);

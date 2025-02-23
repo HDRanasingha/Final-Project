@@ -7,6 +7,7 @@ import "../styles/CheckoutPage.scss";
 
 const CheckoutPage = () => {
   const [cart, setCart] = useState([]);
+  const items = [];
   const [total, setTotal] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [formData, setFormData] = useState({
@@ -30,8 +31,11 @@ const CheckoutPage = () => {
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
+    console.log(storedCart[0]?.growerId?._id);
+   
     calculateTotal(storedCart);
   }, []);
+
 
   useEffect(() => {
     if (formData.area) {
@@ -61,9 +65,40 @@ const CheckoutPage = () => {
     // Generate a unique Order ID
     const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
 
+    console.log("cart: ", cart);
+    // push items from cart to items array
+
+    // {
+    //"_id": "67b9eb828ceb5474c26f14b1",
+    //"name": "ffrefer",
+    //"stock": 1,
+    //"price": 1000,
+    //"description": "dfregre",
+    //"img": "/uploads/1740277896938-grow.jpg",
+    //"growerId": {
+       // "_id": "67b5ee4a7c496cf762a56695",
+        //"firstName": "john",
+        //"lastName": "luvis"
+   // },
+    //"createdAt": "2025-02-22T15:21:38.603Z",
+//"updatedAt": "2025-02-23T02:31:37.079Z",
+    //"__v": 0,
+    //"quantity": 1
+//}
+// item should include name, price, quantity, growerId
+    cart.map(item =>{
+      console.log("item: ", item);
+      items.push({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        listerId: item.growerId._id
+      });
+    })
+
     const orderData = {
       orderId,
-      items: cart,
+      items: items,
       total: total + deliveryFee,
       customer: formData,
       status: "Processing", // Initial order status
@@ -93,7 +128,7 @@ const CheckoutPage = () => {
         localStorage.removeItem("cart");
 
         // Redirect to home page or another page
-        navigate("/customers");
+        navigate("/");
       } catch (error) {
         console.error("Error placing order:", error);
         setErrorMessage("There was an issue with your order. Please try again.");
