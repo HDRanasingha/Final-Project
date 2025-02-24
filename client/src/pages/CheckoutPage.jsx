@@ -18,6 +18,7 @@ const CheckoutPage = () => {
     area: "",
   });
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   const navigate = useNavigate();
 
@@ -78,39 +79,31 @@ const CheckoutPage = () => {
       status: "Processing",
     };
 
-    if (formData.paymentMethod === "card") {
-      try {
+    try {
+      if (formData.paymentMethod === "card") {
         const { data } = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
           totalPrice: total + deliveryFee,
         });
 
         window.location.href = data.url;
-
-        // After successful payment, store the order in the database
-        await axios.post("http://localhost:3001/api/orders/success", orderData);
-
-        // Clear the cart
-        localStorage.removeItem("cart");
-
-        // Redirect to home page or another page
-        navigate("/");
-      } catch (error) {
-        console.error("Error creating Stripe Checkout session:", error);
-        setErrorMessage("There was an issue with your payment. Please try again.");
       }
-    } else {
-      try {
-        await axios.post("http://localhost:3001/api/orders", orderData);
 
-        alert("Your order has been placed successfully!");
+      // Store the order in the database for both payment methods
+      await axios.post("http://localhost:3001/api/orders/success", orderData);
 
-        localStorage.removeItem("cart");
+      // Clear the cart
+      localStorage.removeItem("cart");
 
+      // Set success message
+      setSuccessMessage("Your order has been placed successfully!");
+
+      // Redirect to home page or another page after a delay
+      setTimeout(() => {
         navigate("/");
-      } catch (error) {
-        console.error("Error placing order:", error);
-        setErrorMessage("There was an issue with your order. Please try again.");
-      }
+      }, 3000);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      setErrorMessage("There was an issue with your order. Please try again.");
     }
   };
 
@@ -178,6 +171,7 @@ const CheckoutPage = () => {
             </button>
 
             {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
+            {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
           </div>
         </div>
       </div>
