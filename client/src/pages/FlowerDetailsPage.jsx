@@ -31,6 +31,10 @@ const FlowerDetailsPage = () => {
   const handleBuyNow = () => {
     // Add flower to cart (localStorage or API can be used)
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (storedCart.some(item => item._id === flower._id)) {
+      navigate("/cart");
+      return;
+    }
     storedCart.push({ ...flower, quantity });
     localStorage.setItem("cart", JSON.stringify(storedCart));
 
@@ -41,7 +45,7 @@ const FlowerDetailsPage = () => {
  
 
   const handleAddToWishlist = () => {
-    console.log("Added to Wishlist:", flower.name);
+    
     alert(`${flower.name} added to your wishlist!`);
     // Implement wishlist logic here
   };

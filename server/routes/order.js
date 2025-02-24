@@ -1,48 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
+const Flower = require("../models/Flower");
 
-// Get all orders
-
-// {
-//   "_id": {
-//     "$oid": "67bb6d6bbef5a0702c0fe2fe"
-//   },
-//   "orderId": "ORD-455434",
-//   "items": [
-//     {
-//       "name": "test",
-//       "price": 1000,
-//       "quantity": 1,
-//       "listerId": "67b5ee4a7c496cf762a56695",
-//       "_id": {
-//         "$oid": "67bb6d6bbef5a0702c0fe2ff"
-//       }
-//     },
-//     {
-//       "name": "test2",
-//       "price": 1000,
-//       "quantity": 1,
-//       "listerId": "67b5e66257af28743e9784a1",
-//       "_id": {
-//         "$oid": "67bb6d6bbef5a0702c0fe300"
-//       }
-//     }
-//   ],
-//   "total": 2200,
-//   "customer": {
-//     "name": "test3",
-//     "address": "no.111,jesimine park,bandarawella.\nsuite",
-//     "phone": "0776342440",
-//     "paymentMethod": "cash",
-//     "area": "Colombo"
-//   },
-//   "status": "Processing",
-//   "createdAt": {
-//     "$date": "2025-02-23T18:48:11.583Z"
-//   },
-//   "__v": 0
-// }
 
 // Get all orders
 router.get("/", async (req, res) => {
@@ -70,7 +30,13 @@ router.post("/success", async (req, res) => {
     });
 
     await newOrder.save();
-
+// reduce stock
+    items.forEach(async (item) => {
+      await Flower.findOneAndUpdate(
+        { growerId: item.listerId, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } }
+      );
+    });
     res.status(200).json({ message: "Order placed successfully!" });
   } catch (error) {
     console.error("Error placing order:", error);
