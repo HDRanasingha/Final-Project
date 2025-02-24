@@ -78,4 +78,27 @@ router.post("/success", async (req, res) => {
   }
 });
 
+// Update order status
+router.put("/:orderId/status", async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findOneAndUpdate(
+      { orderId },
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.status(200).json({ message: "Order status updated successfully!", order });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ error: "Failed to update order status" });
+  }
+});
+
 module.exports = router;
