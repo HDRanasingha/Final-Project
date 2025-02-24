@@ -31,11 +31,8 @@ const CheckoutPage = () => {
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
-    console.log(storedCart[0]?.growerId?._id);
-   
     calculateTotal(storedCart);
   }, []);
-
 
   useEffect(() => {
     if (formData.area) {
@@ -62,72 +59,53 @@ const CheckoutPage = () => {
       return;
     }
 
-    // Generate a unique Order ID
     const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
 
-    console.log("cart: ", cart);
-    // push items from cart to items array
-
-    // {
-    //"_id": "67b9eb828ceb5474c26f14b1",
-    //"name": "ffrefer",
-    //"stock": 1,
-    //"price": 1000,
-    //"description": "dfregre",
-    //"img": "/uploads/1740277896938-grow.jpg",
-    //"growerId": {
-       // "_id": "67b5ee4a7c496cf762a56695",
-        //"firstName": "john",
-        //"lastName": "luvis"
-   // },
-    //"createdAt": "2025-02-22T15:21:38.603Z",
-//"updatedAt": "2025-02-23T02:31:37.079Z",
-    //"__v": 0,
-    //"quantity": 1
-//}
-// item should include name, price, quantity, growerId
-    cart.map(item =>{
-      console.log("item: ", item);
+    cart.map(item => {
       items.push({
         name: item.name,
         price: item.price,
         quantity: item.quantity,
         listerId: item.growerId._id
       });
-    })
+    });
 
     const orderData = {
       orderId,
       items: items,
       total: total + deliveryFee,
       customer: formData,
-      status: "Processing", // Initial order status
+      status: "Processing",
     };
 
     if (formData.paymentMethod === "card") {
       try {
-        // Create a Stripe Checkout session
         const { data } = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
           totalPrice: total + deliveryFee,
         });
 
-        // Redirect to Stripe Checkout
         window.location.href = data.url;
+
+        // After successful payment, store the order in the database
+        await axios.post("http://localhost:3001/api/orders/success", orderData);
+
+        // Clear the cart
+        localStorage.removeItem("cart");
+
+        // Redirect to home page or another page
+        navigate("/");
       } catch (error) {
         console.error("Error creating Stripe Checkout session:", error);
         setErrorMessage("There was an issue with your payment. Please try again.");
       }
     } else {
       try {
-        // Send the order data to the server (you should have an API endpoint that handles this)
         await axios.post("http://localhost:3001/api/orders", orderData);
 
         alert("Your order has been placed successfully!");
 
-        // Clear the cart and order data from localStorage
         localStorage.removeItem("cart");
 
-        // Redirect to home page or another page
         navigate("/");
       } catch (error) {
         console.error("Error placing order:", error);

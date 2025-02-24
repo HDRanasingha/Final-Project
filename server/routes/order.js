@@ -44,12 +44,12 @@ const Order = require("../models/Order");
 //   "__v": 0
 // }
 
+// Get all orders
 router.get("/", async (req, res) => {
   try {
-    // order contains listerId and send only orders that match the listerId
     const listerId = req.query.listerId;
-    
-    const orders = await Order.find({ "items.listerId": listerId });
+    const query = listerId ? { "items.listerId": listerId } : {};
+    const orders = await Order.find(query);
     res.status(200).json(orders);
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -57,25 +57,26 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Create a new order
-router.post("/", async (req, res) => {
+router.post("/success", async (req, res) => {
   const { orderId, items, total, customer, status } = req.body;
 
-  const newOrder = new Order({
-    orderId,
-    items,
-    total,
-    customer,
-    status,
-  });
-
   try {
-    const savedOrder = await newOrder.save();
-    res.status(201).json({ message: "Order placed successfully", order: savedOrder });
-  } catch (err) {
-    console.error("Error saving order:", err);
+    const newOrder = new Order({
+      orderId,
+      items,
+      total,
+      customer,
+      status,
+    });
+
+    await newOrder.save();
+
+    res.status(200).json({ message: "Order placed successfully!" });
+  } catch (error) {
+    console.error("Error placing order:", error);
     res.status(500).json({ error: "Failed to place order" });
   }
 });
+
 
 module.exports = router;
