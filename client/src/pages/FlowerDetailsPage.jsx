@@ -9,7 +9,7 @@ const FlowerDetailsPage = () => {
   const { id } = useParams(); // Get flower ID from URL
   const navigate = useNavigate(); // Hook for navigation
   const [flower, setFlower] = useState(null);
-  
+  const userId = JSON.parse(localStorage.getItem("user"))?._id;
   const [quantity, setQuantity] = useState(1); // Default quantity is 1
   const [totalPrice, setTotalPrice] = useState(0); // State for total price
 
@@ -77,10 +77,12 @@ const FlowerDetailsPage = () => {
           <p><strong>Total Price:</strong> Rs. {totalPrice}</p>
 
           {/* Action Buttons */}
-          <div className="action-buttons">
+          {userId !== flower.growerId._id && (
+            <div className="action-buttons">
             <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
             <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
           </div>
+          )}
         </div>
       </div>
       <Footer />
