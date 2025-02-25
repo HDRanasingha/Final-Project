@@ -171,6 +171,7 @@ const GrowersPage = () => {
               onClick={() => handleCardClick(flower._id)}
               style={{ cursor: "pointer" }} // Makes it look clickable
             >
+              {flower.stock === 0 && <div className="sold-out">Sold Out</div>}
               <img
                 src={`http://localhost:3001${flower.img}`}
                 alt={flower.name}

@@ -229,6 +229,17 @@
     transform: scale(1.05);
   }
 
+  .sold-out {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    z-index: 1;
+  }
+
   .wishlist-container {
     position: absolute;
     top: 0;
