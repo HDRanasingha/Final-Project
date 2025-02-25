@@ -81,6 +81,9 @@ const CheckoutPage = () => {
           { totalPrice: total + deliveryFee }
         );
 
+        // Clear the cart before redirecting to the payment page
+        localStorage.removeItem("cart");
+
         window.location.href = data.url;
         return;
       }
