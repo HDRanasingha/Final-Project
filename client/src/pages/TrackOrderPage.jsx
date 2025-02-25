@@ -31,6 +31,20 @@ const TrackOrderPage = () => {
     }
   }, [orderId]);
 
+  const handleCancelOrder = () => {
+    axios
+      .delete(`http://localhost:3001/api/orders/${orderId}`)
+      .then(() => {
+        setOrder(null);
+        setProgress(0);
+        alert("Order has been canceled successfully.");
+      })
+      .catch((err) => {
+        setError("Error canceling the order.");
+        console.error(err);
+      });
+  };
+
   return (
     <div className="track-order-page">
       <Navbar />
@@ -65,6 +79,7 @@ const TrackOrderPage = () => {
                   </li>
                 ))}
               </ul>
+              <button onClick={handleCancelOrder} className="cancel-order-button">Cancel Order</button>
             </div>
           </>
         ) : (
@@ -77,4 +92,3 @@ const TrackOrderPage = () => {
 };
 
 export default TrackOrderPage;
-
