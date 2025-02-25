@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; // Ensure axios is installed and imported
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/CheckoutPage.scss";
 
 const CheckoutPage = () => {
   const [cart, setCart] = useState([]);
+  const items = [];
   const [total, setTotal] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [formData, setFormData] = useState({
@@ -16,8 +17,9 @@ const CheckoutPage = () => {
     paymentMethod: "cash",
     area: "",
   });
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+
   const navigate = useNavigate();
 
   const deliveryFees = {
@@ -35,7 +37,8 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     if (formData.area) {
-      setDeliveryFee(deliveryFees[formData.area] || 0);
+      const fee = deliveryFees[formData.area] || 0;
+      setDeliveryFee(fee);
     }
   }, [formData.area]);
 
@@ -59,16 +62,18 @@ const CheckoutPage = () => {
 
     const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
 
-    const items = cart.map((item) => ({
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-      listerId: item.growerId._id,
-    }));
+    cart.map(item => {
+      items.push({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        listerId: item.growerId._id
+      });
+    });
 
     const orderData = {
       orderId,
-      items,
+      items: items,
       total: total + deliveryFee,
       customer: formData,
       status: "Processing",
@@ -76,26 +81,26 @@ const CheckoutPage = () => {
 
     try {
       if (formData.paymentMethod === "card") {
-        const { data } = await axios.post(
-          "http://localhost:3001/api/payment/create-checkout-session",
-          { totalPrice: total + deliveryFee }
-        );
-
-        // Clear the cart before redirecting to the payment page
-        localStorage.removeItem("cart");
+        const { data } = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
+          totalPrice: total + deliveryFee,
+        });
 
         window.location.href = data.url;
-        return;
       }
 
-      // Save order for Cash on Delivery
+      // Store the order in the database for both payment methods
       await axios.post("http://localhost:3001/api/orders/success", orderData);
 
       // Clear the cart
       localStorage.removeItem("cart");
 
-      // Redirect to Thank You page with Order ID
-      navigate(`/thank-you?orderId=${orderId}`);
+      // Set success message
+      setSuccessMessage("Your order has been placed successfully!");
+
+      // Redirect to home page or another page after a delay
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     } catch (error) {
       console.error("Error placing order:", error);
       setErrorMessage("There was an issue with your order. Please try again.");
@@ -121,9 +126,9 @@ const CheckoutPage = () => {
             <h3>Delivery Fee: Rs. {deliveryFee}</h3>
             <h3>Grand Total: Rs. {(total + deliveryFee).toFixed(2)}</h3>
           </div>
-
           <div className="checkout-form">
             <h3>Billing Details</h3>
+            
             <label>Name:</label>
             <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
 
@@ -133,6 +138,11 @@ const CheckoutPage = () => {
               value={formData.address}
               onChange={handleInputChange}
               rows="3"
+              style={{ resize: "none", overflowY: "hidden" }}
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
               required
             />
 
@@ -143,7 +153,9 @@ const CheckoutPage = () => {
             <select name="area" value={formData.area} onChange={handleInputChange} required>
               <option value="">Select Area</option>
               {Object.keys(deliveryFees).map((area) => (
-                <option key={area} value={area}>{area}</option>
+                <option key={area} value={area}>
+                  {area}
+                </option>
               ))}
             </select>
 
@@ -152,13 +164,12 @@ const CheckoutPage = () => {
               <option value="cash">Cash on Delivery</option>
               <option value="card">Credit/Debit Card</option>
             </select>
-
             <button className="place-order-button" onClick={handlePlaceOrder}>
               Place Order
             </button>
 
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            {successMessage && <p className="success-message">{successMessage}</p>}
+            {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
+            {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
           </div>
         </div>
       </div>
