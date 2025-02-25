@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 
-
 const ThankYouPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ const ThankYouPage = () => {
         <h1>🎉 Thank You for Your Order!</h1>
         <p>Your Order ID: <strong>{orderId}</strong></p>
         <p>Use this Order ID to <strong>track your order</strong>.</p>
-        <button onClick={() => navigate("/track-order")}>Track My Order</button>
+        <button onClick={() => navigate(`/track-order?orderId=${orderId}`)}>Track My Order</button>
       </div>
       <Footer />
     </div>

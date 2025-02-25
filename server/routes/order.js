@@ -67,4 +67,22 @@ router.put("/:orderId/status", async (req, res) => {
   }
 });
 
+// Get order by ID
+router.get("/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findOne({ orderId });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error fetching order:", error);
+    res.status(500).json({ error: "Failed to fetch order" });
+  }
+});
+
 module.exports = router;

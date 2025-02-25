@@ -24,7 +24,7 @@ import AdminPage from './pages/AdminPage';
 import AboutUs from './pages/AboutUs';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-import OrderTrackingPage from './pages/OrderTrackingPage';
+
 import ThankYouPage from './pages/ThankYouPage';
 
 
@@ -73,7 +73,7 @@ function App() {
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/track-order/:orderId" element={<TrackOrderPage />} />
+        <Route path="/track-order" element={<TrackOrderPage />} />
        
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         <Route path="/payment-success" element={<SucsessPage />} />
@@ -82,7 +82,7 @@ function App() {
         <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/order-tracking/:orderId" element={<OrderTrackingPage />} />
+        <Route path="/order-tracking/:orderId" element={<TrackOrderPage/>} />
         <Route path="/thank-you" element={<ThankYouPage />} />
       </Routes>
     </BrowserRouter>
