@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Ensure axios is installed and imported
+import axios from "axios";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/CheckoutPage.scss";
@@ -17,8 +17,8 @@ const CheckoutPage = () => {
     paymentMethod: "cash",
     area: "",
   });
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -88,18 +88,14 @@ const CheckoutPage = () => {
         window.location.href = data.url;
       }
 
-      // Store the order in the database for both payment methods
       await axios.post("http://localhost:3001/api/orders/success", orderData);
 
-      // Clear the cart
       localStorage.removeItem("cart");
 
-      // Set success message
       setSuccessMessage("Your order has been placed successfully!");
 
-      // Redirect to home page or another page after a delay
       setTimeout(() => {
-        navigate("/");
+        navigate(`/thank-you?orderId=${orderId}`);
       }, 3000);
     } catch (error) {
       console.error("Error placing order:", error);
@@ -168,8 +164,8 @@ const CheckoutPage = () => {
               Place Order
             </button>
 
-            {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
-            {successMessage && <p className="success-message">{successMessage}</p>} {/* Display success message */}
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            {successMessage && <p className="success-message">{successMessage}</p>}
           </div>
         </div>
       </div>
