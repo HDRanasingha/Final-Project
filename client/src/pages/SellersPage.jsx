@@ -21,10 +21,21 @@ const SellersPage = () => {
 
   // Fetch products from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/products/all")
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error("Error fetching products:", err));
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        const res = await axios.get("http://localhost:3001/api/products/all", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   // Handle input changes
@@ -41,7 +52,11 @@ const SellersPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setNewProduct({ ...newProduct, img: file });
+      if (editProduct) {
+        setEditProduct({ ...editProduct, img: file });
+      } else {
+        setNewProduct({ ...newProduct, img: file });
+      }
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -55,9 +70,14 @@ const SellersPage = () => {
     formData.append("price", newProduct.price);
     formData.append("description", newProduct.description);
     formData.append("img", newProduct.img);
-    
+
     try {
-      await axios.post("http://localhost:3001/api/products/add", formData);
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      await axios.post("http://localhost:3001/api/products/add", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       window.location.reload();
     } catch (error) {
       console.error("Error adding product:", error);
@@ -73,10 +93,25 @@ const SellersPage = () => {
   // Submit Edited Product
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", editProduct.name);
+    formData.append("stock", editProduct.stock);
+    formData.append("price", editProduct.price);
+    formData.append("description", editProduct.description);
+    if (editProduct.img instanceof File) {
+      formData.append("img", editProduct.img);
+    }
+
     try {
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
       await axios.put(
         `http://localhost:3001/api/products/edit/${editProduct._id}`,
-        editProduct
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setEditProduct(null);
       setShowForm(false);
@@ -90,14 +125,20 @@ const SellersPage = () => {
   const handleRemove = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/products/delete/${id}`);
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        await axios.delete(`http://localhost:3001/api/products/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setProducts(products.filter((product) => product._id !== id));
       } catch (error) {
         console.error("Error deleting product:", error);
       }
     }
   };
-  // ✅ Handle Card Click (Navigate to Flower Details)
+
+  // Handle Card Click (Navigate to Product Details)
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
   };
@@ -130,6 +171,7 @@ const SellersPage = () => {
               onClick={() => handleCardClick(product._id)}
               style={{ cursor: "pointer" }} // Makes it look clickable
             >
+              {product.stock === 0 && <div className="sold-out">Sold Out</div>}
               <img
                 src={`http://localhost:3001${product.img}`}
                 alt={product.name}
@@ -159,63 +201,81 @@ const SellersPage = () => {
           ))}
         </div>
 
-        <button className="add-new-btn" onClick={() => setShowForm(true)}>
-          ➕ Add New Product
-        </button>
-        <button
-          className="view-orders-btn"
-          onClick={() => navigate("/sellers/orders")}
-        >
-          📦 View Orders
-        </button>
-      </div>
+        <div className="button-group">
+          <button
+            className="add-new-btn"
+            onClick={() => {
+              setEditProduct(null);
+              setShowForm(true);
+            }}
+          >
+            ➕ Add New Product
+          </button>
+          <button
+            className="view-orders-btn"
+            onClick={() => navigate("/sellers/orders")}
+          >
+            📦 View Orders
+          </button>
+        </div>
 
-      {showForm && (
-        <div className="add-product-form">
-          <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
-          <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
-            <label>Product Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={editProduct ? editProduct.name : newProduct.name}
-              onChange={handleInputChange}
-              required
-            />
-            <label>Stock:</label>
-            <input
-              type="number"
-              name="stock"
-              value={editProduct ? editProduct.stock : newProduct.stock}
-              onChange={handleInputChange}
-              required
-            />
-            <label>Description:</label>
-            <textarea
-              name="description"
-              value={
-                editProduct ? editProduct.description : newProduct.description
-              }
-              onChange={handleInputChange}
-              required
-            />
-            <label>Price (Rs.):</label>
-            <input
-              type="number"
-              name="price"
-              value={editProduct ? editProduct.price : newProduct.price}
-              onChange={handleInputChange}
-              required
-            />
-            {!editProduct && (
-              <>
+        {showForm && (
+          <div className="add-product-form">
+            <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
+            <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
+              <div className="input-group">
+                <label>Product Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={editProduct ? editProduct.name : newProduct.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Stock:</label>
+                <input
+                  type="number"
+                  name="stock"
+                  value={editProduct ? editProduct.stock : newProduct.stock}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Description:</label>
+                <textarea
+                  name="description"
+                  value={
+                    editProduct ? editProduct.description : newProduct.description
+                  }
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Price (Rs.):</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={editProduct ? editProduct.price : newProduct.price}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
                 <label>📷 Upload Image:</label>
                 <input
                   type="file"
                   name="img"
                   accept="image/*"
                   onChange={handleImageChange}
-                  required
+                  required={!editProduct}
                 />
                 {imagePreview && (
                   <img
@@ -224,15 +284,25 @@ const SellersPage = () => {
                     className="image-preview"
                   />
                 )}
-              </>
-            )}
-            <button type="submit">{editProduct ? "Update" : "Add"}</button>
-            <button type="button" onClick={() => setShowForm(false)}>
-              Cancel
-            </button>
-          </form>
-        </div>
-      )}
+              </div>
+
+              <div className="form-buttons">
+                <button type="submit">{editProduct ? "Update" : "Add"}</button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditProduct(null);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
 
       <Footer />
     </div>

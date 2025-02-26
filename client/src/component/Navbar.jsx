@@ -152,6 +152,7 @@ const Navbar = () => {
               <>
                 <Link to="/login">Log In</Link>
                 <Link to="/register">Sign Up</Link>
+                <Link to="/tracking">OrderTracking</Link>
               </>
             ) : (
               <>

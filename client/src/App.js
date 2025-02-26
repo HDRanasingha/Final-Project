@@ -26,6 +26,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 
 import ThankYouPage from './pages/ThankYouPage';
+import Tracking from './pages/Tracking';
 
 
 function App() {
@@ -84,6 +85,7 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/order-tracking/:orderId" element={<TrackOrderPage/>} />
         <Route path="/thank-you" element={<ThankYouPage />} />
+        <Route path="/tracking" element={<Tracking />} />
       </Routes>
     </BrowserRouter>
   );
