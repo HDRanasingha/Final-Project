@@ -10,6 +10,7 @@ const productRoutes = require('./routes/product.js');
 const itemRoutes = require('./routes/item.js');
 const orderRoutes = require('./routes/order.js');
 const paymentRoutes = require('./routes/payment.js');
+const userRoutes = require('./routes/user.js');
 
 
 
@@ -23,6 +24,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use("/api/users", userRoutes);
 
 
 
