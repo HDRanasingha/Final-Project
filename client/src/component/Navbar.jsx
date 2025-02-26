@@ -37,7 +37,7 @@ const Navbar = () => {
 
     // Fetch products for sellers
     axios
-      .get("http://localhost:3001/api/products/all")
+      .get("http://localhost:3001/api/products/all-products")
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Error fetching products:", err));
 

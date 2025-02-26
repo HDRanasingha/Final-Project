@@ -21,10 +21,21 @@ const SupplierPage = () => {
 
   // ✅ Fetch items from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/items/all")
-      .then((res) => setItems(res.data))
-      .catch((err) => console.error("Error fetching items:", err));
+    const fetchItems = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        const res = await axios.get("http://localhost:3001/api/items/all", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setItems(res.data);
+      } catch (err) {
+        console.error("Error fetching items:", err);
+      }
+    };
+
+    fetchItems();
   }, []);
 
   // ✅ Handle input changes (Fix for description)
@@ -41,7 +52,11 @@ const SupplierPage = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setNewItem({ ...newItem, img: file });
+      if (editItem) {
+        setEditItem({ ...editItem, img: file });
+      } else {
+        setNewItem({ ...newItem, img: file });
+      }
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -55,10 +70,14 @@ const SupplierPage = () => {
     formData.append("price", newItem.price);
     formData.append("description", newItem.description); // ✅ Added description
     formData.append("img", newItem.img);
-    formData.append("supplierId", "65b9ff3cdab5f4b02174a68f");
 
     try {
-      await axios.post("http://localhost:3001/api/items/add", formData);
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      await axios.post("http://localhost:3001/api/items/add", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       window.location.reload();
     } catch (error) {
       console.error("Error adding item:", error);
@@ -71,13 +90,28 @@ const SupplierPage = () => {
     setShowForm(true);
   };
 
-  // ✅ Submit Edited Item (Fix: Include description)
+  // ✅ Submit Edited Item (Fix: Include description and image)
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", editItem.name);
+    formData.append("stock", editItem.stock);
+    formData.append("price", editItem.price);
+    formData.append("description", editItem.description); // ✅ Added description
+    if (editItem.img instanceof File) {
+      formData.append("img", editItem.img);
+    }
+
     try {
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
       await axios.put(
         `http://localhost:3001/api/items/edit/${editItem._id}`,
-        editItem
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setEditItem(null);
       setShowForm(false);
@@ -91,7 +125,12 @@ const SupplierPage = () => {
   const handleRemove = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        await axios.delete(`http://localhost:3001/api/items/delete/${id}`);
+        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        await axios.delete(`http://localhost:3001/api/items/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setItems(items.filter((item) => item._id !== id));
       } catch (error) {
         console.error("Error deleting item:", error);
@@ -131,6 +170,7 @@ const SupplierPage = () => {
               onClick={() => handleCardClick(item._id)}
               style={{ cursor: "pointer" }} // Makes it look clickable
             >
+              {item.stock === 0 && <div className="sold-out">Sold Out</div>}
               <img
                 src={`http://localhost:3001${item.img}`}
                 alt={item.name}
@@ -226,25 +266,23 @@ const SupplierPage = () => {
                 />
               </div>
 
-              {!editItem && (
-                <div className="input-group">
-                  <label>📷 Upload Image:</label>
-                  <input
-                    type="file"
-                    name="img"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
+              <div className="input-group">
+                <label>📷 Upload Image:</label>
+                <input
+                  type="file"
+                  name="img"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required={!editItem}
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="image-preview"
                   />
-                  {imagePreview && (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="image-preview"
-                    />
-                  )}
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="form-buttons">
                 <button type="submit">{editItem ? "Update" : "Add"}</button>

@@ -7,10 +7,11 @@ import "../styles/ItemDetailsPage.scss";
 
 const ItemDetailsPage = () => {
   const { id } = useParams(); // Get item ID from URL
+  const navigate = useNavigate(); // Hook for navigation
   const [item, setItem] = useState(null);
+  const userId = JSON.parse(localStorage.getItem("user"))?._id;
   const [quantity, setQuantity] = useState(1); // Default quantity is 1
-  const [totalPrice, setTotalPrice] = useState(0); // State to store the total price
-  const navigate = useNavigate(); // To navigate to different pages
+  const [totalPrice, setTotalPrice] = useState(0); // State for total price
 
   useEffect(() => {
     axios
@@ -22,39 +23,45 @@ const ItemDetailsPage = () => {
       .catch((err) => console.error("Error fetching item details:", err));
   }, [id]);
 
-  const handleAddToWishlist = () => {
-    alert(`${item.name} added to Wishlist!`);
-    // Implement logic to store in wishlist
-  };
-
-  const handleBuyNow = () => {
-    // Add item to cart (localStorage or API can be used)
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    storedCart.push({ ...item, quantity });
-    localStorage.setItem("cart", JSON.stringify(storedCart));
-
-    // Redirect to cart page
-    navigate("/cart");
-  };
-
   const handleQuantityChange = (e) => {
     const newQuantity = Math.max(1, Number(e.target.value)); // Ensure quantity doesn't go below 1
     setQuantity(newQuantity);
     setTotalPrice(item.price * newQuantity); // Update total price
   };
 
-  if (!item) return <p>Loading...</p>;
+  const handleBuyNow = () => {
+    // Add item to cart (localStorage or API can be used)
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (storedCart.some(cartItem => cartItem._id === item._id)) {
+      navigate("/cart");
+      return;
+    }
+    storedCart.push({ ...item, quantity });
+    localStorage.setItem("cart", JSON.stringify(storedCart));
+
+    // Navigate to cart page
+    navigate("/cart");
+  };
+
+  const handleAddToWishlist = () => {
+    alert(`${item.name} added to your wishlist!`);
+    // Implement wishlist logic here
+  };
+
+  if (!item) return <p>Loading item details...</p>;
 
   return (
-    <div className="item-details">
+    <div className="item-details-page">
       <Navbar />
-      <div className="item-container">
+      <div className="item-details">
         <img src={`http://localhost:3001${item.img}`} alt={item.name} />
         <div className="item-info">
-          <h1>{item.name}</h1>
-          <p>{item.description}</p>
-          <p>Price: Rs. {item.price}</p>
-          <p>Stock: {item.stock}</p>
+          <h2>{item.name}</h2>
+          <p><strong>Stock:</strong> {item.stock} Bunches</p>
+          <p><strong>Price:</strong> Rs. {item.price}</p>
+          <p><strong>Description:</strong> {item.description || "No description available"}</p>
+          
+          {/* Quantity and Total Price */}
           <div className="quantity-container">
             <label>Quantity: </label>
             <input
@@ -65,9 +72,15 @@ const ItemDetailsPage = () => {
               max={item.stock}
             />
           </div>
-          <p>Total Price: Rs. {totalPrice}</p>
-          <button onClick={handleBuyNow} className="buy-now-btn">🛒 Buy Now</button>
-          <button onClick={handleAddToWishlist} className="wishlist-btn">❤️ Add to Wishlist</button>
+          <p><strong>Total Price:</strong> Rs. {totalPrice}</p>
+
+          {/* Action Buttons */}
+          {userId !== item.supplierId._id && (
+            <div className="action-buttons">
+              <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
+              <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
+            </div>
+          )}
         </div>
       </div>
       <Footer />

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const Item = require('../models/Item');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 // ✅ Multer Setup for Image Uploads
 const storage = multer.diskStorage({
@@ -15,10 +16,26 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Add a new item
-router.post('/add', upload.single('img'), async (req, res) => {
+// Middleware to authenticate user and attach user ID to request
+const authenticateUser = (req, res, next) => {
+    const token = req.header("Authorization").replace("Bearer ", "");
+    if (!token) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
     try {
-        const { name, stock, price, description, supplierId } = req.body;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.supplierId = decoded.id;
+        next();
+    } catch (error) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+};
+
+// ✅ Add a new item
+router.post('/add', authenticateUser, upload.single('img'), async (req, res) => {
+    try {
+        const { name, stock, price, description } = req.body;
+        const supplierId = req.supplierId;
 
         if (!name || !stock || !price || !req.file || !supplierId) {
             return res.status(400).json({ success: false, message: "All fields except description are required" });
@@ -60,15 +77,32 @@ router.get('/:id', async (req, res) => {
 });
 
 // ✅ Edit an item
-router.put('/edit/:id', async (req, res) => {
+router.put('/edit/:id', authenticateUser, upload.single('img'), async (req, res) => {
     try {
         const { name, stock, price, description } = req.body;
-        const updatedItem = await Item.findByIdAndUpdate(req.params.id, { name, stock, price, description }, { new: true });
+        const supplierId = req.supplierId;
+        const item = await Item.findOne({ _id: req.params.id, supplierId });
 
-        if (!updatedItem) {
+        if (!item) {
             return res.status(404).json({ success: false, message: "Item not found" });
         }
-        res.status(200).json({ success: true, message: "Item updated successfully", item: updatedItem });
+
+        let imgPath = item.img;
+        if (req.file) {
+            if (item.img && fs.existsSync(`public${item.img}`)) {
+                fs.unlinkSync(`public${item.img}`);
+            }
+            imgPath = `/uploads/${req.file.filename}`;
+        }
+
+        item.name = name || item.name;
+        item.stock = stock || item.stock;
+        item.price = price || item.price;
+        item.description = description || item.description;
+        item.img = imgPath;
+
+        await item.save();
+        res.status(200).json({ success: true, message: "Item updated successfully", item });
 
     } catch (error) {
         res.status(500).json({ success: false, message: "Error updating item", error: error.message });
@@ -76,9 +110,9 @@ router.put('/edit/:id', async (req, res) => {
 });
 
 // ✅ Delete an item
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id', authenticateUser, async (req, res) => {
     try {
-        const item = await Item.findById(req.params.id);
+        const item = await Item.findOne({ _id: req.params.id, supplierId: req.supplierId });
         if (!item) {
             return res.status(404).json({ success: false, message: "Item not found" });
         }
