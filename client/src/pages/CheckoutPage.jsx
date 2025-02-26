@@ -62,12 +62,12 @@ const CheckoutPage = () => {
 
     const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
 
-    cart.map(item => {
+    cart.forEach(item => {
       items.push({
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        listerId: item.growerId._id
+        listerId: item.growerId?._id || item.sellerId?._id || item.supplierId?._id
       });
     });
 

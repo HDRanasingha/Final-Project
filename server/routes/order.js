@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
 const Flower = require("../models/Flower");
+const Product = require("../models/Product");
+const Item = require("../models/Item");
 
 // Get all orders
 router.get("/", async (req, res) => {
@@ -29,13 +31,31 @@ router.post("/success", async (req, res) => {
     });
 
     await newOrder.save();
-    // reduce stock
+
+    // reduce stock for flowers
     items.forEach(async (item) => {
       await Flower.findOneAndUpdate(
         { growerId: item.listerId, stock: { $gte: item.quantity } },
         { $inc: { stock: -item.quantity } }
       );
     });
+
+    // reduce stock for products
+    items.forEach(async (item) => {
+      await Product.findOneAndUpdate(
+        { sellerId: item.listerId, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } }
+      );
+    });
+
+    // reduce stock for items
+    items.forEach(async (item) => {
+      await Item.findOneAndUpdate(
+        { supplierId: item.listerId, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } }
+      );
+    });
+
     res.status(200).json({ message: "Order placed successfully!" });
   } catch (error) {
     console.error("Error placing order:", error);
@@ -103,14 +123,27 @@ router.delete("/:orderId", async (req, res) => {
       );
     });
 
+    // restock products
+    order.items.forEach(async (item) => {
+      await Product.findOneAndUpdate(
+        { sellerId: item.listerId },
+        { $inc: { stock: item.quantity } }
+      );
+    });
+
+    // restock items
+    order.items.forEach(async (item) => {
+      await Item.findOneAndUpdate(
+        { supplierId: item.listerId },
+        { $inc: { stock: item.quantity } }
+      );
+    });
+
     res.status(200).json({ message: "Order canceled successfully!" });
   } catch (error) {
     console.error("Error canceling order:", error);
     res.status(500).json({ error: "Failed to cancel order" });
   }
 });
-
-
-
 
 module.exports = router;
