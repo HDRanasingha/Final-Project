@@ -214,7 +214,7 @@ const GrowersPage = () => {
           </button>
           <button
             className="view-orders-btn"
-            onClick={() => navigate("/growers/orders")}
+            onClick={() => navigate("/recived/orders")}
           >
             📦 View Orders
           </button>

@@ -29,6 +29,7 @@ import ThankYouPage from './pages/ThankYouPage';
 import Tracking from './pages/Tracking';
 
 
+
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -79,7 +80,8 @@ function App() {
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         <Route path="/payment-success" element={<SucsessPage />} />
         <Route path="/payment-cancel" element={<CancelPage />} />
-        <Route path="/growers/orders" element={<GrowersOrderPage />} />
+        <Route path="/recived/orders" element={<GrowersOrderPage />} />
+        
         <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />

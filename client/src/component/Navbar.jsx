@@ -210,6 +210,7 @@ const Navbar = () => {
             <h2>Growers Flowers</h2>
             {flowers.map((flower) => (
               <div className="flower-card" key={flower._id} onClick={() => handleCardClick(flower._id)}>
+                {flower.stock === 0 && <div className="sold-out">Sold Out</div>}
                 <div className="wishlist-container" onClick={(e) => handleWishlistToggle(flower._id, e)}>
                   {wishlist.includes(flower._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
                 </div>
@@ -227,6 +228,7 @@ const Navbar = () => {
             <h2>Sellers' Products</h2>
             {products.map((product) => (
               <div className="product-card" key={product._id} onClick={() => handleProductCardClick(product._id)}>
+                {product.stock === 0 && <div className="sold-out">Sold Out</div>}
                 <div className="wishlist-container" onClick={(e) => handleProductWishlistToggle(product._id, e)}>
                   {wishlist.includes(product._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
                 </div>
@@ -244,6 +246,7 @@ const Navbar = () => {
             <h2>Supplier's Items</h2>
             {items.map((item) => (
               <div className="item-card" key={item._id} onClick={() => handleItemCardClick(item._id)}>
+                {item.stock === 0 && <div className="sold-out">Sold Out</div>}
                 <div className="wishlist-container" onClick={(e) => handleItemWishlistToggle(item._id, e)}>
                   {wishlist.includes(item._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
                 </div>

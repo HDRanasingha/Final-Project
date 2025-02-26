@@ -213,7 +213,7 @@ const SupplierPage = () => {
           </button>
           <button
             className="view-orders-btn"
-            onClick={() => navigate("/suppliers/orders")}
+            onClick={() => navigate("/recived/orders")}
           >
             📦 View Orders
           </button>

@@ -29,6 +29,11 @@ const FlowerDetailsPage = () => {
   };
 
   const handleBuyNow = () => {
+    if (flower.stock === 0) {
+      alert("This flower is sold out and cannot be purchased.");
+      return;
+    }
+
     // Add flower to cart (localStorage or API can be used)
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     if (storedCart.some(item => item._id === flower._id)) {
@@ -42,10 +47,7 @@ const FlowerDetailsPage = () => {
     navigate("/cart");
   };
 
- 
-
   const handleAddToWishlist = () => {
-    
     alert(`${flower.name} added to your wishlist!`);
     // Implement wishlist logic here
   };
@@ -79,9 +81,9 @@ const FlowerDetailsPage = () => {
           {/* Action Buttons */}
           {userId !== flower.growerId._id && (
             <div className="action-buttons">
-            <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
-            <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
-          </div>
+              <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
+              <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
+            </div>
           )}
         </div>
       </div>

@@ -213,7 +213,7 @@ const SellersPage = () => {
           </button>
           <button
             className="view-orders-btn"
-            onClick={() => navigate("/sellers/orders")}
+            onClick={() => navigate("/recived/orders")}
           >
             📦 View Orders
           </button>

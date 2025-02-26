@@ -30,6 +30,11 @@ const ItemDetailsPage = () => {
   };
 
   const handleBuyNow = () => {
+    if (item.stock === 0) {
+      alert("This item is sold out and cannot be purchased.");
+      return;
+    }
+
     // Add item to cart (localStorage or API can be used)
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     if (storedCart.some(cartItem => cartItem._id === item._id)) {
