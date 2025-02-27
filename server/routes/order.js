@@ -18,6 +18,56 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get top-selling items
+router.get("/top-sellers", async (req, res) => {
+  try {
+    const orders = await Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.name",
+          totalQuantity: { $sum: "$items.quantity" },
+        },
+      },
+      { $sort: { totalQuantity: -1 } },
+    ]);
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching top-selling items:", error);
+    res.status(500).json({ error: "Failed to fetch top-selling items" });
+  }
+});
+
+// Get order statuses
+router.get("/statuses", async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    const statuses = { processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+    orders.forEach(order => {
+      if (order.status === 'Processing') statuses.processing++;
+      if (order.status === 'Shipped') statuses.shipped++;
+      if (order.status === 'Delivered') statuses.delivered++;
+      if (order.status === 'Cancelled') statuses.cancelled++;
+    });
+    res.status(200).json(statuses);
+  } catch (error) {
+    console.error("Error fetching order statuses:", error);
+    res.status(500).json({ error: "Failed to fetch order statuses" });
+  }
+});
+
+// Get total income
+router.get("/total-income", async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    const totalIncome = orders.reduce((sum, order) => sum + order.total, 0);
+    res.status(200).json({ totalIncome });
+  } catch (error) {
+    console.error("Error fetching total income:", error);
+    res.status(500).json({ error: "Failed to fetch total income" });
+  }
+});
+
 router.post("/success", async (req, res) => {
   const { orderId, items, total, customer, status } = req.body;
 

@@ -28,8 +28,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ThankYouPage from './pages/ThankYouPage';
 import Tracking from './pages/Tracking';
 
-
-
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -37,13 +35,14 @@ function App() {
   const getUserDashboard = () => {
     if (!user) return <Navigate to="/" />; // Redirect to home if no user
     switch (user.role) {
-      
       case "grower":
         return <GrowersDashboard />;
       case "seller":
         return <SellerPage />;
       case "supplier":
         return <SupplierPage />;
+      case "admin":
+        return <AdminPage />;
       default:
         return <Navigate to="/" />;
     }
@@ -60,7 +59,6 @@ function App() {
         {/* Role-Based Routes (Accessible Only If Logged In) */}
         {user && (
           <>
-            
             <Route path="/growers" element={<GrowersDashboard />} />
             <Route path="/sellers" element={<SellerPage />} />
             <Route path="/suppliers" element={<SupplierPage />} />

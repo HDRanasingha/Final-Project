@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Bar, Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from 'chart.js';
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/AdminPage.scss";
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [editUser, setEditUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [topSellers, setTopSellers] = useState([]);
+  const [userRoles, setUserRoles] = useState({ growers: 0, suppliers: 0, sellers: 0 });
+  const [orderStatuses, setOrderStatuses] = useState({ processing: 0, shipped: 0, delivered: 0, cancelled: 0 });
+  const [totalIncome, setTotalIncome] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -20,6 +47,7 @@ const AdminPage = () => {
           },
         });
         setUsers(res.data);
+        categorizeUserRoles(res.data);
       } catch (err) {
         console.error("Error fetching users:", err);
       }
@@ -27,16 +55,46 @@ const AdminPage = () => {
 
     const fetchTopSellers = async () => {
       try {
-        const res = await axios.get("http://localhost:3001/api/orders/top-selling");
+        const res = await axios.get("http://localhost:3001/api/orders/top-sellers");
         setTopSellers(res.data);
       } catch (err) {
         console.error("Error fetching top-selling items:", err);
       }
     };
 
+    const fetchOrderStatuses = async () => {
+      try {
+        const res = await axios.get("http://localhost:3001/api/orders/statuses");
+        setOrderStatuses(res.data);
+      } catch (err) {
+        console.error("Error fetching order statuses:", err);
+      }
+    };
+
+    const fetchTotalIncome = async () => {
+      try {
+        const res = await axios.get("http://localhost:3001/api/orders/total-income");
+        setTotalIncome(res.data.totalIncome);
+      } catch (err) {
+        console.error("Error fetching total income:", err);
+      }
+    };
+
     fetchUsers();
     fetchTopSellers();
+    fetchOrderStatuses();
+    fetchTotalIncome();
   }, []);
+
+  const categorizeUserRoles = (users) => {
+    const roles = { growers: 0, suppliers: 0, sellers: 0 };
+    users.forEach(user => {
+      if (user.role === 'grower') roles.growers++;
+      if (user.role === 'supplier') roles.suppliers++;
+      if (user.role === 'seller') roles.sellers++;
+    });
+    setUserRoles(roles);
+  };
 
   const handleEditClick = (user) => {
     setEditUser(user);
@@ -83,6 +141,139 @@ const AdminPage = () => {
         console.error("Error deleting user:", error);
       }
     }
+  };
+
+  const barChartData = {
+    labels: topSellers.map((item) => item._id),
+    datasets: [
+      {
+        label: "Quantity Sold",
+        data: topSellers.map((item) => item.totalQuantity),
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+      },
+    ],
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Top Selling Items',
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Item Name',
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Total Quantity Sold',
+        },
+      },
+    },
+  };
+
+  const pieChartData = {
+    labels: ['Growers', 'Suppliers', 'Sellers'],
+    datasets: [
+      {
+        label: 'User Roles',
+        data: [userRoles.growers, userRoles.suppliers, userRoles.sellers],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+        ],
+      },
+    ],
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'User Roles Distribution',
+      },
+    },
+  };
+
+  const orderStatusChartData = {
+    labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+    datasets: [
+      {
+        label: 'Order Statuses',
+        data: [
+          orderStatuses.processing,
+          orderStatuses.shipped,
+          orderStatuses.delivered,
+          orderStatuses.cancelled
+        ],
+        backgroundColor: [
+          'rgba(255, 159, 64, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)'
+        ],
+      },
+    ],
+  };
+
+  const orderStatusChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Order Status Distribution',
+      },
+    },
+  };
+
+  const totalIncomeChartData = {
+    labels: ['Total Income'],
+    datasets: [
+      {
+        label: 'Total Income',
+        data: [totalIncome],
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      },
+    ],
+  };
+
+  const totalIncomeChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Expected Income',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Income (Rs.)',
+        },
+      },
+    },
   };
 
   return (
@@ -168,17 +359,24 @@ const AdminPage = () => {
           </div>
         )}
 
-        <div className="top-sellers">
+        <div className="top-sellers-chart">
           <h2>Top Selling Items</h2>
-          <ul>
-            {topSellers.map((item) => (
-              <li key={item._id}>
-                <p>Item Name: {item._id}</p>
-                <p>Total Quantity Sold: {item.totalQuantity}</p>
-                <p>Total Revenue: Rs. {item.totalRevenue.toFixed(2)}</p>
-              </li>
-            ))}
-          </ul>
+          <Bar data={barChartData} options={barChartOptions} />
+        </div>
+
+        <div className="user-roles-chart">
+          <h2>User Roles Distribution</h2>
+          <Pie data={pieChartData} options={pieChartOptions} />
+        </div>
+
+        <div className="order-status-chart">
+          <h2>Order Status Distribution</h2>
+          <Pie data={orderStatusChartData} options={orderStatusChartOptions} />
+        </div>
+
+        <div className="total-income-chart">
+          <h2>Expected Income</h2>
+          <Bar data={totalIncomeChartData} options={totalIncomeChartOptions} />
         </div>
       </div>
       <Footer />
