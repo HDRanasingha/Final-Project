@@ -18,6 +18,27 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get orders by role
+router.get("/role/:role", async (req, res) => {
+  const { role } = req.params;
+  try {
+    let orders;
+    if (role === "grower") {
+      orders = await Order.find({ "items.listerRole": "grower" });
+    } else if (role === "supplier") {
+      orders = await Order.find({ "items.listerRole": "supplier" });
+    } else if (role === "seller") {
+      orders = await Order.find({ "items.listerRole": "seller" });
+    } else {
+      return res.status(400).json({ error: "Invalid role" });
+    }
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(`Error fetching ${role} orders:`, error);
+    res.status(500).json({ error: `Failed to fetch ${role} orders` });
+  }
+});
+
 // Get top-selling items
 router.get("/top-sellers", async (req, res) => {
   try {
@@ -56,12 +77,19 @@ router.get("/statuses", async (req, res) => {
   }
 });
 
-// Get total income
+// Get total income month-to-month
 router.get("/total-income", async (req, res) => {
   try {
-    const orders = await Order.find({});
-    const totalIncome = orders.reduce((sum, order) => sum + order.total, 0);
-    res.status(200).json({ totalIncome });
+    const orders = await Order.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          totalIncome: { $sum: "$total" },
+        },
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+    res.status(200).json(orders);
   } catch (error) {
     console.error("Error fetching total income:", error);
     res.status(500).json({ error: "Failed to fetch total income" });
@@ -195,5 +223,6 @@ router.delete("/:orderId", async (req, res) => {
     res.status(500).json({ error: "Failed to cancel order" });
   }
 });
+
 
 module.exports = router;

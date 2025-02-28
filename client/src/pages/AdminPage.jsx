@@ -35,7 +35,7 @@ const AdminPage = () => {
   const [topSellers, setTopSellers] = useState([]);
   const [userRoles, setUserRoles] = useState({ growers: 0, suppliers: 0, sellers: 0 });
   const [orderStatuses, setOrderStatuses] = useState({ processing: 0, shipped: 0, delivered: 0, cancelled: 0 });
-  const [totalIncome, setTotalIncome] = useState(0);
+  const [monthlyIncome, setMonthlyIncome] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -71,10 +71,10 @@ const AdminPage = () => {
       }
     };
 
-    const fetchTotalIncome = async () => {
+    const fetchMonthlyIncome = async () => {
       try {
         const res = await axios.get("http://localhost:3001/api/orders/total-income");
-        setTotalIncome(res.data.totalIncome);
+        setMonthlyIncome(res.data);
       } catch (err) {
         console.error("Error fetching total income:", err);
       }
@@ -83,7 +83,7 @@ const AdminPage = () => {
     fetchUsers();
     fetchTopSellers();
     fetchOrderStatuses();
-    fetchTotalIncome();
+    fetchMonthlyIncome();
   }, []);
 
   const categorizeUserRoles = (users) => {
@@ -242,18 +242,18 @@ const AdminPage = () => {
       },
     },
   };
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const totalIncomeChartData = {
-    labels: ['Total Income'],
+    labels: monthlyIncome.map((income) => monthNames[income._id - 1]),
     datasets: [
       {
         label: 'Total Income',
-        data: [totalIncome],
+        data: monthlyIncome.map((income) => income.totalIncome),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
       },
     ],
   };
-
   const totalIncomeChartOptions = {
     responsive: true,
     plugins: {
