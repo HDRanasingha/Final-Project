@@ -34,8 +34,9 @@ const AdminPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [topSellers, setTopSellers] = useState([]);
   const [userRoles, setUserRoles] = useState({ growers: 0, suppliers: 0, sellers: 0 });
-  const [orderStatuses, setOrderStatuses] = useState({ processing: 0, shipped: 0, delivered: 0, cancelled: 0 });
+  const [orderStatuses, setOrderStatuses] = useState({ processing: 0, shipped: 0, delivered: 0, cancelled: 0, receivedWarehouse: 0 });
   const [monthlyIncome, setMonthlyIncome] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -80,10 +81,20 @@ const AdminPage = () => {
       }
     };
 
+    const fetchOrders = async () => {
+      try {
+        const res = await axios.get("http://localhost:3001/api/orders");
+        setOrders(res.data);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+
     fetchUsers();
     fetchTopSellers();
     fetchOrderStatuses();
     fetchMonthlyIncome();
+    fetchOrders();
   }, []);
 
   const categorizeUserRoles = (users) => {
@@ -140,6 +151,18 @@ const AdminPage = () => {
       } catch (error) {
         console.error("Error deleting user:", error);
       }
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await axios.put(`http://localhost:3001/api/orders/${orderId}/status`, { status: newStatus });
+      const updatedOrder = response.data.order;
+      setOrders((prevOrders) =>
+        prevOrders.map((order) => (order.orderId === orderId ? updatedOrder : order))
+      );
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
   };
 
@@ -210,7 +233,7 @@ const AdminPage = () => {
   };
 
   const orderStatusChartData = {
-    labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled'],
+    labels: ['Processing', 'Shipped', 'Delivered', 'Cancelled', 'Received Warehouse'],
     datasets: [
       {
         label: 'Order Statuses',
@@ -218,13 +241,15 @@ const AdminPage = () => {
           orderStatuses.processing,
           orderStatuses.shipped,
           orderStatuses.delivered,
-          orderStatuses.cancelled
+          orderStatuses.cancelled,
+          orderStatuses.receivedWarehouse
         ],
         backgroundColor: [
           'rgba(255, 159, 64, 0.6)',
           'rgba(75, 192, 192, 0.6)',
           'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)'
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(153, 102, 255, 0.6)'
         ],
       },
     ],
@@ -242,6 +267,7 @@ const AdminPage = () => {
       },
     },
   };
+
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const totalIncomeChartData = {
@@ -254,6 +280,7 @@ const AdminPage = () => {
       },
     ],
   };
+
   const totalIncomeChartOptions = {
     responsive: true,
     plugins: {
@@ -377,6 +404,43 @@ const AdminPage = () => {
         <div className="total-income-chart">
           <h2>Expected Income</h2>
           <Bar data={totalIncomeChartData} options={totalIncomeChartOptions} />
+        </div>
+
+        <div className="orders-list">
+          <h2>Orders</h2>
+          {orders.length > 0 ? (
+            <ul className="order-list">
+              {orders.map((order) => (
+                <li key={order._id} className="order-card">
+                  <h3>Order ID: {order.orderId || order._id}</h3>
+                  <p>Customer: {order.customer?.name || "Unknown"}</p>
+                  <p>Status: {order.status || "Pending"}</p>
+                  <p>Ordered At: {order.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}</p>
+                  <ul>
+                    {order.items.map((item) => (
+                      <li key={item._id}>
+                        <p>Item Name: {item.name}</p>
+                        <p>Price: Rs. {item.price.toFixed(2)}</p>
+                        <p>Quantity: {item.quantity}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  <select
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
+                  >
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Received Warehouse">Received Warehouse</option>
+                  </select>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No orders found.</p>
+          )}
         </div>
       </div>
       <Footer />

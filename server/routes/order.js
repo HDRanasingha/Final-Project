@@ -63,12 +63,13 @@ router.get("/top-sellers", async (req, res) => {
 router.get("/statuses", async (req, res) => {
   try {
     const orders = await Order.find({});
-    const statuses = { processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+    const statuses = { processing: 0, shipped: 0, delivered: 0, cancelled: 0, receivedWarehouse: 0 };
     orders.forEach(order => {
       if (order.status === 'Processing') statuses.processing++;
       if (order.status === 'Shipped') statuses.shipped++;
       if (order.status === 'Delivered') statuses.delivered++;
       if (order.status === 'Cancelled') statuses.cancelled++;
+      if (order.status === 'Received Warehouse') statuses.receivedWarehouse++;
     });
     res.status(200).json(statuses);
   } catch (error) {
@@ -223,6 +224,5 @@ router.delete("/:orderId", async (req, res) => {
     res.status(500).json({ error: "Failed to cancel order" });
   }
 });
-
 
 module.exports = router;

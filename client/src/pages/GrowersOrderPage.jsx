@@ -68,9 +68,7 @@ const GrowersOrderPage = () => {
                   onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
                 >
                   <option value="Processing">Processing</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
+                  <option value="Received Warehouse">Received Warehouse</option>
                 </select>
               </li>
             ))}
