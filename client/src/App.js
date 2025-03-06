@@ -27,6 +27,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 
 import ThankYouPage from './pages/ThankYouPage';
 import Tracking from './pages/Tracking';
+// Add this import with your other imports
+import ChatBot from "./pages/ChatBot";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -86,6 +88,8 @@ function App() {
         <Route path="/order-tracking/:orderId" element={<TrackOrderPage/>} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/tracking" element={<Tracking />} />
+        // Add this route in your Routes component
+        <Route path="/chatbot" element={<ChatBot />} />
       </Routes>
     </BrowserRouter>
   );
