@@ -26,19 +26,7 @@ const GrowersOrderPage = () => {
       })
       .catch((err) => console.error("Error fetching orders:", err));
   }, [listerId]);
-
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      const response = await axios.put(`http://localhost:3001/api/orders/${orderId}/status`, { status: newStatus });
-      const updatedOrder = response.data.order;
-      setOrders((prevOrders) =>
-        prevOrders.map((order) => (order.orderId === orderId ? updatedOrder : order))
-      );
-    } catch (error) {
-      console.error("Error updating order status:", error);
-    }
-  };
-
+  // Removed handleStatusChange function
   return (
     <div className="growers-orders-page">
       <Navbar />
@@ -63,13 +51,7 @@ const GrowersOrderPage = () => {
                       </li>
                     ))}
                 </ul>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                >
-                  <option value="Processing">Processing</option>
-                  <option value="Received Warehouse">Received Warehouse</option>
-                </select>
+                {/* Removed select dropdown for status change */}
               </li>
             ))}
           </ul>

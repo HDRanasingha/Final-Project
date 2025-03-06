@@ -239,3 +239,111 @@
     }
   }
 }
+
+// Add these styles for the grower search component
+.grower-search {
+  width: 100%;
+  
+  form {
+    width: 100%;
+  }
+
+  .search-input-container {
+    display: flex;
+    width: 100%;
+    position: relative;
+    margin-bottom: 25px;
+    
+    input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+      
+      &:focus {
+        border-color: #4caf50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        outline: none;
+      }
+      
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+    
+    button {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      
+      &:hover {
+        background: #388e3c;
+      }
+    }
+  }
+}
+// Add styles for search results page buttons
+.search-results-page {
+  .flower-card,
+  .product-card,
+  .item-card {
+    position: relative;
+    
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      
+      .edit-btn,
+      .remove-btn {
+        margin: 5px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 0.9rem;
+        
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
+      
+      .edit-btn {
+        background-color: #28a745;
+        color: white;
+        
+        &:hover {
+          background-color: #218838;
+        }
+      }
+      
+      .remove-btn {
+        background-color: #dc3545;
+        color: white;
+        
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+    
+    // Add a special style for grower's own flowers
+    &.own-flower {
+      .action-buttons {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -11,9 +11,7 @@ const itemRoutes = require('./routes/item.js');
 const orderRoutes = require('./routes/order.js');
 const paymentRoutes = require('./routes/payment.js');
 const userRoutes = require('./routes/user.js');
-//const searchRoutes = require('./routes/search.js');
-
-
+const searchRoutes = require('./routes/search');
 
 
 app.use(cors());
@@ -26,7 +24,8 @@ app.use('/api/items', itemRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use("/api/users", userRoutes);
-//app.use('/api/search', searchRoutes);
+// Add the search route
+app.use('/api/search', searchRoutes);
 
 
 

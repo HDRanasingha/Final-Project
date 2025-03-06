@@ -14,8 +14,12 @@ const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [flowers, setFlowers] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [products, setProducts] = useState([]); // For sellers' products
-  const [items, setItems] = useState([]); // For supplier's items
+  const [products, setProducts] = useState([]); 
+  const [items, setItems] = useState([]);
+  // Add new state for search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState({ flowers: [], products: [], items: [] });
+  
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
@@ -55,14 +59,24 @@ const Navbar = () => {
     dispatch(setLogout());
     navigate('/'); // Redirect to home page
   };
-
+  // Add this inside your Navbar component, typically near other navigation elements
+{user && (
+  <div className="nav-dropdown">
+    <button className="dropdown-btn">
+      {user.name || "Profile"} <i className="fas fa-caret-down"></i>
+    </button>
+    <div className="dropdown-content">
+      <Link to="/profile">My Profile</Link>
+      <Link to="/logout" onClick={handleLogout}>Logout</Link>
+    </div>
+  </div>
+)}
   const handleCardClick = (flowerId) => {
     navigate(`/flower/${flowerId}`);
   };
-
   const handleWishlistToggle = (flowerId, e) => {
     e.stopPropagation(); // Prevent card click event
-
+  
     if (wishlist.includes(flowerId)) {
       setWishlist(wishlist.filter((id) => id !== flowerId));
     } else {
@@ -70,14 +84,12 @@ const Navbar = () => {
       navigate("/wishlist"); // Navigate to wishlist page
     }
   };
-
   const handleProductCardClick = (productId) => {
     navigate(`/product/${productId}`);
   };
-
   const handleProductWishlistToggle = (productId, e) => {
     e.stopPropagation(); // Prevent card click event
-
+  
     if (wishlist.includes(productId)) {
       setWishlist(wishlist.filter((id) => id !== productId));
     } else {
@@ -85,14 +97,12 @@ const Navbar = () => {
       navigate("/wishlist"); // Navigate to wishlist page
     }
   };
-
   const handleItemCardClick = (itemId) => {
     navigate(`/item/${itemId}`);
   };
-
   const handleItemWishlistToggle = (itemId, e) => {
     e.stopPropagation(); // Prevent card click event
-
+  
     if (wishlist.includes(itemId)) {
       setWishlist(wishlist.filter((id) => id !== itemId));
     } else {
@@ -100,22 +110,48 @@ const Navbar = () => {
       navigate("/wishlist"); // Navigate to wishlist page
     }
   };
-
+  // Add search function
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+  
+    try {
+      const response = await axios.get(`http://localhost:3001/api/search?query=${searchQuery}`);
+      setSearchResults(response.data);
+      
+      // Navigate to search results page with the data
+      navigate('/search-results', { 
+        state: { 
+          flowers: response.data.flowers,
+          products: response.data.products,
+          items: response.data.items,
+          query: searchQuery
+        } 
+      });
+    } catch (error) {
+      console.error("Error searching:", error);
+    }
+  };
   return (
     <>
       <nav className="navbar">
         <Link to="/" className="navbar__logo">
           <img src="/assets/logo.png" alt="Flower SCM Logo" />
         </Link>
-
-        {/* Search Bar */}
-        <div className="navbar__search">
-          <input type="text" placeholder="Search..." />
-          <IconButton>
+  
+        {/* Updated Search Bar */}
+        <form className="navbar__search" onSubmit={handleSearch}>
+          <input 
+            type="text" 
+            placeholder="Search..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <IconButton type="submit">
             <Search sx={{ color: "#E91E63" }} />
           </IconButton>
-        </div>
-
+        </form>
+  
         {/* Cart Icon with Item Count */}
         <Link to="/cart" className="navbar__cart">
           <IconButton>
@@ -124,7 +160,7 @@ const Navbar = () => {
             </Badge>
           </IconButton>
         </Link>
-
+  
         {/* Account Button */}
         <button
           className="navbar__account-btn"
@@ -144,7 +180,7 @@ const Navbar = () => {
             <Person sx={{ color: "#333" }} />
           )}
         </button>
-
+  
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div className="navbar__dropdown">
@@ -156,6 +192,7 @@ const Navbar = () => {
               </>
             ) : (
               <>
+                <Link to="/profile">Profile Details</Link>
                 <Link to="/wishlist">Wishlist</Link>
                 <Link to="/chatbot">ChatBot</Link>
                 <Link to="/" onClick={handleLogout}>
@@ -166,7 +203,7 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-
+  
       {/* Hero Section (Only on Home Page & Before Login) */}
       {location.pathname === "/" && !user && (
         <div className="hero">
@@ -185,7 +222,7 @@ const Navbar = () => {
               </div>
             </div>
           </header>
-
+  
           {/* Features Section */}
           <section className="features">
             <div className="feature">
@@ -204,7 +241,7 @@ const Navbar = () => {
               <p>Reduce delays with AI-driven smart routing.</p>
             </div>
           </section>
-
+  
           {/* Growers Flowers Section */}
           <div className="flower-list">
             <h2>Growers Flowers</h2>
@@ -222,7 +259,7 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-
+  
           {/* Sellers' Products Section */}
           <div className="product-list">
             <h2>Sellers' Products</h2>
@@ -240,7 +277,7 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-
+  
           {/* Supplier's Items Section */}
           <div className="item-list">
             <h2>Supplier's Items</h2>
