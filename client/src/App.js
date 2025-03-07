@@ -4,7 +4,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-
+import SearchResults from './pages/SearchResults';
 import GrowersDashboard from './pages/Growers';
 import FlowerDetailsPage from './pages/FlowerDetailsPage';
 import SellerPage from './pages/SellersPage';
@@ -76,7 +76,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/track-order" element={<TrackOrderPage />} />
-       
+        <Route path="/search-results" element={<SearchResults/>}/>
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         <Route path="/payment-success" element={<SucsessPage />} />
         <Route path="/payment-cancel" element={<CancelPage />} />
@@ -90,6 +90,7 @@ function App() {
         <Route path="/tracking" element={<Tracking />} />
         // Add this route in your Routes component
         <Route path="/chatbot" element={<ChatBot />} />
+       
       </Routes>
     </BrowserRouter>
   );

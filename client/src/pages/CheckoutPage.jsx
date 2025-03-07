@@ -81,8 +81,12 @@ const CheckoutPage = () => {
 
     try {
       if (formData.paymentMethod === "card") {
+        // Store orderId in localStorage before redirecting to payment
+        localStorage.setItem("pendingOrderId", orderId);
+        
         const { data } = await axios.post("http://localhost:3001/api/payment/create-checkout-session", {
           totalPrice: total + deliveryFee,
+          orderId: orderId, // Pass orderId to the backend
         });
 
         window.location.href = data.url;

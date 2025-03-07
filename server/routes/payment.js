@@ -4,7 +4,7 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // Replace with your Stripe secret key
 
 router.post('/create-checkout-session', async (req, res) => {
-  const { totalPrice } = req.body;
+  const { totalPrice, orderId } = req.body;
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -18,7 +18,7 @@ router.post('/create-checkout-session', async (req, res) => {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `http://localhost:3000/payment-success`,
+      success_url: `http://localhost:3000/payment-success?orderId=${orderId}`,
       cancel_url: `http://localhost:3000/payment-cancel`,
     });
 

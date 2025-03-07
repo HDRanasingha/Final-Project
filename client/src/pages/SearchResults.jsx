@@ -13,6 +13,8 @@ const SearchResults = () => {
   const currentUser = useSelector((state) => state.user);
   const isAdmin = currentUser?.role === "admin";
   const isGrower = currentUser?.role === "grower";
+  const isSeller = currentUser?.role === "seller";
+  const isSupplier = currentUser?.role === "supplier";
   
   const { flowers, products, items, users, query, isGrowerSearch } = location.state || { 
     flowers: [], 
@@ -22,17 +24,17 @@ const SearchResults = () => {
     query: "",
     isGrowerSearch: false
   };
-
+  
   // Get wishlist from localStorage
   const [wishlist, setWishlist] = React.useState(() => {
     const savedWishlist = localStorage.getItem('guestWishlist');
     return savedWishlist ? JSON.parse(savedWishlist) : [];
   });
-
+  
   const handleCardClick = (id, type) => {
     navigate(`/${type}/${id}`);
   };
-
+  
   const handleUserClick = (userId) => {
     navigate(`/admin/users/${userId}`);
   };
@@ -63,9 +65,9 @@ const SearchResults = () => {
   const isInWishlist = (id, type) => {
     return wishlist.some(item => item._id === id && item.itemType === type);
   };
-
+  
   const totalResults = flowers.length + products.length + items.length + (isAdmin ? users.length : 0);
-
+  
   return (
     <div>
       <Navbar />
@@ -73,7 +75,11 @@ const SearchResults = () => {
         <h2>
           {isGrowerSearch 
             ? `Search Results for Your Flowers: "${query}"` 
-            : `Search Results for "${query}"`}
+            : isSeller 
+              ? `Search Results for Your Products: "${query}"`
+              : isSupplier
+                ? `Search Results for Your Items: "${query}"`
+                : `Search Results for "${query}"`}
         </h2>
         
         {totalResults === 0 ? (

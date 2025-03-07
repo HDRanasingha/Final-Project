@@ -116,16 +116,66 @@ const Navbar = () => {
     if (!searchQuery.trim()) return;
   
     try {
-      const response = await axios.get(`http://localhost:3001/api/search?query=${searchQuery}`);
-      setSearchResults(response.data);
+      // Get the user ID and role from Redux state
+      const userId = user?._id;
+      const userRole = user?.role;
       
-      // Navigate to search results page with the data
+      // Make the search request
+      const response = await axios.get(`http://localhost:3001/api/search?query=${searchQuery}`);
+      let filteredResults = { ...response.data };
+      
+      // Filter results based on user role if user is logged in
+      if (user) {
+        if (userRole === 'grower') {
+          // For growers, only show their own flowers
+          filteredResults.flowers = response.data.flowers.filter(flower => 
+            flower.growerId && flower.growerId._id === userId
+          ).map(flower => ({
+            ...flower,
+            isOwnFlower: true,
+            canEdit: true,  // Add flag to indicate this flower can be edited
+            canUpdate: true // Add flag to indicate this flower can be updated
+          }));
+          // Only keep other items if they're relevant to the grower
+          filteredResults.products = [];
+          filteredResults.items = response.data.items;
+        } else if (userRole === 'seller') {
+          // For sellers, only show their own products
+          filteredResults.products = response.data.products.filter(product => 
+            product.sellerId && product.sellerId._id === userId
+          ).map(product => ({
+            ...product,
+            canEdit: true,
+            canUpdate: true
+          }));
+          // Only keep other items if they're relevant to the seller
+          filteredResults.flowers = response.data.flowers;
+          filteredResults.items = [];
+        } else if (userRole === 'supplier') {
+          // For suppliers, only show their own items
+          filteredResults.items = response.data.items.filter(item => 
+            item.supplierId && item.supplierId._id === userId
+          ).map(item => ({
+            ...item,
+            canEdit: true,
+            canUpdate: true
+          }));
+          // Only keep other items if they're relevant to the supplier
+          filteredResults.flowers = [];
+          filteredResults.products = [];
+        }
+        // Admin sees everything by default
+      }
+      
+      // Navigate to search results page with the filtered data
       navigate('/search-results', { 
         state: { 
-          flowers: response.data.flowers,
-          products: response.data.products,
-          items: response.data.items,
-          query: searchQuery
+          flowers: filteredResults.flowers,
+          products: filteredResults.products,
+          items: filteredResults.items,
+          users: userRole === 'admin' ? response.data.users : [],
+          query: searchQuery,
+          isGrowerSearch: userRole === 'grower'
         } 
       });
     } catch (error) {

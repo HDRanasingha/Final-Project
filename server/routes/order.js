@@ -119,21 +119,21 @@ router.post("/success", async (req, res) => {
       );
     });
 
-    // reduce stock for products
-    items.forEach(async (item) => {
+     // reduce stock for products
+     items.forEach(async (item) => {
       await Product.findOneAndUpdate(
         { sellerId: item.listerId, stock: { $gte: item.quantity } },
         { $inc: { stock: -item.quantity } }
       );
     });
 
-    // reduce stock for items
-    items.forEach(async (item) => {
-      await Item.findOneAndUpdate(
-        { supplierId: item.listerId, stock: { $gte: item.quantity } },
-        { $inc: { stock: -item.quantity } }
-      );
-    });
+   // reduce stock for items
+   items.forEach(async (item) => {
+    await Item.findOneAndUpdate(
+      { supplierId: item.listerId, stock: { $gte: item.quantity } },
+      { $inc: { stock: -item.quantity } }
+    );
+  });
 
     res.status(200).json({ message: "Order placed successfully!" });
   } catch (error) {
@@ -202,21 +202,23 @@ router.delete("/:orderId", async (req, res) => {
       );
     });
 
-    // restock products
-    order.items.forEach(async (item) => {
+     // restock products
+     order.items.forEach(async (item) => {
       await Product.findOneAndUpdate(
         { sellerId: item.listerId },
         { $inc: { stock: item.quantity } }
       );
     });
+ // restock items
+ order.items.forEach(async (item) => {
+  await Item.findOneAndUpdate(
+    { supplierId: item.listerId },
+    { $inc: { stock: item.quantity } }
+  );
+});
 
-    // restock items
-    order.items.forEach(async (item) => {
-      await Item.findOneAndUpdate(
-        { supplierId: item.listerId },
-        { $inc: { stock: item.quantity } }
-      );
-    });
+     
+
 
     res.status(200).json({ message: "Order canceled successfully!" });
   } catch (error) {
