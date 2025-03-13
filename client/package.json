@@ -25,6 +25,7 @@
     "recharts": "^2.15.1",
     "redux-persist": "^6.0.0",
     "sass": "^1.77.8",
+    "socket.io-client": "^4.8.1",
     "uuid": "^11.0.5",
     "web-vitals": "^2.1.4"
   },

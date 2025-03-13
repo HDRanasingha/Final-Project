@@ -239,11 +239,12 @@ const Navbar = () => {
                 <Link to="/login">Log In</Link>
                 <Link to="/register">Sign Up</Link>
                 <Link to="/tracking">OrderTracking</Link>
+                <Link to="/wishlist">Wishlist</Link>
               </>
             ) : (
               <>
                 <Link to="/profile">Profile Details</Link>
-                <Link to="/wishlist">Wishlist</Link>
+                
                 <Link to="/chatbot">ChatBot</Link>
                 <Link to="/" onClick={handleLogout}>
                   Log Out

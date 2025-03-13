@@ -19,6 +19,7 @@ const CheckoutPage = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -52,6 +53,8 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error message when user starts typing
+    if (errorMessage) setErrorMessage("");
   };
 
   const handlePlaceOrder = async () => {
@@ -60,6 +63,7 @@ const CheckoutPage = () => {
       return;
     }
 
+    setIsSubmitting(true);
     const orderId = "ORD-" + Math.floor(Math.random() * 1000000);
 
     cart.forEach(item => {
@@ -100,10 +104,11 @@ const CheckoutPage = () => {
 
       setTimeout(() => {
         navigate(`/thank-you?orderId=${orderId}`);
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error("Error placing order:", error);
       setErrorMessage("There was an issue with your order. Please try again.");
+      setIsSubmitting(false);
     }
   };
 
@@ -130,13 +135,21 @@ const CheckoutPage = () => {
             <h3>Billing Details</h3>
             
             <label>Name:</label>
-            <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+            <input 
+              type="text" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleInputChange} 
+              placeholder="Enter your full name"
+              required 
+            />
 
             <label>Address:</label>
             <textarea
               name="address"
               value={formData.address}
               onChange={handleInputChange}
+              placeholder="Enter your delivery address"
               rows="3"
               style={{ resize: "none", overflowY: "hidden" }}
               onInput={(e) => {
@@ -147,14 +160,21 @@ const CheckoutPage = () => {
             />
 
             <label>Phone:</label>
-            <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
+            <input 
+              type="text" 
+              name="phone" 
+              value={formData.phone} 
+              onChange={handleInputChange} 
+              placeholder="Enter your phone number"
+              required 
+            />
 
             <label>Area:</label>
             <select name="area" value={formData.area} onChange={handleInputChange} required>
               <option value="">Select Area</option>
               {Object.keys(deliveryFees).map((area) => (
                 <option key={area} value={area}>
-                  {area}
+                  {area} (Rs. {deliveryFees[area]})
                 </option>
               ))}
             </select>
@@ -164,8 +184,12 @@ const CheckoutPage = () => {
               <option value="cash">Cash on Delivery</option>
               <option value="card">Credit/Debit Card</option>
             </select>
-            <button className="place-order-button" onClick={handlePlaceOrder}>
-              Place Order
+            <button 
+              className="place-order-button" 
+              onClick={handlePlaceOrder}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Processing..." : "Place Order"}
             </button>
 
             {errorMessage && <p className="error-message">{errorMessage}</p>}
