@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send } from "@mui/icons-material";
+import { Send, SmartToy } from "@mui/icons-material";
 import "../styles/ChatBot.scss";
 import Footer from "../component/Footer";
+import Navbar from "../component/Navbar";
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([
     {
-      text: "Hello! I'm FlowerSCM Assistant. How can I help you today?",
+      text: "Hello! I'm FlowerSCM Assistant. How can I help you today with your flower supply chain needs?",
       sender: "bot",
     },
   ]);
@@ -65,48 +66,74 @@ const ChatBot = () => {
   };
 
   return (
-    <div>
-      <div className="chatbot-container">
-        <div className="chatbot-header">
-          <h1>FlowerSCM Assistant</h1>
-          <p>Ask me anything about flowers, orders, or our services!</p>
-        </div>
-
-        <div className="chat-messages">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`message ${
-                message.sender === "user" ? "user-message" : "bot-message"
-              }`}
-            >
-              {message.text}
+    <div className="chatbot-page">
+      <Navbar />
+      <div className="chatbot-wrapper">
+        <div className="chatbot-container">
+          <div className="chatbot-header">
+            <div className="header-icon">
+              <SmartToy fontSize="large" />
             </div>
-          ))}
-          {isLoading && (
-            <div className="message bot-message loading">
-              <div className="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div className="header-text">
+              <h1>FlowerSCM Assistant</h1>
+              <p>Your personal guide to flowers, orders, and services</p>
+            </div>
+          </div>
+
+          <div className="chat-messages">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`message ${
+                  message.sender === "user" ? "user-message" : "bot-message"
+                }`}
+              >
+                {message.text}
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            ))}
+            {isLoading && (
+              <div className="message bot-message loading">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
 
-        <form className="chat-input" onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message here..."
-            disabled={isLoading}
-          />
-          <button type="submit" disabled={isLoading || !input.trim()}>
-            <Send />
-          </button>
-        </form>
+          <form className="chat-input" onSubmit={handleSendMessage}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about flowers, orders, or services..."
+              disabled={isLoading}
+            />
+            <button type="submit" disabled={isLoading || !input.trim()}>
+              <Send />
+            </button>
+          </form>
+        </div>
+        
+        <div className="chatbot-info">
+          <div className="info-card">
+            <h3>How can I help you?</h3>
+            <ul>
+              <li>Learn about flower varieties and care</li>
+              <li>Get information about ordering and delivery</li>
+              <li>Find out about our services and products</li>
+              <li>Get assistance with your account</li>
+            </ul>
+          </div>
+          
+          <div className="info-card">
+            <h3>Quick Tips</h3>
+            <p>Be specific with your questions for better answers.</p>
+            <p>You can ask about seasonal flowers, care instructions, or order status.</p>
+          </div>
+        </div>
       </div>
       <Footer />
     </div>
