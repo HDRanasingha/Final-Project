@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import "../styles/ThankYouPage.scss"; // We'll create this style file
 
 const ThankYouPage = () => {
   const location = useLocation();
@@ -13,10 +14,42 @@ const ThankYouPage = () => {
     <div className="thank-you-page">
       <Navbar />
       <div className="thank-you-container">
-        <h1>🎉 Thank You for Your Order!</h1>
-        <p>Your Order ID: <strong>{orderId}</strong></p>
-        <p>Use this Order ID to <strong>track your order</strong>.</p>
-        <button onClick={() => navigate(`/track-order?orderId=${orderId}`)}>Track My Order</button>
+        <div className="thank-you-card">
+          <div className="success-icon">✓</div>
+          <h1>Thank You for Your Order!</h1>
+          <p className="order-confirmation">Your order has been successfully placed.</p>
+          
+          {orderId && (
+            <div className="order-details">
+              <p>Order ID: <span className="highlight">{orderId}</span></p>
+              <p>A confirmation email has been sent to your registered email address.</p>
+            </div>
+          )}
+          
+          <div className="next-steps">
+            <h3>What's Next?</h3>
+            <ul>
+              <li>You can track your order status anytime</li>
+              <li>Our team is preparing your items for shipment</li>
+              <li>You'll receive updates as your order progresses</li>
+            </ul>
+          </div>
+          
+          <div className="action-buttons">
+            <button 
+              className="primary-button"
+              onClick={() => navigate(orderId ? `/track-order?orderId=${orderId}` : "/track-order")}
+            >
+              Track My Order
+            </button>
+            <button 
+              className="secondary-button"
+              onClick={() => navigate("/")}
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
       </div>
       <Footer />
     </div>
