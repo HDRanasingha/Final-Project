@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IconButton, Badge } from "@mui/material";
-import { Search, Person, Menu, ShoppingCart } from "@mui/icons-material";
+import { Search, Person, Menu, ShoppingCart, Message } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
@@ -19,6 +19,9 @@ const Navbar = () => {
   // Add new state for search
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState({ flowers: [], products: [], items: [] });
+  // Add new state for messages
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [socket, setSocket] = useState(null);
   
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -31,6 +34,56 @@ const Navbar = () => {
     const totalItems = storedCart.reduce((acc, item) => acc + item.quantity, 0);
     setCartCount(totalItems);
   }, []); // Run only once on component mount
+
+  // Setup WebSocket connection for messaging
+  useEffect(() => {
+    if (user) {
+      // Create WebSocket connection
+      const newSocket = new WebSocket('ws://localhost:3001');
+      
+      // Connection opened
+      newSocket.addEventListener('open', (event) => {
+        console.log('Connected to WebSocket server');
+        // Identify the user to the server
+        if (newSocket.readyState === WebSocket.OPEN) {
+          newSocket.send(JSON.stringify({
+            type: 'identify',
+            userId: user._id
+          }));
+        }
+      });
+      
+      // Listen for messages
+      newSocket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'new_message') {
+          // Increment unread messages count
+          setUnreadMessages(prev => prev + 1);
+        } else if (data.type === 'unread_count') {
+          // Set initial unread count from server
+          setUnreadMessages(data.count);
+        }
+      });
+      
+      // Handle errors and connection close
+      newSocket.addEventListener('error', (error) => {
+        console.error('WebSocket error:', error);
+      });
+      
+      newSocket.addEventListener('close', () => {
+        console.log('Disconnected from WebSocket server');
+      });
+      
+      setSocket(newSocket);
+      
+      // Cleanup on unmount
+      return () => {
+        if (newSocket) {
+          newSocket.close();
+        }
+      };
+    }
+  }, [user]);
 
   useEffect(() => {
     // Fetch flowers for customers
@@ -110,6 +163,15 @@ const Navbar = () => {
       navigate("/wishlist"); // Navigate to wishlist page
     }
   };
+
+  // Handle message icon click
+  const handleMessageClick = () => {
+    // Reset unread count when navigating to messages
+    setUnreadMessages(0);
+    // Navigate to messages page
+    navigate('/messages');
+  };
+  
   // Add search function
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -201,6 +263,15 @@ const Navbar = () => {
             <Search sx={{ color: "#E91E63" }} />
           </IconButton>
         </form>
+  
+        {/* Message Icon with Unread Count - Only show for logged in users */}
+        {user && (
+          <IconButton onClick={handleMessageClick} className="navbar__messages">
+            <Badge badgeContent={unreadMessages} color="error">
+              <Message sx={{ color: "#333" }} />
+            </Badge>
+          </IconButton>
+        )}
   
         {/* Cart Icon with Item Count */}
         <Link to="/cart" className="navbar__cart">

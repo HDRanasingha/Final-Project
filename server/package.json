@@ -12,7 +12,8 @@
     "multer-gridfs": "^0.0.1",
     "socket.io": "^4.8.1",
     "stripe": "^17.6.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "ws": "^8.18.1"
   },
   "name": "server",
   "version": "1.0.0",

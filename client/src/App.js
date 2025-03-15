@@ -29,6 +29,7 @@ import ThankYouPage from './pages/ThankYouPage';
 import Tracking from './pages/Tracking';
 // Add this import with your other imports
 import ChatBot from "./pages/ChatBot";
+import Messages from "./pages/Messages";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -90,6 +91,7 @@ function App() {
         <Route path="/tracking" element={<Tracking />} />
         // Add this route in your Routes component
         <Route path="/chatbot" element={<ChatBot />} />
+        <Route path="/messages" element={<Messages />} />
        
       </Routes>
     </BrowserRouter>
