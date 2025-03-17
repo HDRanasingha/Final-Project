@@ -15,6 +15,7 @@ import WishlistPage from './pages/WishlistPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import TrackOrderPage from './pages/TrackOrderPage';
+import ProfileDetails from './pages/ProfileDetails'; // Import the ProfileDetails page
 
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
 import SucsessPage from './pages/SucsessPage';
@@ -82,6 +83,7 @@ function App() {
         <Route path="/payment-success" element={<SucsessPage />} />
         <Route path="/payment-cancel" element={<CancelPage />} />
         <Route path="/recived/orders" element={<GrowersOrderPage />} />
+        <Route path="/profile" element={<ProfileDetails />} /> {/* Add route for profile details */}
         
         <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
@@ -89,7 +91,7 @@ function App() {
         <Route path="/order-tracking/:orderId" element={<TrackOrderPage/>} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/tracking" element={<Tracking />} />
-        // Add this route in your Routes component
+        {/* Add this route in your Routes component */}
         <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/messages" element={<Messages />} />
        
