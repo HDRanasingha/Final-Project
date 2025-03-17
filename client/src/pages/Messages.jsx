@@ -55,23 +55,26 @@ const Messages = () => {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
-    if (!currentUser || !currentUser._id) {
-      console.error('User is not logged in or user data is missing.');
-      return;
-    }
-
-    const messageData = {
-      text: newMessage,
-      sender: currentUser._id,
-      timestamp: new Date(),
-    };
-
     try {
-      await axios.post('http://localhost:3001/api/messages', messageData);
-      socket.current.emit('sendMessage', messageData);
-      setNewMessage('');
+        const messageData = {
+            text: newMessage,
+            sender: currentUser._id,
+            profileImage: currentUser.profileImage,
+            timestamp: Date.now()
+        };
+
+        const response = await axios.post('http://localhost:3001/api/messages', messageData);
+        
+        // Add the new message to the messages array
+        setMessages(prevMessages => [...prevMessages, response.data]);
+        
+        // Clear the input field
+        setNewMessage('');
+        
+        // Emit the message through socket
+        socket.current.emit('send_message', messageData);
     } catch (error) {
-      console.error('Error sending message:', error);
+        console.error('Error sending message:', error);
     }
   };
 
@@ -84,18 +87,17 @@ const Messages = () => {
         </div>
         
         <div className="messages-list">
-          {Array.isArray(messages) && messages.map((message, index) => ( // Check if messages is an array
+          {Array.isArray(messages) && messages.map((message, index) => (
             <div 
               key={index} 
               className={`message-item ${message.sender === currentUser?._id ? 'sent' : 'received'}`}
             >
-              <div className="message-avatar">
-                <img src={message.senderAvatar || '/default-avatar.png'} alt="User avatar" />
-              </div>
               <div className="message-content">
                 <div className="message-info">
+                  <img src={message.senderProfileImage} alt="Profile" className="message-profile-image" />
                   <span className="message-sender">{message.senderName}</span>
                   <span className="message-role">{message.senderRole}</span>
+                  
                   <span className="message-time">{formatTime(message.timestamp)}</span>
                 </div>
                 <div className="message-text">{message.text}</div>
