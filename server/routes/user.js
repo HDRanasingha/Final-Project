@@ -1,6 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const multer = require("multer");
+
+// Multer configuration for profile image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 // Get all users
 router.get("/", async (req, res) => {
@@ -13,15 +26,25 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Update user details
-router.put("/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const { firstName, lastName, email, role } = req.body;
-
+// Update user profile
+router.put("/:userId/update", upload.single("profileImage"), async (req, res) => {
   try {
+    const { userId } = req.params;
+    const { firstName, lastName, email } = req.body;
+    
+    const updateData = {
+      firstName,
+      lastName,
+      email,
+    };
+
+    if (req.file) {
+      updateData.profileImagePath = req.file.path;
+    }
+
     const user = await User.findByIdAndUpdate(
       userId,
-      { firstName, lastName, email, role },
+      updateData,
       { new: true }
     );
 
@@ -29,7 +52,7 @@ router.put("/:userId", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "User updated successfully!", user });
+    res.status(200).json({ user });
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ error: "Failed to update user" });

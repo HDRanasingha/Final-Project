@@ -13,12 +13,19 @@ const ProfileDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Separate state for view mode and edit mode
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    role: user?.role || "",
+  const [viewData, setViewData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+  });
+  const [editData, setEditData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
   });
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
@@ -26,17 +33,26 @@ const ProfileDetails = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Redirect if not logged in
+  // Initialize data when user is loaded
   useEffect(() => {
     if (!user) {
       navigate("/login");
+    } else {
+      const userData = {
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        role: user.role || "",
+      };
+      setViewData(userData);
+      setEditData(userData);
     }
   }, [user, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData({
-      ...profileData,
+    setEditData({
+      ...editData,
       [name]: value,
     });
   };
@@ -49,73 +65,132 @@ const ProfileDetails = () => {
     }
   };
 
-  const handleEditToggle = () => {
-    if (isEditing) {
-      // Reset form data if canceling edit
-      setProfileData({
-        firstName: user?.firstName || "",
-        lastName: user?.lastName || "",
-        email: user?.email || "",
-        role: user?.role || "",
-      });
-      setNewProfileImage(null);
-      setPreviewImage(null);
-    }
-    setIsEditing(!isEditing);
+  // Debug user state changes
+  useEffect(() => {
+    console.log("User state changed:", user);
+  }, [user]);
+
+  // Debug edit mode changes
+  useEffect(() => {
+    console.log("Edit mode changed:", isEditing);
+  }, [isEditing]);
+
+  // Start editing - switch to edit mode with improved state handling
+  const handleStartEdit = () => {
+    // First set the edit data to match current user data
+    const currentUserData = {
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+      role: user.role || "",
+    };
+    
+    setEditData(currentUserData);
+    setNewProfileImage(null);
+    setPreviewImage(null);
     setError("");
     setSuccess("");
+    
+    // Set editing mode in a separate state update to ensure it happens after data is prepared
+    setTimeout(() => {
+      setIsEditing(true);
+    }, 0);
   };
 
+  // Cancel editing - with improved cleanup
+  const handleCancelEdit = () => {
+    // Clean up resources first
+    if (previewImage) {
+      URL.revokeObjectURL(previewImage);
+      setPreviewImage(null);
+    }
+    setNewProfileImage(null);
+    setError("");
+    setSuccess("");
+    
+    // Exit edit mode after cleanup
+    setIsEditing(false);
+  };
+
+  // Submit changes with improved error handling
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Prevent submission if not in edit mode
+    if (!isEditing) {
+      console.log("Not in edit mode, preventing submission");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setSuccess("");
 
     try {
+      // Create a new FormData object for each submission
       const formData = new FormData();
-      formData.append("firstName", profileData.firstName);
-      formData.append("lastName", profileData.lastName);
-      formData.append("email", profileData.email);
-      
+      formData.append("firstName", editData.firstName);
+      formData.append("lastName", editData.lastName);
+      formData.append("email", editData.email);
+
       if (newProfileImage) {
         formData.append("profileImage", newProfileImage);
       }
 
-      const response = await axios.put(
-        `http://localhost:3001/api/users/${user._id}/update`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+      
+      // Make the API call
+      const response = await axios({
+        method: 'put',
+        url: `http://localhost:3001/api/users/${user._id}/update`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`
         }
-      );
+      });
 
-      if (response.status === 200) {
-        // Update Redux state with new user data
+      // Handle successful response
+      if (response.data.user) {
+        // Update Redux state
         dispatch(
           setLogin({
             user: response.data.user,
-            token: localStorage.getItem("token"),
+            token: token,
           })
         );
+        
+        // Update view data
+        setViewData({
+          firstName: response.data.user.firstName || "",
+          lastName: response.data.user.lastName || "",
+          email: response.data.user.email || "",
+          role: response.data.user.role || "",
+        });
+        
         setSuccess("Profile updated successfully!");
-        setIsEditing(false);
+        
+        // Exit edit mode after a short delay to ensure success message is seen
+        setTimeout(() => {
+          setIsEditing(false);
+        }, 1000);
       }
     } catch (err) {
       console.error("Error updating profile:", err);
-      setError(err.response?.data?.error || "Failed to update profile");
+      setError(err.response?.data?.error || "Failed to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Format role for display
   const formatRole = (role) => {
     if (!role) return "";
-    return role.charAt(0).toUpperCase() + role.slice(1);
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   };
+
+  // Determine which data to display based on mode
+  const displayData = isEditing ? editData : viewData;
 
   return (
     <div className="profile-details-page">
@@ -129,7 +204,7 @@ const ProfileDetails = () => {
         <div className="profile-content">
           <div className="profile-image-section">
             <div className="profile-image-container">
-              {previewImage ? (
+              {isEditing && previewImage ? (
                 <img src={previewImage} alt="Profile Preview" className="profile-image" />
               ) : user?.profileImagePath ? (
                 <img
@@ -139,8 +214,8 @@ const ProfileDetails = () => {
                 />
               ) : (
                 <div className="profile-image-placeholder">
-                  {profileData.firstName.charAt(0)}
-                  {profileData.lastName.charAt(0)}
+                  {displayData.firstName.charAt(0)}
+                  {displayData.lastName.charAt(0)}
                 </div>
               )}
               {isEditing && (
@@ -168,10 +243,9 @@ const ProfileDetails = () => {
                 <input
                   type="text"
                   name="firstName"
-                  value={profileData.firstName}
+                  value={displayData.firstName}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  required
                 />
               </div>
 
@@ -180,10 +254,9 @@ const ProfileDetails = () => {
                 <input
                   type="text"
                   name="lastName"
-                  value={profileData.lastName}
+                  value={displayData.lastName}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  required
                 />
               </div>
 
@@ -192,10 +265,9 @@ const ProfileDetails = () => {
                 <input
                   type="email"
                   name="email"
-                  value={profileData.email}
+                  value={displayData.email}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  required
                 />
               </div>
 
@@ -203,8 +275,9 @@ const ProfileDetails = () => {
                 <label>Role</label>
                 <input
                   type="text"
-                  value={formatRole(profileData.role)}
-                  disabled
+                  name="role"
+                  value={formatRole(displayData.role)}
+                  disabled={true}
                   className="role-field"
                 />
               </div>
@@ -214,26 +287,18 @@ const ProfileDetails = () => {
 
               <div className="profile-actions">
                 {!isEditing ? (
-                  <button
-                    type="button"
-                    className="edit-button"
-                    onClick={handleEditToggle}
-                  >
+                  <button type="button" className="edit-button" onClick={handleStartEdit}>
                     <Edit /> Edit Profile
                   </button>
                 ) : (
                   <>
-                    <button
-                      type="submit"
-                      className="save-button"
-                      disabled={loading}
-                    >
-                      <Save /> {loading ? "Saving..." : "Save Changes"}
+                    <button type="submit" className="save-button" disabled={loading}>
+                      <Save /> Save Changes
                     </button>
                     <button
                       type="button"
                       className="cancel-button"
-                      onClick={handleEditToggle}
+                      onClick={handleCancelEdit}
                       disabled={loading}
                     >
                       <Cancel /> Cancel
