@@ -59,7 +59,6 @@ const Messages = () => {
         const messageData = {
             text: newMessage,
             sender: currentUser._id,
-            profileImage: currentUser.profileImage,
             timestamp: Date.now()
         };
 
@@ -79,7 +78,7 @@ const Messages = () => {
   };
 
   return (
-    <div>
+    <div className="messages-page">
       <Navbar />
       <div className="messages-container">
         <div className="messages-header">
@@ -92,12 +91,16 @@ const Messages = () => {
               key={index} 
               className={`message-item ${message.sender === currentUser?._id ? 'sent' : 'received'}`}
             >
+              <div className="message-avatar">
+                <img 
+                  src={message.senderAvatar || '/default-avatar.png'} 
+                  alt={message.senderName || 'User'} 
+                />
+              </div>
               <div className="message-content">
                 <div className="message-info">
-                  <img src={message.senderProfileImage} alt="Profile" className="message-profile-image" />
                   <span className="message-sender">{message.senderName}</span>
                   <span className="message-role">{message.senderRole}</span>
-                  
                   <span className="message-time">{formatTime(message.timestamp)}</span>
                 </div>
                 <div className="message-text">{message.text}</div>

@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const messages = await Message.find()
       .sort({ timestamp: 1 })
-      .populate('sender', 'name firstName lastName role avatar');
+      .populate('sender', 'name firstName lastName role avatar profileImagePath');
     
     // Format messages to include sender information
     const formattedMessages = messages.map(message => ({
@@ -17,8 +17,10 @@ router.get('/', async (req, res) => {
       sender: message.sender._id,
       senderName: message.senderName || message.sender.name || `${message.sender.firstName} ${message.sender.lastName}` || 'Unknown User',
       senderRole: message.senderRole || message.sender.role || 'User',
-      profileImage: { type: String },
-
+      senderAvatar: message.senderAvatar || message.sender.avatar || 
+                   (message.sender.profileImagePath ? 
+                    `http://localhost:3001/${message.sender.profileImagePath.replace("public", "")}` : 
+                    '/default-avatar.png'),
       timestamp: message.timestamp
     }));
     
@@ -42,7 +44,7 @@ router.get('/paginated', async (req, res) => {
       .sort({ timestamp: -1 })
       .skip(page * limit)
       .limit(limit)
-      .populate('sender', 'name firstName lastName role avatar');
+      .populate('sender', 'name firstName lastName role avatar profileImagePath');
     
     // Format messages to include sender information
     const formattedMessages = messages.map(message => ({
@@ -51,7 +53,10 @@ router.get('/paginated', async (req, res) => {
       sender: message.sender._id,
       senderName: message.senderName || message.sender.name || `${message.sender.firstName} ${message.sender.lastName}` || 'Unknown User',
       senderRole: message.senderRole || message.sender.role || 'User',
-      senderAvatar: message.senderAvatar || message.sender.avatar || '/default-avatar.png',
+      senderAvatar: message.senderAvatar || message.sender.avatar || 
+                   (message.sender.profileImagePath ? 
+                    `http://localhost:3001/${message.sender.profileImagePath.replace("public", "")}` : 
+                    '/default-avatar.png'),
       timestamp: message.timestamp
     }));
     
@@ -82,12 +87,17 @@ router.post('/', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
+    // Prepare the avatar URL
+    const senderAvatar = user.profileImagePath ? 
+      `http://localhost:3001/${user.profileImagePath.replace("public", "")}` : 
+      '/default-avatar.png';
+
     const newMessage = new Message({
         text,
         sender,
         senderName: user.name || `${user.firstName} ${user.lastName}`,
         senderRole: user.role,
-        senderAvatar: user.avatar || '/default-avatar.png',
+        senderAvatar: senderAvatar,
         timestamp: timestamp || Date.now()
     });
 
@@ -127,17 +137,6 @@ router.delete('/:id', async (req, res) => {
     console.error('Error deleting message:', error);
     res.status(500).json({ message: 'Server error' });
   }
-});
-
-// Define the POST route for messages
-router.post('/', (req, res) => {
-    const message = req.body.message;
-    if (!message) {
-        return res.status(400).json({ error: 'Message content is required' });
-    }
-    // Handle the message (e.g., save to database, broadcast via WebSocket, etc.)
-    console.log(`Received message: ${message}`);
-    res.status(200).json({ success: true, message: 'Message received' });
 });
 
 module.exports = router;

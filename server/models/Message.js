@@ -16,7 +16,7 @@ const MessageSchema = new mongoose.Schema({
   senderRole: {
     type: String
   },
-  profileImage: {
+  senderAvatar: {
     type: String
   },
   timestamp: {
