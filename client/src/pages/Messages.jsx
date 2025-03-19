@@ -24,7 +24,9 @@ const Messages = () => {
     // Connect to Socket.io server
     socket.current = io('http://localhost:3001');
 
-    socket.current.on('newMessage', (message) => {
+    // Listen for new messages from the server
+    socket.current.on('new_message', (message) => {
+      console.log('Received new message via socket:', message);
       setMessages(prevMessages => [...prevMessages, message]);
     });
 
@@ -64,14 +66,14 @@ const Messages = () => {
 
         const response = await axios.post('http://localhost:3001/api/messages', messageData);
         
-        // Add the new message to the messages array
-        setMessages(prevMessages => [...prevMessages, response.data]);
-        
         // Clear the input field
         setNewMessage('');
         
         // Emit the message through socket
-        socket.current.emit('send_message', messageData);
+        socket.current.emit('send_message', response.data);
+        
+        // Note: We don't need to add the message to the state here
+        // because it will come back through the socket broadcast
     } catch (error) {
         console.error('Error sending message:', error);
     }

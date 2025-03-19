@@ -33,14 +33,6 @@ app.use('/api/search', searchRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/messages', messagesRoutes);
 
-
-
-
-
-
-
-
-
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -49,16 +41,20 @@ const io = new Server(server, {
     }
 });
 
+// Improved Socket.IO implementation for real-time messaging
 io.on('connection', (socket) => {
-    console.log('New client connected');
-    socket.on('message', (message) => {
-        console.log(`Received message: ${message}`);
-        // Echo the message back to the client
-        socket.emit('message', `Server received: ${message}`);
+    console.log('New client connected:', socket.id);
+    
+    // Listen for new messages
+    socket.on('send_message', (messageData) => {
+        console.log('Message received:', messageData);
+        
+        // Broadcast the message to ALL connected clients (including sender)
+        io.emit('new_message', messageData);
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        console.log('Client disconnected:', socket.id);
     });
 });
 
