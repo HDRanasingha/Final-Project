@@ -3,29 +3,35 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
-import "../styles/FlowerDetailsPage.scss"; // Add CSS file for styling
+import "../styles/FlowerDetailsPage.scss";
+import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import heart icons
+import { addToWishlist, isInWishlist, removeFromWishlist } from '../utils/wishlistUtils'; // Import wishlist utilities
 
 const FlowerDetailsPage = () => {
-  const { id } = useParams(); // Get flower ID from URL
-  const navigate = useNavigate(); // Hook for navigation
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [flower, setFlower] = useState(null);
   const userId = JSON.parse(localStorage.getItem("user"))?._id;
-  const [quantity, setQuantity] = useState(1); // Default quantity is 1
-  const [totalPrice, setTotalPrice] = useState(0); // State for total price
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [inWishlist, setInWishlist] = useState(false); // Track if item is in wishlist
 
   useEffect(() => {
     axios.get(`http://localhost:3001/api/flowers/${id}`)
       .then(res => {
         setFlower(res.data);
-        setTotalPrice(res.data.price); // Set initial total price
+        setTotalPrice(res.data.price);
+        
+        // Check if flower is in wishlist
+        setInWishlist(isInWishlist(res.data._id, 'flower'));
       })
       .catch(err => console.error("Error fetching flower details:", err));
   }, [id]);
 
   const handleQuantityChange = (e) => {
-    const newQuantity = Math.max(1, Number(e.target.value)); // Ensure quantity doesn't go below 1
+    const newQuantity = Math.max(1, Number(e.target.value));
     setQuantity(newQuantity);
-    setTotalPrice(flower.price * newQuantity); // Update total price
+    setTotalPrice(flower.price * newQuantity);
   };
 
   const handleBuyNow = () => {
@@ -48,8 +54,29 @@ const FlowerDetailsPage = () => {
   };
 
   const handleAddToWishlist = () => {
-    alert(`${flower.name} added to your wishlist!`);
-    // Implement wishlist logic here
+    if (!flower) return;
+    
+    if (inWishlist) {
+      // Remove from wishlist if already in wishlist
+      removeFromWishlist(flower._id, 'flower');
+      setInWishlist(false);
+      alert(`${flower.name} removed from your wishlist!`);
+    } else {
+      // Add to wishlist
+      const added = addToWishlist({
+        _id: flower._id,
+        name: flower.name,
+        price: flower.price,
+        stock: flower.stock,
+        img: flower.img,
+        itemType: 'flower'
+      });
+      
+      if (added) {
+        setInWishlist(true);
+        alert(`${flower.name} added to your wishlist!`);
+      }
+    }
   };
 
   if (!flower) return <p>Loading flower details...</p>;
@@ -61,30 +88,44 @@ const FlowerDetailsPage = () => {
         <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
         <div className="flower-info">
           <h2>{flower.name}</h2>
-          <p><strong>Stock:</strong> {flower.stock} Bunches</p>
-          <p><strong>Price:</strong> Rs. {flower.price}</p>
-          <p><strong>Description:</strong> {flower.description || "No description available"}</p>
+          <p>Price: Rs. {flower.price}</p>
+          <p>Stock: {flower.stock} Bunches</p>
+          <p>Description: {flower.description || "No description available"}</p>
           
-          {/* Quantity and Total Price */}
           <div className="quantity-container">
-            <label>Quantity: </label>
+            <label htmlFor="quantity">Quantity:</label>
             <input
               type="number"
-              value={quantity}
-              onChange={handleQuantityChange}
+              id="quantity"
               min="1"
               max={flower.stock}
+              value={quantity}
+              onChange={handleQuantityChange}
             />
           </div>
-          <p><strong>Total Price:</strong> Rs. {totalPrice}</p>
-
-          {/* Action Buttons */}
-          {userId !== flower.growerId._id && (
-            <div className="action-buttons">
-              <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
-              <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
-            </div>
-          )}
+          
+          <p className="total-price">Total: Rs. {totalPrice}</p>
+          
+          <div className="action-buttons">
+            <button 
+              className="buy-now-button" 
+              onClick={handleBuyNow}
+              disabled={flower.stock === 0}
+            >
+              {flower.stock === 0 ? "Out of Stock" : "Buy Now"}
+            </button>
+            
+            <button 
+              className="wishlist-button" 
+              onClick={handleAddToWishlist}
+            >
+              {inWishlist ? 
+                <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
+                <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
+              } 
+              {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+            </button>
+          </div>
         </div>
       </div>
       <Footer />

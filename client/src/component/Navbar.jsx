@@ -370,9 +370,7 @@ const Navbar = () => {
             {flowers.map((flower) => (
               <div className="flower-card" key={flower._id} onClick={() => handleCardClick(flower._id)}>
                 {flower.stock === 0 && <div className="sold-out">Sold Out</div>}
-                <div className="wishlist-container" onClick={(e) => handleWishlistToggle(flower._id, e)}>
-                  {wishlist.includes(flower._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
-                </div>
+                {/* Removing the wishlist container with heart icon */}
                 <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
                 <h3>{flower.name}</h3>
                 <p>Stock: {flower.stock} Bunches</p>
@@ -388,9 +386,7 @@ const Navbar = () => {
             {products.map((product) => (
               <div className="product-card" key={product._id} onClick={() => handleProductCardClick(product._id)}>
                 {product.stock === 0 && <div className="sold-out">Sold Out</div>}
-                <div className="wishlist-container" onClick={(e) => handleProductWishlistToggle(product._id, e)}>
-                  {wishlist.includes(product._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
-                </div>
+                {/* Removing the wishlist container with heart icon */}
                 <img src={`http://localhost:3001${product.img}`} alt={product.name} />
                 <h3>{product.name}</h3>
                 <p>Stock: {product.stock} Bunches</p>
@@ -406,9 +402,7 @@ const Navbar = () => {
             {items.map((item) => (
               <div className="item-card" key={item._id} onClick={() => handleItemCardClick(item._id)}>
                 {item.stock === 0 && <div className="sold-out">Sold Out</div>}
-                <div className="wishlist-container" onClick={(e) => handleItemWishlistToggle(item._id, e)}>
-                  {wishlist.includes(item._id) ? <FaHeart className="wishlist-icon active" /> : <FaRegHeart className="wishlist-icon" />}
-                </div>
+                {/* Removing the wishlist container with heart icon */}
                 <img src={`http://localhost:3001${item.img}`} alt={item.name} />
                 <h3>{item.name}</h3>
                 <p>Stock: {item.stock} Bunches</p>

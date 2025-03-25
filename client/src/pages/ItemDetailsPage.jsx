@@ -4,29 +4,35 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/ItemDetailsPage.scss";
+import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import heart icons
+import { addToWishlist, isInWishlist, removeFromWishlist } from '../utils/wishlistUtils'; // Import wishlist utilities
 
 const ItemDetailsPage = () => {
-  const { id } = useParams(); // Get item ID from URL
-  const navigate = useNavigate(); // Hook for navigation
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const userId = JSON.parse(localStorage.getItem("user"))?._id;
-  const [quantity, setQuantity] = useState(1); // Default quantity is 1
-  const [totalPrice, setTotalPrice] = useState(0); // State for total price
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [inWishlist, setInWishlist] = useState(false); // Track if item is in wishlist
 
   useEffect(() => {
     axios
       .get(`http://localhost:3001/api/items/${id}`)
       .then((res) => {
         setItem(res.data);
-        setTotalPrice(res.data.price); // Set initial total price
+        setTotalPrice(res.data.price);
+        
+        // Check if item is in wishlist
+        setInWishlist(isInWishlist(res.data._id, 'item'));
       })
       .catch((err) => console.error("Error fetching item details:", err));
   }, [id]);
 
   const handleQuantityChange = (e) => {
-    const newQuantity = Math.max(1, Number(e.target.value)); // Ensure quantity doesn't go below 1
+    const newQuantity = Math.max(1, Number(e.target.value));
     setQuantity(newQuantity);
-    setTotalPrice(item.price * newQuantity); // Update total price
+    setTotalPrice(item.price * newQuantity);
   };
 
   const handleBuyNow = () => {
@@ -49,8 +55,29 @@ const ItemDetailsPage = () => {
   };
 
   const handleAddToWishlist = () => {
-    alert(`${item.name} added to your wishlist!`);
-    // Implement wishlist logic here
+    if (!item) return;
+    
+    if (inWishlist) {
+      // Remove from wishlist if already in wishlist
+      removeFromWishlist(item._id, 'item');
+      setInWishlist(false);
+      alert(`${item.name} removed from your wishlist!`);
+    } else {
+      // Add to wishlist
+      const added = addToWishlist({
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        stock: item.stock,
+        img: item.img,
+        itemType: 'item'
+      });
+      
+      if (added) {
+        setInWishlist(true);
+        alert(`${item.name} added to your wishlist!`);
+      }
+    }
   };
 
   if (!item) return <p>Loading item details...</p>;
@@ -62,30 +89,44 @@ const ItemDetailsPage = () => {
         <img src={`http://localhost:3001${item.img}`} alt={item.name} />
         <div className="item-info">
           <h2>{item.name}</h2>
-          <p><strong>Stock:</strong> {item.stock} Bunches</p>
-          <p><strong>Price:</strong> Rs. {item.price}</p>
-          <p><strong>Description:</strong> {item.description || "No description available"}</p>
+          <p>Price: Rs. {item.price}</p>
+          <p>Stock: {item.stock} Units</p>
+          <p>Description: {item.description || "No description available"}</p>
           
-          {/* Quantity and Total Price */}
           <div className="quantity-container">
-            <label>Quantity: </label>
+            <label htmlFor="quantity">Quantity:</label>
             <input
               type="number"
-              value={quantity}
-              onChange={handleQuantityChange}
+              id="quantity"
               min="1"
               max={item.stock}
+              value={quantity}
+              onChange={handleQuantityChange}
             />
           </div>
-          <p><strong>Total Price:</strong> Rs. {totalPrice}</p>
-
-          {/* Action Buttons */}
-          {userId !== item.supplierId._id && (
-            <div className="action-buttons">
-              <button className="buy-now-button" onClick={handleBuyNow}>🛒 Buy Now</button>
-              <button className="wishlist-button" onClick={handleAddToWishlist}>♡ Add to Wishlist</button>
-            </div>
-          )}
+          
+          <p className="total-price">Total: Rs. {totalPrice}</p>
+          
+          <div className="action-buttons">
+            <button 
+              className="buy-now-button" 
+              onClick={handleBuyNow}
+              disabled={item.stock === 0}
+            >
+              {item.stock === 0 ? "Out of Stock" : "Buy Now"}
+            </button>
+            
+            <button 
+              className="wishlist-button" 
+              onClick={handleAddToWishlist}
+            >
+              {inWishlist ? 
+                <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
+                <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
+              } 
+              {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+            </button>
+          </div>
         </div>
       </div>
       <Footer />
