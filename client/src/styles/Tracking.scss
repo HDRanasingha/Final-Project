@@ -8,6 +8,7 @@
   color: #333;
   
   .track-order-container {
+    flex: 1; // This ensures the container takes up available space
     max-width: 800px;
     margin: 40px auto;
     padding: 30px;

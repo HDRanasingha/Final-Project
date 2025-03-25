@@ -71,6 +71,9 @@ const WishlistPage = () => {
           <div className="wishlist-items">
             {wishlist.map((item, index) => (
               <div className="wishlist-item" key={`${item._id || index}-${item.itemType}`}>
+                {/* Add sold-out label for items with zero stock */}
+                {item.stock === 0 && <div className="sold-out">Sold Out</div>}
+                
                 <img 
                   src={item.img && item.img.startsWith('http') 
                     ? item.img 
@@ -82,6 +85,7 @@ const WishlistPage = () => {
                     e.target.src = "https://via.placeholder.com/200x200?text=Image+Not+Found";
                   }}
                 />
+                
                 <div className="item-details">
                   <h3>{item.name || "Product Name"}</h3>
                   <p>Type: {item.itemType ? item.itemType.charAt(0).toUpperCase() + item.itemType.slice(1) : "Product"}</p>

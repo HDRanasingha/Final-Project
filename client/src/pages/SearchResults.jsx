@@ -100,12 +100,8 @@ const SearchResults = () => {
                       key={flower._id} 
                       onClick={() => handleCardClick(flower._id, 'flower')}
                     >
-                      <div className="wishlist-icon" onClick={(e) => handleWishlistToggle(e, flower, 'flower')}>
-                        {isInWishlist(flower._id, 'flower') ? 
-                          <FaHeart style={{ color: 'red' }} /> : 
-                          <FaRegHeart />
-                        }
-                      </div>
+                      {flower.stock === 0 && <div className="sold-out">Sold Out</div>}
+                      {/* Removing the wishlist icon div */}
                       <img src={`http://localhost:3001${flower.img}`} alt={flower.name} />
                       <h3>{flower.name}</h3>
                       <p>Stock: {flower.stock} Bunches</p>
@@ -135,12 +131,8 @@ const SearchResults = () => {
                 <div className="product-list">
                   {products.map((product) => (
                     <div className="product-card" key={product._id} onClick={() => handleCardClick(product._id, 'product')}>
-                      <div className="wishlist-icon" onClick={(e) => handleWishlistToggle(e, product, 'product')}>
-                        {isInWishlist(product._id, 'product') ? 
-                          <FaHeart style={{ color: 'red' }} /> : 
-                          <FaRegHeart />
-                        }
-                      </div>
+                      {product.stock === 0 && <div className="sold-out">Sold Out</div>}
+                      {/* Removing the wishlist icon div */}
                       <img src={`http://localhost:3001${product.img}`} alt={product.name} />
                       <h3>{product.name}</h3>
                       <p>Stock: {product.stock} Bunches</p>
@@ -157,12 +149,8 @@ const SearchResults = () => {
                 <div className="item-list">
                   {items.map((item) => (
                     <div className="item-card" key={item._id} onClick={() => handleCardClick(item._id, 'item')}>
-                      <div className="wishlist-icon" onClick={(e) => handleWishlistToggle(e, item, 'item')}>
-                        {isInWishlist(item._id, 'item') ? 
-                          <FaHeart style={{ color: 'red' }} /> : 
-                          <FaRegHeart />
-                        }
-                      </div>
+                      {item.stock === 0 && <div className="sold-out">Sold Out</div>}
+                      {/* Removing the wishlist icon div */}
                       <img src={`http://localhost:3001${item.img}`} alt={item.name} />
                       <h3>{item.name}</h3>
                       <p>Stock: {item.stock} Bunches</p>
