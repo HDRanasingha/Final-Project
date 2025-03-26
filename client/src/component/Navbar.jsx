@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IconButton, Badge } from "@mui/material";
-import { Search, Person, Menu, ShoppingCart, Message } from "@mui/icons-material";
+import { Search, Person, Menu, ShoppingCart, Message, Notifications } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
@@ -22,6 +22,10 @@ const Navbar = () => {
   // Add new state for messages
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [socket, setSocket] = useState(null);
+  
+  // Add new state for inventory alerts
+  const [inventoryAlerts, setInventoryAlerts] = useState([]);
+  const [showAlerts, setShowAlerts] = useState(false);
   
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -244,6 +248,62 @@ const Navbar = () => {
       console.error("Error searching:", error);
     }
   };
+  // Add new useEffect to fetch inventory alerts
+  useEffect(() => {
+    // Only fetch alerts if user is logged in and has appropriate role
+    if (user && ['grower', 'seller', 'supplier', 'admin'].includes(user.role)) {
+      fetchInventoryAlerts();
+    }
+  }, [user]);
+
+  // Function to fetch inventory alerts
+  const fetchInventoryAlerts = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/inventory/low-stock', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      // Filter alerts based on user role
+      let filteredAlerts = [];
+      if (user.role === 'grower') {
+        filteredAlerts = response.data.filter(item => item.type === 'flower' && item.growerId?._id === user._id);
+      } else if (user.role === 'seller') {
+        filteredAlerts = response.data.filter(item => item.type === 'product' && item.sellerId?._id === user._id);
+      } else if (user.role === 'supplier') {
+        filteredAlerts = response.data.filter(item => item.type === 'item' && item.supplierId?._id === user._id);
+      } else if (user.role === 'admin') {
+        filteredAlerts = response.data; // Admin sees all alerts
+      }
+      
+      setInventoryAlerts(filteredAlerts);
+    } catch (error) {
+      console.error('Error fetching inventory alerts:', error);
+    }
+  };
+
+  // Add function to toggle alerts dropdown
+  const toggleAlertsDropdown = () => {
+    setShowAlerts(!showAlerts);
+    // Close other dropdowns if open
+    if (!showAlerts) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  // Add function to navigate to item details
+  const handleAlertItemClick = (alert) => {
+    if (alert.type === 'flower') {
+      navigate(`/flower/${alert._id}`);
+    } else if (alert.type === 'product') {
+      navigate(`/product/${alert._id}`);
+    } else if (alert.type === 'item') {
+      navigate(`/item/${alert._id}`);
+    }
+    setShowAlerts(false);
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -271,6 +331,56 @@ const Navbar = () => {
               <Message sx={{ color: "#333" }} />
             </Badge>
           </IconButton>
+        )}
+        
+        {/* Inventory Alerts - Only show for appropriate roles */}
+        {user && ['grower', 'seller', 'supplier', 'admin'].includes(user.role) && (
+          <div className="navbar__alerts">
+            <IconButton onClick={toggleAlertsDropdown}>
+              <Badge badgeContent={inventoryAlerts.length} color="error">
+                <Notifications sx={{ color: "#333" }} />
+              </Badge>
+            </IconButton>
+            
+            {/* Alerts Dropdown */}
+            {showAlerts && (
+              <div className="alerts-dropdown">
+                <h3>Inventory Alerts</h3>
+                {inventoryAlerts.length === 0 ? (
+                  <p className="no-alerts">No low stock items</p>
+                ) : (
+                  <>
+                    <div className="alerts-list">
+                      {inventoryAlerts.map(alert => (
+                        <div 
+                          key={`${alert.type}-${alert._id}`} 
+                          className="alert-item"
+                          onClick={() => handleAlertItemClick(alert)}
+                        >
+                          <div className="alert-icon">
+                            {alert.type === 'flower' ? '🌸' : alert.type === 'product' ? '📦' : '🛠️'}
+                          </div>
+                          <div className="alert-content">
+                            <p className="alert-name">{alert.name}</p>
+                            <p className="alert-stock">Stock: <span className="low-stock">{alert.stock}</span></p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button 
+                      className="view-all-alerts"
+                      onClick={() => {
+                        navigate('/inventory-alerts');
+                        setShowAlerts(false);
+                      }}
+                    >
+                      View All
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         )}
   
         {/* Cart Icon with Item Count */}
@@ -315,7 +425,6 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/profile">Profile Details</Link>
-                
                 <Link to="/chatbot">ChatBot</Link>
                 <Link to="/" onClick={handleLogout}>
                   Log Out

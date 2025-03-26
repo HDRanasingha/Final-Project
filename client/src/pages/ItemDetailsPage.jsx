@@ -6,15 +6,18 @@ import Footer from "../component/Footer";
 import "../styles/ItemDetailsPage.scss";
 import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import heart icons
 import { addToWishlist, isInWishlist, removeFromWishlist } from '../utils/wishlistUtils'; // Import wishlist utilities
+import { useSelector } from 'react-redux'; // Add this import
 
 const ItemDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [inWishlist, setInWishlist] = useState(false); // Track if item is in wishlist
+  
+  // Get user from Redux store
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     axios
@@ -33,6 +36,30 @@ const ItemDetailsPage = () => {
     const newQuantity = Math.max(1, Number(e.target.value));
     setQuantity(newQuantity);
     setTotalPrice(item.price * newQuantity);
+  };
+
+  const handleAddToCart = () => {
+    if (item.stock === 0) {
+      alert("This item is sold out and cannot be added to cart.");
+      return;
+    }
+
+    // Add item to cart (localStorage or API can be used)
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    // Check if item already exists in cart
+    const existingItemIndex = storedCart.findIndex(cartItem => cartItem._id === item._id);
+    
+    if (existingItemIndex >= 0) {
+      // Update quantity if item already in cart
+      storedCart[existingItemIndex].quantity += quantity;
+    } else {
+      // Add new item to cart
+      storedCart.push({ ...item, quantity });
+    }
+    
+    localStorage.setItem("cart", JSON.stringify(storedCart));
+    alert(`${item.name} added to your cart!`);
   };
 
   const handleBuyNow = () => {
@@ -54,7 +81,7 @@ const ItemDetailsPage = () => {
     navigate("/cart");
   };
 
-  const handleAddToWishlist = () => {
+  const handleWishlistToggle = () => {
     if (!item) return;
     
     if (inWishlist) {
@@ -80,57 +107,84 @@ const ItemDetailsPage = () => {
     }
   };
 
+  // Function to check if current user is the owner of the item
+  const isOwner = () => {
+    if (!user || !item || !item.supplierId) return false;
+    return user.role === 'supplier' && item.supplierId._id === user._id;
+  };
+
+  // Function to determine if buttons should be shown
+  const shouldShowButtons = () => {
+    // Show buttons if user is not logged in OR user is logged in but not the owner
+    return !user || (user && !isOwner());
+  };
+
   if (!item) return <p>Loading item details...</p>;
 
   return (
-    <div className="item-details-page">
+    <>
       <Navbar />
-      <div className="item-details">
-        <img src={`http://localhost:3001${item.img}`} alt={item.name} />
-        <div className="item-info">
-          <h2>{item.name}</h2>
-          <p>Price: Rs. {item.price}</p>
-          <p>Stock: {item.stock} Units</p>
-          <p>Description: {item.description || "No description available"}</p>
-          
-          <div className="quantity-container">
-            <label htmlFor="quantity">Quantity:</label>
-            <input
-              type="number"
-              id="quantity"
-              min="1"
-              max={item.stock}
-              value={quantity}
-              onChange={handleQuantityChange}
-            />
-          </div>
-          
-          <p className="total-price">Total: Rs. {totalPrice}</p>
-          
-          <div className="action-buttons">
-            <button 
-              className="buy-now-button" 
-              onClick={handleBuyNow}
-              disabled={item.stock === 0}
-            >
-              {item.stock === 0 ? "Out of Stock" : "Buy Now"}
-            </button>
+      <div className="item-details-page">
+        <div className="item-details">
+          <img src={`http://localhost:3001${item.img}`} alt={item.name} />
+          <div className="item-info">
+            <h2>{item.name}</h2>
+            <p>Price: Rs. {item.price}</p>
+            <p>Stock: {item.stock} Units</p>
+            <p>Description: {item.description || "No description available"}</p>
             
-            <button 
-              className="wishlist-button" 
-              onClick={handleAddToWishlist}
-            >
-              {inWishlist ? 
-                <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
-                <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
-              } 
-              {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            </button>
+            {/* Always show quantity selector */}
+            <div className="quantity-container">
+              <label htmlFor="quantity">Quantity:</label>
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                max={item.stock}
+                value={quantity}
+                onChange={handleQuantityChange}
+              />
+            </div>
+            
+            <p className="total-price">Total: Rs. {totalPrice}</p>
+            
+            {/* Conditionally show action buttons */}
+            {shouldShowButtons() && (
+              <div className="action-buttons">
+                {/* Removed Add to Cart button */}
+                
+                <button 
+                  className="buy-now-button" 
+                  onClick={handleBuyNow}
+                  disabled={item.stock === 0}
+                >
+                  {item.stock === 0 ? "Out of Stock" : "Buy Now"}
+                </button>
+                
+                <button 
+                  className="wishlist-button" 
+                  onClick={handleWishlistToggle}
+                >
+                  {inWishlist ? 
+                    <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
+                    <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
+                  } 
+                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+              </div>
+            )}
+            
+            {/* Show edit button if user is the owner */}
+            {isOwner() && (
+              <div className="action-buttons">
+                
+              </div>
+            )}
           </div>
         </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

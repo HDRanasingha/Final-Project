@@ -17,6 +17,7 @@ const userRoutes = require('./routes/user.js');
 const searchRoutes = require('./routes/search.js');
 const chatbotRoutes = require('./routes/chatbot.js');
 const messagesRoutes = require('./routes/messages.js');
+const inventoryRoutes = require("./routes/inventory");
 
 app.use(cors());
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/api/users", userRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/messages', messagesRoutes);
+app.use("/api/inventory", inventoryRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

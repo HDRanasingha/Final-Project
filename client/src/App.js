@@ -16,6 +16,9 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import ProfileDetails from './pages/ProfileDetails'; // Import the ProfileDetails page
+import InventoryAlerts from "./pages/InventoryAlerts";
+// Add this import
+import ProtectedRoute from './component/ProtectedRoute';
 
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
 import SucsessPage from './pages/SucsessPage';
@@ -94,6 +97,13 @@ function App() {
         {/* Add this route in your Routes component */}
         <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/messages" element={<Messages />} />
+        
+        {/* Add the new route */}
+        <Route path="/inventory-alerts" element={
+          <ProtectedRoute>
+            <InventoryAlerts />
+          </ProtectedRoute>
+        } />
        
       </Routes>
     </BrowserRouter>

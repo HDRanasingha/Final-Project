@@ -6,15 +6,18 @@ import Footer from '../component/Footer';
 import '../styles/productdetails.scss';
 import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import heart icons
 import { addToWishlist, isInWishlist, removeFromWishlist } from '../utils/wishlistUtils'; // Import wishlist utilities
+import { useSelector } from 'react-redux'; // Add this import
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [inWishlist, setInWishlist] = useState(false); // Track if item is in wishlist
+  
+  // Get user from Redux store
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     axios.get(`http://localhost:3001/api/products/${id}`)
@@ -53,7 +56,7 @@ const ProductDetailsPage = () => {
     navigate("/cart");
   };
 
-  const handleAddToWishlist = () => {
+  const handleWishlistToggle = () => {
     if (!product) return;
     
     if (inWishlist) {
@@ -79,57 +82,82 @@ const ProductDetailsPage = () => {
     }
   };
 
+  // Function to check if current user is the owner of the product
+  const isOwner = () => {
+    if (!user || !product || !product.sellerId) return false;
+    return user.role === 'seller' && product.sellerId._id === user._id;
+  };
+
+  // Function to determine if buttons should be shown
+  const shouldShowButtons = () => {
+    // Show buttons if user is not logged in OR user is logged in but not the owner
+    return !user || (user && !isOwner());
+  };
+
   if (!product) return <p>Loading product details...</p>;
 
   return (
-    <div className="product-details-page">
+    <>
       <Navbar />
-      <div className="product-details">
-        <img src={`http://localhost:3001${product.img}`} alt={product.name} />
-        <div className="product-info">
-          <h2>{product.name}</h2>
-          <p>Price: Rs. {product.price}</p>
-          <p>Stock: {product.stock} Units</p>
-          <p>Description: {product.description || "No description available"}</p>
-          
-          <div className="quantity-container">
-            <label htmlFor="quantity">Quantity:</label>
-            <input
-              type="number"
-              id="quantity"
-              min="1"
-              max={product.stock}
-              value={quantity}
-              onChange={handleQuantityChange}
-            />
-          </div>
-          
-          <p className="total-price">Total: Rs. {totalPrice}</p>
-          
-          <div className="action-buttons">
-            <button 
-              className="buy-now-button" 
-              onClick={handleBuyNow}
-              disabled={product.stock === 0}
-            >
-              {product.stock === 0 ? "Out of Stock" : "Buy Now"}
-            </button>
+      <div className="product-details-page">
+        <div className="product-details">
+          <img src={`http://localhost:3001${product.img}`} alt={product.name} />
+          <div className="product-info">
+            <h2>{product.name}</h2>
+            <p>Price: Rs. {product.price}</p>
+            <p>Stock: {product.stock} Units</p>
+            <p>Description: {product.description || "No description available"}</p>
             
-            <button 
-              className="wishlist-button" 
-              onClick={handleAddToWishlist}
-            >
-              {inWishlist ? 
-                <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
-                <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
-              } 
-              {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            </button>
+            {/* Always show quantity selector */}
+            <div className="quantity-container">
+              <label htmlFor="quantity">Quantity:</label>
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                max={product.stock}
+                value={quantity}
+                onChange={handleQuantityChange}
+              />
+            </div>
+            
+            <p className="total-price">Total: Rs. {totalPrice}</p>
+            
+            {/* Conditionally show action buttons */}
+            {shouldShowButtons() && (
+              <div className="action-buttons">
+                <button 
+                  className="buy-now-button" 
+                  onClick={handleBuyNow}
+                  disabled={product.stock === 0}
+                >
+                  {product.stock === 0 ? "Out of Stock" : "Buy Now"}
+                </button>
+                
+                <button 
+                  className="wishlist-button" 
+                  onClick={handleWishlistToggle}
+                >
+                  {inWishlist ? 
+                    <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
+                    <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
+                  } 
+                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+              </div>
+            )}
+            
+            {/* Show edit button if user is the owner */}
+            {isOwner() && (
+              <div className="action-buttons">
+               
+              </div>
+            )}
           </div>
         </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 
