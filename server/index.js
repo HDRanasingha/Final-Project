@@ -7,6 +7,12 @@ const http = require('http');
 // Replace ws with socket.io
 const { Server } = require('socket.io');
 
+// First, set up middleware
+app.use(cors());         // Handles CORS (Cross-Origin Resource Sharing)
+app.use(express.json()); // Parses JSON request bodies
+app.use(express.static('public')); // Serves static files from 'public' directory
+
+// Then import routes
 const authRoutes = require('./routes/auth.js');
 const flowerRoutes = require('./routes/flower.js');
 const productRoutes = require('./routes/product.js');
@@ -18,10 +24,9 @@ const searchRoutes = require('./routes/search.js');
 const chatbotRoutes = require('./routes/chatbot.js');
 const messagesRoutes = require('./routes/messages.js');
 const inventoryRoutes = require("./routes/inventory");
+const temperatureDeviceRoutes = require("./routes/temperatureDevices");
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
+// Then set up routes
 app.use('/auth', authRoutes);
 app.use('/api/flowers', flowerRoutes);
 app.use('/api/products', productRoutes);
@@ -29,11 +34,11 @@ app.use('/api/items', itemRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use("/api/users", userRoutes);
-// Add the search route
 app.use('/api/search', searchRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/temperature-devices", temperatureDeviceRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

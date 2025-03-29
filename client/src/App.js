@@ -34,7 +34,7 @@ import Tracking from './pages/Tracking';
 // Add this import with your other imports
 import ChatBot from "./pages/ChatBot";
 import Messages from "./pages/Messages";
-
+import TemperatureDevicesPage from "./pages/TemperatureDevicesPage";
 function App() {
   const user = useSelector((state) => state.user);
 
@@ -87,7 +87,7 @@ function App() {
         <Route path="/payment-cancel" element={<CancelPage />} />
         <Route path="/recived/orders" element={<GrowersOrderPage />} />
         <Route path="/profile" element={<ProfileDetails />} /> {/* Add route for profile details */}
-        
+        <Route path="/temperature-devices" element={<TemperatureDevicesPage />} />
         <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />

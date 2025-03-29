@@ -4,7 +4,7 @@ import { Search, Person, Menu, ShoppingCart, Message, Notifications } from "@mui
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "../redux/state";
-import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart, FaThermometerHalf } from "react-icons/fa";
 import axios from "axios";
 import "../styles/Navbar.scss";
 import "../styles/Customers.scss";
@@ -176,6 +176,11 @@ const Navbar = () => {
     navigate('/messages');
   };
   
+  // Add this function to handle temperature device navigation
+  const handleTemperatureDeviceClick = () => {
+    navigate('/temperature-devices');
+  };
+  
   // Add search function
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -330,6 +335,13 @@ const Navbar = () => {
             <Badge badgeContent={unreadMessages} color="error">
               <Message sx={{ color: "#333" }} />
             </Badge>
+          </IconButton>
+        )}
+        
+        {/* Temperature Device Icon - Only show for appropriate roles */}
+        {user && ['admin', 'grower', 'seller'].includes(user.role) && (
+          <IconButton onClick={handleTemperatureDeviceClick} className="navbar__icon">
+            <FaThermometerHalf style={{ color: "#333" }} />
           </IconButton>
         )}
         
