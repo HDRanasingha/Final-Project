@@ -433,20 +433,22 @@ const Navbar = () => {
           )}
         </button>
   
-        {/* Dropdown Menu */}
+        {/* Updated Dropdown Menu - Make ChatBot and OrderTracking available to everyone */}
         {isDropdownOpen && (
           <div className="navbar__dropdown">
             {!user ? (
               <>
                 <Link to="/login">Log In</Link>
                 <Link to="/register">Sign Up</Link>
-                <Link to="/tracking">OrderTracking</Link>
+                <Link to="/tracking">Order Tracking</Link>
+                <Link to="/chatbot">ChatBot</Link>
                 <Link to="/wishlist">Wishlist</Link>
               </>
             ) : (
               <>
                 <Link to="/profile">Profile Details</Link>
                 <Link to="/chatbot">ChatBot</Link>
+                <Link to="/tracking">Order Tracking</Link>
                 <Link to="/" onClick={handleLogout}>
                   Log Out
                 </Link>
