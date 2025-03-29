@@ -28,7 +28,7 @@ import AdminPage from './pages/AdminPage';
 import AboutUs from './pages/AboutUs';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-
+import SupplyChainPage from './pages/SupplyChainPage';
 import ThankYouPage from './pages/ThankYouPage';
 import Tracking from './pages/Tracking';
 // Add this import with your other imports
@@ -97,6 +97,7 @@ function App() {
         {/* Add this route in your Routes component */}
         <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/supply-chain" element={<SupplyChainPage />} />
         
         {/* Add the new route */}
         <Route path="/inventory-alerts" element={

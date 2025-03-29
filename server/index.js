@@ -40,6 +40,10 @@ app.use('/api/messages', messagesRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/temperature-devices", temperatureDeviceRoutes);
 
+// Import the supply chain route
+const supplyChainRoute = require("./routes/supplyChain");
+
+app.use("/api/supply-chain", supplyChainRoute);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {

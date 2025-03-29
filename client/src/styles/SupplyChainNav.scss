@@ -1,0 +1,40 @@
+@import "variables";
+
+.supply-chain-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  .supply-chain-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #333;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba($pinkred, 0.1);
+      color: $pinkred;
+    }
+    
+    svg {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .supply-chain-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    
+    .supply-chain-link {
+      width: 100%;
+    }
+  }
+}

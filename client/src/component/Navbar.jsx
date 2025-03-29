@@ -8,6 +8,8 @@ import { FaRegHeart, FaHeart, FaThermometerHalf } from "react-icons/fa";
 import axios from "axios";
 import "../styles/Navbar.scss";
 import "../styles/Customers.scss";
+// Import SupplyChainNav component
+import SupplyChainNav from "./SupplyChainNav";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -343,6 +345,13 @@ const Navbar = () => {
           <IconButton onClick={handleTemperatureDeviceClick} className="navbar__icon">
             <FaThermometerHalf style={{ color: "#333" }} />
           </IconButton>
+        )}
+        
+        {/* Add Supply Chain Nav here - Only show for logged in users */}
+        {user && (
+          <div className="navbar__supply-chain">
+            <SupplyChainNav />
+          </div>
         )}
         
         {/* Inventory Alerts - Only show for appropriate roles */}
