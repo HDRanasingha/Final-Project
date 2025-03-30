@@ -57,6 +57,35 @@ const CheckoutPage = () => {
     if (errorMessage) setErrorMessage("");
   };
 
+  // Add this function to update product stock after purchase
+  const updateProductStock = async (cartItems) => {
+    try {
+      // Process each item in the cart
+      for (const item of cartItems) {
+        // Determine the item type and call the appropriate endpoint
+        if (item.growerId) {
+          // This is a flower
+          await axios.put(`http://localhost:3001/api/flowers/update-stock/${item._id}`, {
+            quantity: item.quantity
+          });
+        } else if (item.sellerId) {
+          // This is a product
+          await axios.put(`http://localhost:3001/api/products/update-stock/${item._id}`, {
+            quantity: item.quantity
+          });
+        } else if (item.supplierId) {
+          // This is a supplier item
+          await axios.put(`http://localhost:3001/api/items/update-stock/${item._id}`, {
+            quantity: item.quantity
+          });
+        }
+      }
+      console.log("All stock updated successfully");
+    } catch (error) {
+      console.error("Error updating stock:", error);
+    }
+  };
+
   const handlePlaceOrder = async () => {
     if (!formData.name || !formData.address || !formData.phone || !formData.area) {
       setErrorMessage("Please fill in all required fields.");
@@ -97,6 +126,9 @@ const CheckoutPage = () => {
       }
 
       await axios.post("http://localhost:3001/api/orders/success", orderData);
+      
+      // Update stock for all purchased items
+      await updateProductStock(cart);
 
       localStorage.removeItem("cart");
 
