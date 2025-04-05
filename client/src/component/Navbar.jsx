@@ -10,6 +10,8 @@ import "../styles/Navbar.scss";
 import "../styles/Customers.scss";
 // Import SupplyChainNav component
 import SupplyChainNav from "./SupplyChainNav";
+// Import WeatherWidget component
+import WeatherWidget from "./WeatherWidget";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -331,6 +333,9 @@ const Navbar = () => {
           </IconButton>
         </form>
   
+        {/* Add Weather Widget here */}
+        <WeatherWidget />
+        
         {/* Message Icon with Unread Count - Only show for logged in users */}
         {user && (
           <IconButton onClick={handleMessageClick} className="navbar__messages">
