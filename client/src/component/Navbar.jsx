@@ -477,7 +477,14 @@ const Navbar = () => {
                   logistics, and seamless communication—reducing waste and
                   maximizing freshness.
                 </p>
-                <button className="hero__cta" onClick={() => navigate('/customer')}>Shop Now</button>
+                <button className="hero__cta" onClick={() => navigate('/search-results', { 
+                  state: { 
+                    flowers: flowers,
+                    products: products,
+                    items: items,
+                    query: "All Products" 
+                  } 
+                })}>Shop Now</button>
               </div>
             </div>
           </header>
