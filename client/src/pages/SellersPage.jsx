@@ -4,6 +4,24 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import "../styles/SellerPage.scss";
 import Footer from "../component/Footer";
+import { 
+  FaEdit, 
+  FaTrash, 
+  FaPlus, 
+  FaChartLine, 
+  FaBoxOpen, 
+  FaShoppingCart, 
+  FaUsers, 
+  FaSeedling, 
+  FaLeaf, 
+  FaBox, 
+  FaStore, 
+  FaTruck,
+  FaRecycle,
+  FaArrowRight,
+  FaDollarSign,
+  FaThermometerHalf
+} from "react-icons/fa";
 
 const SellersPage = () => {
   const [showForm, setShowForm] = useState(false);
@@ -17,25 +35,91 @@ const SellersPage = () => {
   });
   const [imagePreview, setImagePreview] = useState("");
   const [editProduct, setEditProduct] = useState(null);
+  const [stats, setStats] = useState({
+    revenue: 0,
+    ordersCount: 0,
+    productsCount: 0,
+    customersCount: 0
+  });
+  // Add these state variables near your other useState declarations
+  const [showTraceability, setShowTraceability] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editingTraceability, setEditingTraceability] = useState(false);
+  const [traceabilityData, setTraceabilityData] = useState({
+    supplier: {
+      name: "Quality Suppliers Co.",
+      location: "Western Province, Sri Lanka",
+      manager: "Supply Chain Partners"
+    },
+    rawMaterials: {
+      name: "Sunflower Seeds",
+      origin: "Local Farms, Sri Lanka",
+      supplier: "Sunshine Seeds Co."
+    },
+    growing: {
+      name: "Sunflower Field",
+      location: "Central Province, Sri Lanka",
+      harvested: "3 days ago",
+      grower: "Green Thumb Farms"
+    },
+    packaging: {
+      name: "Eco-Friendly Packaging",
+      material: "Recycled Paper",
+      provider: "GreenWrap Solutions"
+    }
+  });
+
   const navigate = useNavigate();
 
   // Fetch products from backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:3001/api/products/all", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setProducts(res.data);
+        setStats(prev => ({ ...prev, productsCount: res.data.length }));
       } catch (err) {
         console.error("Error fetching products:", err);
       }
     };
 
+    // Fetch orders summary
+    const fetchOrdersSummary = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:3001/api/orders/summary", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (res.data) {
+          setStats(prev => ({
+            ...prev,
+            revenue: res.data.totalRevenue || 0,
+            ordersCount: res.data.totalOrders || 0,
+            customersCount: res.data.uniqueCustomers || 0
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching orders summary:", err);
+        // Set some default stats if API fails
+        setStats(prev => ({
+          ...prev,
+          revenue: 15000,
+          ordersCount: 12,
+          customersCount: 8
+        }));
+      }
+    };
+
     fetchProducts();
+    fetchOrdersSummary();
   }, []);
 
   // Handle input changes
@@ -72,7 +156,7 @@ const SellersPage = () => {
     formData.append("img", newProduct.img);
 
     try {
-      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      const token = localStorage.getItem("token");
       await axios.post("http://localhost:3001/api/products/add", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -103,7 +187,7 @@ const SellersPage = () => {
     }
 
     try {
-      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:3001/api/products/edit/${editProduct._id}`,
         formData,
@@ -125,7 +209,7 @@ const SellersPage = () => {
   const handleRemove = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+        const token = localStorage.getItem("token");
         await axios.delete(`http://localhost:3001/api/products/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -139,167 +223,585 @@ const SellersPage = () => {
   };
 
   // Handle Card Click (Navigate to Product Details)
+  // Add these handler functions before the return statement, after the handleCardClick function
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
   };
+  
+  // Add these functions inside the component
+  const handleTraceabilityClick = (product) => {
+    setSelectedProduct(product);
+    setShowTraceability(true);
+  };
+
+  const handleCloseTraceability = () => {
+    setShowTraceability(false);
+  };
+  
+  // Add these missing functions
+  const handleTraceabilityChange = (section, field, value) => {
+    setTraceabilityData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const saveTraceabilityData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      // You'll need to create this endpoint on your backend
+      await axios.post(
+        `http://localhost:3001/api/supply-chain/update/${selectedProduct._id}`,
+        { traceabilityData },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setEditingTraceability(false);
+      // Optional: Show success message
+      alert("Supply chain data updated successfully!");
+    } catch (error) {
+      console.error("Error saving traceability data:", error);
+      alert("Failed to update supply chain data. Please try again.");
+    }
+  };
 
   return (
-    <div className="sellers-page">
+    <div className="seller-dashboard">
       <Navbar />
-      <div className="hero-section">
-        <img
-          src="/assets/seller.jpeg"
-          alt="Marketplace"
-          className="hero-image"
-        />
-        <div className="hero-text">
-          <h1>🛒 Seller Marketplace</h1>
-          <p>
-            Sellers can list high-quality products for customers, manage stock,
-            and track sales. Optimize your business with real-time insights.
-          </p>
-        </div>
-      </div>
-
-      <div className="inventory-section">
-        <h2>Manage Flower Inventory</h2>
-        <div className="product-list">
-          {products.map((product) => (
-            <div
-              className="product-card"
-              key={product._id}
-              onClick={() => handleCardClick(product._id)}
-              style={{ cursor: "pointer" }} // Makes it look clickable
-            >
-              {product.stock === 0 && <div className="sold-out">Sold Out</div>}
-              <img
-                src={`http://localhost:3001${product.img}`}
-                alt={product.name}
-              />
-              <h3>{product.name}</h3>
-              <p>Stock: {product.stock} Bunches</p>
-              <p>Price: Rs. {product.price}</p>
-              <button
-                className="edit-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditClick(product);
-                }}
-              >
-                Edit
-              </button>
-              <button
-                className="remove-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemove(product._id);
-                }}
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <div className="button-group">
-          <button
-            className="add-new-btn"
-            onClick={() => {
+      
+      <div className="seller-dashboard__container">
+        <div className="seller-dashboard__header">
+          <h1>Seller Dashboard</h1>
+          <div className="actions">
+            <button onClick={() => {
               setEditProduct(null);
               setShowForm(true);
-            }}
-          >
-            ➕ Add New Product
-          </button>
-          <button
-            className="view-orders-btn"
-            onClick={() => navigate("/recived/orders")}
-          >
-            📦 View Orders
-          </button>
+            }}>
+              <FaPlus />
+              Add Product
+            </button>
+            <button className="view-orders-btn" onClick={() => navigate("/recived/orders")}>
+              <FaShoppingCart />
+              View Orders
+            </button>
+          </div>
+        </div>
+        
+        <div className="seller-dashboard__stats">
+          <div className="stat-card">
+            <div className="stat-icon revenue">
+              <FaDollarSign />
+            </div>
+            <div className="stat-value">Rs. {stats.revenue.toLocaleString()}</div>
+            <div className="stat-label">Total Revenue</div>
+            <div className="stat-change positive">
+              <FaChartLine /> +12.5% from last month
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon orders">
+              <FaShoppingCart />
+            </div>
+            <div className="stat-value">{stats.ordersCount}</div>
+            <div className="stat-label">Total Orders</div>
+            <div className="stat-change positive">
+              <FaChartLine /> +5.3% from last month
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon products">
+              <FaBoxOpen />
+            </div>
+            <div className="stat-value">{stats.productsCount}</div>
+            <div className="stat-label">Products</div>
+            <div className="stat-change positive">
+              <FaChartLine /> +2 new this month
+            </div>
+          </div>
+          
+          <div className="stat-card">
+            <div className="stat-icon customers">
+              <FaUsers />
+            </div>
+            <div className="stat-value">{stats.customersCount}</div>
+            <div className="stat-label">Customers</div>
+            <div className="stat-change positive">
+              <FaChartLine /> +8.1% from last month
+            </div>
+          </div>
+        </div>
+        
+        <div className="inventory-section">
+          <h2>Manage Flower Inventory</h2>
+          <div className="product-grid">
+            {products.map((product) => (
+              <div
+                className="product-card"
+                key={product._id}
+                onClick={() => handleCardClick(product._id)}
+              >
+                {product.stock === 0 && <div className="sold-out">Sold Out</div>}
+                <div className="product-image">
+                  <img
+                    src={`http://localhost:3001${product.img}`}
+                    alt={product.name}
+                  />
+                </div>
+                <div className="product-info">
+                  <h3>{product.name}</h3>
+                  <p className="stock">Stock: {product.stock} Bunches</p>
+                  <p className="price">Rs. {product.price}</p>
+                  <div className="product-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditClick(product);
+                      }}
+                    >
+                      <FaEdit /> Edit
+                    </button>
+                    <button
+                      className="remove-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemove(product._id);
+                      }}
+                    >
+                      <FaTrash /> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Supply Chain Section - Moved inside the component return */}
+        <div className="supply-chain-section">
+          <h2>
+            Supply Chain Visibility
+            <a href="#" onClick={(e) => {
+              e.preventDefault();
+              navigate("/supply-chain");
+            }}>View All</a>
+          </h2>
+          
+          <div className="supply-chain-overview">
+            <div className="chain-step">
+              <div className="step-icon">
+                <FaSeedling />
+              </div>
+              <div className="step-info">
+                <h4>Raw Materials</h4>
+                <small>Sourced from local farms</small>
+              </div>
+            </div>
+            
+            <div className="flow-arrow">
+              <FaArrowRight />
+            </div>
+            
+            <div className="chain-step">
+              <div className="step-icon">
+                <FaLeaf />
+              </div>
+              <div className="step-info">
+                <h4>Growers</h4>
+                <small>Sustainable farming</small>
+              </div>
+            </div>
+            
+            <div className="flow-arrow">
+              <FaArrowRight />
+            </div>
+            
+            <div className="chain-step">
+              <div className="step-icon">
+                <FaBox />
+              </div>
+              <div className="step-info">
+                <h4>Packaging</h4>
+                <small>Eco-friendly materials</small>
+              </div>
+            </div>
+            
+            <div className="flow-arrow">
+              <FaArrowRight />
+            </div>
+            
+            <div className="chain-step">
+              <div className="step-icon">
+                <FaStore />
+              </div>
+              <div className="step-info">
+                <h4>Your Store</h4>
+                <small>Ready for customers</small>
+              </div>
+            </div>
+          </div>
+          
+          <div className="product-grid">
+            {products.slice(0, 3).map((product) => (
+              <div
+                className="product-card"
+                key={`trace-${product._id}`}
+                onClick={() => handleTraceabilityClick(product)}
+              >
+                <div className="product-image">
+                  <img
+                    src={`http://localhost:3001${product.img}`}
+                    alt={product.name}
+                  />
+                </div>
+                <div className="product-info">
+                  <h3>{product.name}</h3>
+                  <p className="stock">View complete supply chain</p>
+                  <button className="trace-btn">
+                    View Traceability
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="sustainability-info">
+            <div className="sustainability-card">
+              <h4>Carbon Footprint</h4>
+              <p>Low - locally sourced materials</p>
+            </div>
+            <div className="sustainability-card">
+              <h4>Water Usage</h4>
+              <p>Optimized irrigation systems</p>
+            </div>
+            <div className="sustainability-card">
+              <h4>Packaging</h4>
+              <p>Recyclable materials</p>
+            </div>
+          </div>
         </div>
 
         {showForm && (
-          <div className="add-product-form">
-            <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
-            <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
-              <div className="input-group">
-                <label>Product Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={editProduct ? editProduct.name : newProduct.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Stock:</label>
-                <input
-                  type="number"
-                  name="stock"
-                  value={editProduct ? editProduct.stock : newProduct.stock}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Description:</label>
-                <textarea
-                  name="description"
-                  value={
-                    editProduct ? editProduct.description : newProduct.description
-                  }
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label>Price (Rs.):</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={editProduct ? editProduct.price : newProduct.price}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label>📷 Upload Image:</label>
-                <input
-                  type="file"
-                  name="img"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  required={!editProduct}
-                />
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="image-preview"
+          <div className="form-overlay">
+            <div className="add-product-form">
+              <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
+              <form onSubmit={editProduct ? handleEditSubmit : handleSubmit}>
+                <div className="input-group">
+                  <label>Product Name:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editProduct ? editProduct.name : newProduct.name}
+                    onChange={handleInputChange}
+                    required
                   />
-                )}
-              </div>
+                </div>
 
-              <div className="form-buttons">
-                <button type="submit">{editProduct ? "Update" : "Add"}</button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditProduct(null);
-                  }}
-                >
-                  Cancel
-                </button>
+                <div className="input-group">
+                  <label>Stock:</label>
+                  <input
+                    type="number"
+                    name="stock"
+                    value={editProduct ? editProduct.stock : newProduct.stock}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Description:</label>
+                  <textarea
+                    name="description"
+                    value={
+                      editProduct ? editProduct.description : newProduct.description
+                    }
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>Price (Rs.):</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={editProduct ? editProduct.price : newProduct.price}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label>📷 Upload Image:</label>
+                  <input
+                    type="file"
+                    name="img"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    required={!editProduct}
+                  />
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="image-preview"
+                    />
+                  )}
+                  {editProduct && !imagePreview && (
+                    <img
+                      src={`http://localhost:3001${editProduct.img}`}
+                      alt="Current"
+                      className="image-preview"
+                    />
+                  )}
+                </div>
+
+                <div className="form-buttons">
+                  <button type="submit" className="submit-btn">
+                    {editProduct ? "Update Product" : "Add Product"}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => {
+                      setShowForm(false);
+                      setEditProduct(null);
+                      setImagePreview("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        
+        {/* Traceability Modal - Simplified version */}
+        {showTraceability && selectedProduct && (
+          <div className="product-traceability-modal">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>Supply Chain: {selectedProduct.name}</h3>
+                <div className="modal-actions">
+                  {!editingTraceability ? (
+                    <button 
+                      className="edit-traceability-btn" 
+                      onClick={() => setEditingTraceability(true)}
+                    >
+                      <FaEdit /> Edit Supply Chain
+                    </button>
+                  ) : (
+                    <button 
+                      className="save-traceability-btn" 
+                      onClick={saveTraceabilityData}
+                    >
+                      Save Changes
+                    </button>
+                  )}
+                  <button className="close-button" onClick={handleCloseTraceability}>×</button>
+                </div>
               </div>
-            </form>
+              <div className="modal-body">
+                {/* Temperature Section - New */}
+                <div className="journey-step">
+                  <div className="step-icon">
+                    <FaThermometerHalf />
+                  </div>
+                  <div className="step-content">
+                    <h4>Temperature Monitoring</h4>
+                    {!editingTraceability ? (
+                      <div className="materials-list">
+                        <div className="material-item">
+                          <div className="temperature-gauge">
+                            <div className="gauge-value">22°C</div>
+                            <div className="gauge-range">
+                              <span>Min: 18°C</span>
+                              <span>Max: 25°C</span>
+                            </div>
+                          </div>
+                          <div className="material-info">
+                            <h5>Cold Storage Facility</h5>
+                            <p>Current Status: Optimal</p>
+                            <p>Last Updated: Today, 10:30 AM</p>
+                            <div className="temperature-history">
+                              <div className="history-bar">
+                                <div className="history-point" style={{height: '60%'}} title="6 AM: 20°C"></div>
+                                <div className="history-point" style={{height: '70%'}} title="8 AM: 21°C"></div>
+                                <div className="history-point" style={{height: '75%'}} title="10 AM: 22°C"></div>
+                                <div className="history-point" style={{height: '73%'}} title="12 PM: 21.5°C"></div>
+                                <div className="history-point" style={{height: '70%'}} title="2 PM: 21°C"></div>
+                              </div>
+                              <div className="history-label">24-hour temperature history</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="edit-traceability-form">
+                        <div className="form-group">
+                          <label>Facility Name:</label>
+                          <input 
+                            type="text" 
+                            value="Cold Storage Facility"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Min Temperature (°C):</label>
+                          <input 
+                            type="number" 
+                            value="18"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Max Temperature (°C):</label>
+                          <input 
+                            type="number" 
+                            value="25"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Current Temperature (°C):</label>
+                          <input 
+                            type="number" 
+                            value="22"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Packaging Section - Kept */}
+                <div className="journey-step">
+                  <div className="step-icon">
+                    <FaBox />
+                  </div>
+                  <div className="step-content">
+                    <h4>Packaging</h4>
+                    {!editingTraceability ? (
+                      <div className="materials-list">
+                        <div className="material-item">
+                          <img src="/assets/ecofriendlly.jpg" alt="Eco Packaging" />
+                          <div className="material-info">
+                            <h5>{traceabilityData.packaging?.name || "Eco-Friendly Packaging"}</h5>
+                            <p>Material: {traceabilityData.packaging?.material || "Recycled Paper"}</p>
+                            <div className="supplier-info">
+                              <div className="supplier-icon">
+                                <FaUsers />
+                              </div>
+                              Provided by: {traceabilityData.packaging?.provider || "GreenWrap Solutions"}
+                            </div>
+                            <div className="eco-badge">
+                              <FaRecycle /> 100% Recyclable
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="edit-traceability-form">
+                        <div className="form-group">
+                          <label>Packaging Name:</label>
+                          <input 
+                            type="text" 
+                            value={traceabilityData.packaging?.name || "Eco-Friendly Packaging"}
+                            onChange={(e) => handleTraceabilityChange('packaging', 'name', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Material:</label>
+                          <input 
+                            type="text" 
+                            value={traceabilityData.packaging?.material || "Recycled Paper"}
+                            onChange={(e) => handleTraceabilityChange('packaging', 'material', e.target.value)}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Provider:</label>
+                          <input 
+                            type="text" 
+                            value={traceabilityData.packaging?.provider || "GreenWrap Solutions"}
+                            onChange={(e) => handleTraceabilityChange('packaging', 'provider', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Final Product Section - Kept */}
+                <div className="journey-step">
+                  <div className="step-icon">
+                    <FaStore />
+                  </div>
+                  <div className="step-content">
+                    <h4>Final Product</h4>
+                    <div className="materials-list">
+                      <div className="material-item">
+                        <img 
+                          src={`http://localhost:3001${selectedProduct.img}`} 
+                          alt={selectedProduct.name} 
+                        />
+                        <div className="material-info">
+                          <h5>{selectedProduct.name}</h5>
+                          <p>Price: Rs. {selectedProduct.price}</p>
+                          <p>Stock: {selectedProduct.stock} units</p>
+                          <div className="supplier-info">
+                            <div className="supplier-icon">
+                              <FaStore />
+                            </div>
+                            Sold by: Your Flower Shop
+                          </div>
+                          <div className="carbon-footprint">
+                            <div className="carbon-icon">
+                              <FaLeaf />
+                            </div>
+                            Carbon Footprint: Low
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Add a footer with sustainability information - Simplified */}
+              <div className="modal-footer">
+                <div className="sustainability-metrics">
+                  <div className="metric">
+                    <div className="metric-icon">
+                      <FaRecycle />
+                    </div>
+                    <div className="metric-info">
+                      <h5>Recyclable Packaging</h5>
+                      <p>100% recyclable materials used</p>
+                    </div>
+                  </div>
+                  <div className="metric">
+                    <div className="metric-icon">
+                      <FaLeaf />
+                    </div>
+                    <div className="metric-info">
+                      <h5>Carbon Footprint</h5>
+                      <p>30% lower than industry average</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="traceability-actions">
+                  <button className="print-btn" onClick={() => window.print()}>
+                    Print Traceability Report
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
