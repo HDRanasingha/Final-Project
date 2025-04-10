@@ -1,13 +1,27 @@
-$pinkred: #F8395A;
-$blue: #24355A;
-$lightgrey: #F7F8F8;
-$grey: #bdb9b9;
-$darkgrey: #969393;
-$green: #4CAF50;
-$orange: #FF9800;
+// Updating the color palette
+// Existing variables
+$pinkred: #4a6fa5; // Changed from pink to professional blue
+$pink: #f8f9fa;    // Changed to off-white
+$grey: #6c757d;    // Keeping neutral grey
+$blue: #2c3e50;    // Darker blue for text
+$lightgrey: #e9ecef;
+$darkgrey: #343a40;
 
-// Add the primary color variable
-$primary-color: $pinkred;
+// Add these missing variables
+$green: #28a745;
+$primary-color: #4a6fa5; // Same as $pinkred for consistency
+$secondary-color: #f59e0b;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
+// Additional variables that might be needed
+$background-color: #f8fafc;
+$text-color: #1e293b;
+$light-text-color: #64748b;
+$border-color: #e2e8f0;
+$white: #ffffff;
 
 @mixin shadow {
   box-shadow: 0 3px 10px 2px rgba(0, 0, 0, 0.2);

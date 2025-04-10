@@ -334,7 +334,7 @@ const Navbar = () => {
         </form>
   
         {/* Add Weather Widget here */}
-        <WeatherWidget />
+        
         
         {/* Message Icon with Unread Count - Only show for logged in users */}
         {user && (
