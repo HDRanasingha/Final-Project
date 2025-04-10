@@ -490,20 +490,20 @@ const Navbar = () => {
           </header>
   
           {/* Features Section */}
-          <section className="features">
+          <section className="features horizontal-features">
             <div className="feature">
-              <h3>Real-Time Inventory</h3>
               <img src="/assets/inventory.jpeg" alt="Real-Time Inventory" />
+              <h3>Real-Time Inventory</h3>
               <p>Manage your inventory live and never run out of stock.</p>
             </div>
             <div className="feature">
-              <h3>Streamlined Communication</h3>
               <img src="/assets/comunication.png" alt="Streamlined Communication" />
+              <h3>Streamlined Communication</h3>
               <p>Seamless chat integration with suppliers and buyers.</p>
             </div>
             <div className="feature">
-              <h3>Optimized Logistics</h3>
               <img src="/assets/logic.jpeg" alt="Optimized Logistics" />
+              <h3>Optimized Logistics</h3>
               <p>Reduce delays with AI-driven smart routing.</p>
             </div>
           </section>

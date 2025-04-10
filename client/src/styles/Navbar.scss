@@ -195,30 +195,59 @@
 /* Features Section */
 .features {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 2rem;
-  padding: 2rem;
+  padding: 3rem 5%;
+  margin: 2rem auto;
+  max-width: 1200px;
+  
+  @media (max-width: 768px) {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2rem;
+    overflow-x: auto;
+  }
 
   .feature {
     text-align: center;
-    max-width: 500px;
-
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+    
     img {
-      width: 10%;
-      height: auto;
-      border-radius: 100px;
+      width: 60px;
+      height: 60px;
       margin-bottom: 1rem;
+      object-fit: contain;
     }
-
+    
     h3 {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
       color: #333;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
+      
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
     }
-
+    
     p {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #666;
+      line-height: 1.5;
+      max-width: 90%;
+      margin: 0 auto;
+      
+      @media (max-width: 768px) {
+        font-size: 0.85rem;
+      }
     }
   }
 }
@@ -416,6 +445,37 @@
       .location {
         font-size: 0.7rem;
       }
+    }
+  }
+}
+
+/* Add this specific class for horizontal features */
+.horizontal-features {
+  display: flex;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: space-between;
+  align-items: center;
+  overflow-x: auto;
+  padding: 2rem 1rem;
+  
+  .feature {
+    flex: 0 0 auto;
+    width: 33.333%;
+    min-width: 200px;
+    padding: 0 10px;
+    margin-bottom: 0;
+  }
+  
+  /* Make sure mobile devices also display horizontally */
+  @media (max-width: 768px) {
+    flex-direction: row !important;
+    justify-content: flex-start;
+    
+    .feature {
+      flex: 0 0 auto;
+      width: 75%;
+      min-width: 200px;
     }
   }
 }
