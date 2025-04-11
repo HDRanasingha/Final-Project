@@ -117,7 +117,9 @@ const RegisterPage = () => {
                 <div className="form-group">
                   <label htmlFor="firstName">First Name</label>
                   <div className="input-with-icon">
-                    <FaUser className="input-icon" />
+                    <div className="icon-container">
+                      <FaUser className="input-icon" />
+                    </div>
                     <input
                       type="text"
                       id="firstName"
@@ -133,7 +135,9 @@ const RegisterPage = () => {
                 <div className="form-group">
                   <label htmlFor="lastName">Last Name</label>
                   <div className="input-with-icon">
-                    <FaUser className="input-icon" />
+                    <div className="icon-container">
+                      <FaUser className="input-icon" />
+                    </div>
                     <input
                       type="text"
                       id="lastName"
@@ -150,7 +154,9 @@ const RegisterPage = () => {
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <div className="input-with-icon">
-                  <FaEnvelope className="input-icon" />
+                  <div className="icon-container">
+                    <FaEnvelope className="input-icon" />
+                  </div>
                   <input
                     type="email"
                     id="email"
@@ -166,7 +172,9 @@ const RegisterPage = () => {
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <div className="input-with-icon">
-                  <FaLock className="input-icon" />
+                  <div className="icon-container">
+                    <FaLock className="input-icon" />
+                  </div>
                   <input
                     type="password"
                     id="password"
@@ -182,7 +190,9 @@ const RegisterPage = () => {
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <div className="input-with-icon">
-                  <FaLock className="input-icon" />
+                  <div className="icon-container">
+                    <FaLock className="input-icon" />
+                  </div>
                   <input
                     type="password"
                     id="confirmPassword"
@@ -200,7 +210,9 @@ const RegisterPage = () => {
               <div className="form-group">
                 <label htmlFor="role">Role</label>
                 <div className="input-with-icon">
-                  <FaUserTag className="input-icon" />
+                  <div className="icon-container">
+                    <FaUserTag className="input-icon" />
+                  </div>
                   <select
                     id="role"
                     name="role"

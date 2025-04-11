@@ -76,44 +76,108 @@ const SellersPage = () => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("Fetching products with token:", token);
         const res = await axios.get("http://localhost:3001/api/products/all", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("Products data:", res.data);
         setProducts(res.data);
-        setStats(prev => ({ ...prev, productsCount: res.data.length }));
+        setStats(prev => ({ 
+          ...prev, 
+          productsCount: res.data.length,
+          newProducts: res.data.filter(product => {
+            const productDate = new Date(product.createdAt);
+            const currentDate = new Date();
+            const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            return productDate >= monthStart;
+          }).length
+        }));
       } catch (err) {
         console.error("Error fetching products:", err);
       }
     };
 
-    // Fetch orders summary
+    // Fetch orders summary with detailed stats
     const fetchOrdersSummary = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3001/api/orders/summary", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        
+        // Get the current user's ID from localStorage
+        const user = JSON.parse(localStorage.getItem("user"));
+        const sellerId = user?._id;
+        
+        console.log("Current seller ID:", sellerId);
+        
+        if (!sellerId) {
+          console.error("Seller ID not found");
+          return;
+        }
+        
+        // Fetch all orders
+        const ordersResponse = await axios.get("http://localhost:3001/api/orders", {
+          headers: { Authorization: `Bearer ${token}` }
         });
         
-        if (res.data) {
-          setStats(prev => ({
-            ...prev,
-            revenue: res.data.totalRevenue || 0,
-            ordersCount: res.data.totalOrders || 0,
-            customersCount: res.data.uniqueCustomers || 0
-          }));
+        console.log("Orders API response:", ordersResponse.data);
+        
+        if (ordersResponse.data && ordersResponse.data.length > 0) {
+          // Filter orders for this seller only
+          const sellerOrders = ordersResponse.data.filter(order => {
+            return order.items && order.items.some(item => 
+              item.listerId === sellerId
+            );
+          });
+          
+          console.log("Filtered seller orders:", sellerOrders);
+          
+          // Calculate seller's total revenue
+          let totalRevenue = 0;
+          
+          sellerOrders.forEach(order => {
+            order.items.forEach(item => {
+              if (item.listerId === sellerId) {
+                totalRevenue += item.price * item.quantity;
+              }
+            });
+          });
+          
+          // Count unique customers
+          const customerIds = new Set();
+          sellerOrders.forEach(order => {
+            if (order.customer && order.customer.customerId) {
+              customerIds.add(order.customer.customerId);
+            }
+          });
+          
+          // Update stats
+          setStats({
+            revenue: totalRevenue,
+            ordersCount: sellerOrders.length,
+            productsCount: products.length,
+            customersCount: customerIds.size,
+            revenueGrowth: 0,
+            ordersGrowth: 0,
+            customersGrowth: 0,
+            newProducts: 0
+          });
+          
+          console.log("Updated seller stats:", {
+            revenue: totalRevenue,
+            ordersCount: sellerOrders.length,
+            productsCount: products.length,
+            customersCount: customerIds.size
+          });
         }
       } catch (err) {
-        console.error("Error fetching orders summary:", err);
-        // Set some default stats if API fails
+        console.error("Error fetching orders:", err);
+        // Use default values if the API call fails
         setStats(prev => ({
           ...prev,
-          revenue: 15000,
-          ordersCount: 12,
-          customersCount: 8
+          revenue: 0,
+          ordersCount: 0,
+          customersCount: 0
         }));
       }
     };
@@ -300,8 +364,8 @@ const SellersPage = () => {
             </div>
             <div className="stat-value">Rs. {stats.revenue.toLocaleString()}</div>
             <div className="stat-label">Total Revenue</div>
-            <div className="stat-change positive">
-              <FaChartLine /> +12.5% from last month
+            <div className={`stat-change ${stats.revenueGrowth >= 0 ? 'positive' : 'negative'}`}>
+              <FaChartLine /> {stats.revenueGrowth >= 0 ? '+' : ''}{stats.revenueGrowth || 0}% from last month
             </div>
           </div>
           
@@ -311,8 +375,8 @@ const SellersPage = () => {
             </div>
             <div className="stat-value">{stats.ordersCount}</div>
             <div className="stat-label">Total Orders</div>
-            <div className="stat-change positive">
-              <FaChartLine /> +5.3% from last month
+            <div className={`stat-change ${stats.ordersGrowth >= 0 ? 'positive' : 'negative'}`}>
+              <FaChartLine /> {stats.ordersGrowth >= 0 ? '+' : ''}{stats.ordersGrowth || 0}% from last month
             </div>
           </div>
           
@@ -323,7 +387,7 @@ const SellersPage = () => {
             <div className="stat-value">{stats.productsCount}</div>
             <div className="stat-label">Products</div>
             <div className="stat-change positive">
-              <FaChartLine /> +2 new this month
+              <FaChartLine /> +{stats.newProducts || 0} new this month
             </div>
           </div>
           
@@ -333,8 +397,8 @@ const SellersPage = () => {
             </div>
             <div className="stat-value">{stats.customersCount}</div>
             <div className="stat-label">Customers</div>
-            <div className="stat-change positive">
-              <FaChartLine /> +8.1% from last month
+            <div className={`stat-change ${stats.customersGrowth >= 0 ? 'positive' : 'negative'}`}>
+              <FaChartLine /> {stats.customersGrowth >= 0 ? '+' : ''}{stats.customersGrowth || 0}% from last month
             </div>
           </div>
         </div>

@@ -468,7 +468,7 @@ const Navbar = () => {
         <div className="hero">
           <header className="hero__header">
             <div className="hero__container">
-              <img src="/assets/new.jpeg" alt="Flower SCM" className="hero__image" />
+              <img src="/assets/now.jpg" alt="Flower SCM" className="hero__image" />
               <div className="hero__text">
                 <h1>Revolutionizing the Fresh Flower Supply Chain</h1>
                 <p>

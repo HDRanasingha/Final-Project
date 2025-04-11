@@ -176,17 +176,19 @@
       margin-top: 20px;
       font-size: 1rem;
       padding: 12px 24px;
-      background-color: rgb(154, 132, 5);
-      border: none;
+      background-color: white;
+      border: 1px solid rgba(255, 255, 255, 0.8);
       border-radius: 6px;
-      color: white;
+      color: #333;
       cursor: pointer;
       font-weight: 600;
-      transition: background 0.3s, transform 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 
       &:hover {
-        background-color: darken(rgb(154, 132, 5), 10%);
+        background-color: rgba(255, 255, 255, 0.9);
         transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
       }
     }
   }
@@ -456,7 +458,7 @@
   flex-wrap: nowrap !important;
   justify-content: space-between;
   align-items: center;
-  overflow-x: auto;
+  overflow-x: hidden;
   padding: 2rem 1rem;
   
   .feature {

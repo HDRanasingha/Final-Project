@@ -103,7 +103,9 @@ const LoginPage = () => {
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <div className="input-with-icon">
-                  <FaEnvelope className="input-icon" />
+                  <div className="icon-container">
+                    <FaEnvelope className="input-icon" />
+                  </div>
                   <input
                     type="email"
                     id="email"
@@ -118,7 +120,9 @@ const LoginPage = () => {
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <div className="input-with-icon">
-                  <FaLock className="input-icon" />
+                  <div className="icon-container">
+                    <FaLock className="input-icon" />
+                  </div>
                   <input
                     type="password"
                     id="password"
