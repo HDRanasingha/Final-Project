@@ -308,24 +308,6 @@ const SupplyChainPage = () => {
             </div>
           </div>
         </div>
-        
-        <div className="sustainability-info">
-          <h3>Sustainability Information</h3>
-          <div className="sustainability-metrics">
-            <div className="metric">
-              <h4>Carbon Footprint</h4>
-              <p>Low - locally sourced materials</p>
-            </div>
-            <div className="metric">
-              <h4>Water Usage</h4>
-              <p>Medium - optimized irrigation</p>
-            </div>
-            <div className="metric">
-              <h4>Packaging</h4>
-              <p>Recyclable materials</p>
-            </div>
-          </div>
-        </div>
       </div>
     );
   };

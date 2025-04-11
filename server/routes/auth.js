@@ -20,14 +20,16 @@ const upload = multer({ storage });
 /* USER REGISTER */
 router.post("/register", upload.single("profileImage"), async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role } = req.body;
-    const profileImage = req.file;
-
-    if (!profileImage) {
-      return res.status(400).send("No file uploaded");
+    const { firstName, lastName, email, password } = req.body;
+    let role = req.body.role;
+    
+    // Convert role to lowercase to ensure consistency
+    if (role) {
+      role = role.toLowerCase();
     }
 
-    const profileImagePath = profileImage.path;
+    // Check if profile image was uploaded
+    const profileImagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -36,14 +38,14 @@ router.post("/register", upload.single("profileImage"), async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    
     const newUser = new User({
       firstName,
       lastName,
       email,
       password: hashedPassword,
       profileImagePath,
-      role, // Add the role here
+      role,
     });
 
     await newUser.save();

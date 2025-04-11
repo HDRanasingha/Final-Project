@@ -5,33 +5,39 @@
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
   
   .supply-chain-container {
     flex: 1;
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
     
     h1 {
-      color: #333;
-      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      margin-bottom: 2rem;
       text-align: center;
+      font-size: 2.2rem;
+      font-weight: 600;
     }
     
     .view-selector {
       display: flex;
       justify-content: center;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 0.5rem;
       
       button {
         background: none;
         border: none;
-        padding: 0.75rem 1.5rem;
+        padding: 1rem 2rem;
         margin: 0 0.5rem;
         font-size: 1rem;
         cursor: pointer;
-        border-bottom: 2px solid transparent;
-        transition: all 0.3s;
+        color: #666;
+        position: relative;
+        transition: all 0.3s ease;
         
         &:hover {
           color: $primary-color;
@@ -39,8 +45,18 @@
         
         &.active {
           color: $primary-color;
-          border-bottom: 2px solid $primary-color;
           font-weight: 600;
+          
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: $primary-color;
+            border-radius: 3px;
+          }
         }
       }
     }
@@ -61,9 +77,35 @@
   
   // Overview styles
   .supply-chain-overview {
-    h2, h3 {
-      margin-bottom: 1.5rem;
-      color: #333;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    
+    h2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+      font-size: 1.5rem;
+      font-weight: 600;
+      
+      a {
+        color: $primary-color;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateX(5px);
+        }
+      }
     }
     
     .supply-chain-stats {
@@ -103,48 +145,76 @@
     }
     
     .supply-chain-flow {
-      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 3rem 0;
+      position: relative;
       
-      .flow-diagram {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
+      &:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(to right, 
+          rgba($primary-color, 0.1),
+          rgba($primary-color, 0.5),
+          rgba($primary-color, 0.1));
+        z-index: 0;
+      }
+      
+      .flow-step {
+        position: relative;
+        z-index: 1;
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        flex: 1;
+        max-width: 200px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
         
-        .flow-step {
-          flex: 1;
-          min-width: 150px;
-          text-align: center;
-          padding: 1rem;
-          
-          .flow-icon {
-            width: 70px;
-            height: 70px;
-            background-color: $primary-color;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.5rem;
-          }
-          
-          p {
-            margin: 0 0 0.25rem;
-            font-weight: 600;
-          }
-          
-          small {
-            color: #666;
-          }
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        .flow-arrow {
+        .step-icon {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1rem;
           font-size: 1.5rem;
-          color: #666;
-          margin: 0 0.5rem;
+          box-shadow: 0 4px 12px rgba($primary-color, 0.2);
         }
+        
+        h4 {
+          color: #2c3e50;
+          margin: 0 0 0.5rem;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+        
+        small {
+          color: #666;
+          font-size: 0.85rem;
+          display: block;
+        }
+      }
+      
+      .flow-arrow {
+        color: $primary-color;
+        font-size: 1.5rem;
+        margin: 0 -1rem;
+        z-index: 2;
       }
     }
     
@@ -260,87 +330,6 @@
         }
       }
     }
-    
-    .supply-chain-journey {
-      margin-bottom: 2rem;
-      
-      .journey-timeline {
-        .journey-step {
-          display: flex;
-          margin-bottom: 2rem;
-          
-          .step-icon {
-            width: 50px;
-            height: 50px;
-            background-color: $primary-color;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1.5rem;
-            flex-shrink: 0;
-          }
-          
-          .step-content {
-            flex: 1;
-            
-            h4 {
-              margin-top: 0;
-              margin-bottom: 1rem;
-            }
-            
-            .materials-list {
-              .material-item {
-                display: flex;
-                align-items: center;
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                padding: 1rem;
-                margin-bottom: 1rem;
-                
-                img {
-                  width: 80px;
-                  height: 80px;
-                  object-fit: cover;
-                  border-radius: 4px;
-                  margin-right: 1rem;
-                }
-                
-                p {
-                  margin: 0.25rem 0;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    .sustainability-info {
-      .sustainability-metrics {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        
-        .metric {
-          background-color: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          padding: 1.5rem;
-          
-          h4 {
-            margin-top: 0;
-            color: $primary-color;
-          }
-          
-          p {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
   }
   
   // Order view styles
@@ -417,31 +406,37 @@
 @media (max-width: 768px) {
   .supply-chain-page {
     .supply-chain-container {
-      padding: 0 0.5rem;
-    }
-    
-    .product-traceability-view {
-      .product-details {
-        flex-direction: column;
-        
-        .product-image {
-          width: 100%;
-          height: 200px;
-        }
+      padding: 0 1rem;
+      
+      h1 {
+        font-size: 1.8rem;
       }
     }
     
-    .supply-chain-flow {
-      .flow-diagram {
+    .supply-chain-overview {
+      padding: 1.5rem;
+      
+      .supply-chain-flow {
         flex-direction: column;
+        gap: 2rem;
+        
+        &:before {
+          width: 2px;
+          height: 100%;
+          left: 50%;
+          top: 0;
+          background: linear-gradient(to bottom, 
+            rgba($primary-color, 0.1),
+            rgba($primary-color, 0.5),
+            rgba($primary-color, 0.1));
+        }
         
         .flow-step {
-          margin-bottom: 1rem;
+          max-width: 100%;
         }
         
         .flow-arrow {
           transform: rotate(90deg);
-          margin: 0.5rem 0;
         }
       }
     }

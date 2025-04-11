@@ -12,6 +12,23 @@ import "../styles/Customers.scss";
 import SupplyChainNav from "./SupplyChainNav";
 // Import WeatherWidget component
 import WeatherWidget from "./WeatherWidget";
+import { 
+  FaEdit, 
+  FaTrash, 
+  FaPlus, 
+  FaChartLine, 
+  FaBoxOpen, 
+  FaShoppingCart, 
+  FaUsers, 
+  FaSeedling, 
+  FaLeaf, 
+  FaBox, 
+  FaStore, 
+  FaTruck,
+  FaRecycle,
+  FaArrowRight,
+  FaDollarSign
+} from "react-icons/fa";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -180,11 +197,6 @@ const Navbar = () => {
     navigate('/messages');
   };
   
-  // Add this function to handle temperature device navigation
-  const handleTemperatureDeviceClick = () => {
-    navigate('/temperature-devices');
-  };
-  
   // Add search function
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -333,9 +345,6 @@ const Navbar = () => {
           </IconButton>
         </form>
   
-        {/* Add Weather Widget here */}
-        
-        
         {/* Message Icon with Unread Count - Only show for logged in users */}
         {user && (
           <IconButton onClick={handleMessageClick} className="navbar__messages">
@@ -345,15 +354,8 @@ const Navbar = () => {
           </IconButton>
         )}
         
-        {/* Temperature Device Icon - Only show for appropriate roles */}
-        {user && ['admin', 'grower', 'seller'].includes(user.role) && (
-          <IconButton onClick={handleTemperatureDeviceClick} className="navbar__icon">
-            <FaThermometerHalf style={{ color: "#333" }} />
-          </IconButton>
-        )}
-        
-        {/* Add Supply Chain Nav here - Only show for logged in users */}
-        {user && (
+        {/* Supply Chain Nav - Only show for admin users */}
+        {user && user.role === 'admin' && (
           <div className="navbar__supply-chain">
             <SupplyChainNav />
           </div>

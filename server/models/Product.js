@@ -5,6 +5,12 @@ const ProductSchema = new mongoose.Schema({
           type: String,
           required: true,
       },
+      category: {
+          type: String,
+          required: true,
+          enum: ['arrangements', 'wedding', 'events', 'bouquets', 'gifts'],
+          default: 'arrangements'
+      },
       stock: {
           type: Number,
           required: true,

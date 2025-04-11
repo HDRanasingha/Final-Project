@@ -333,13 +333,11 @@ const AdminPage = () => {
     labels: monthlyIncome.map((income) => monthNames[income._id - 1]),
     datasets: [
       {
-        label: 'Total Income',
+        label: 'Monthly Income',
         data: monthlyIncome.map((income) => income.totalIncome),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
+        borderWidth: 1,
       },
     ],
   };
@@ -352,7 +350,7 @@ const AdminPage = () => {
       },
       title: {
         display: true,
-        text: 'Expected Monthly Income',
+        text: 'Monthly Income',
         font: {
           size: 16,
           weight: 'bold'
@@ -480,7 +478,7 @@ const AdminPage = () => {
               <div className="chart-row">
                 <div className="chart-container">
                   <h2>Monthly Income</h2>
-                  <Line data={totalIncomeChartData} options={totalIncomeChartOptions} />
+                  <Bar data={totalIncomeChartData} options={totalIncomeChartOptions} />
                 </div>
                 <div className="chart-container">
                   <h2>Order Status</h2>
@@ -678,7 +676,7 @@ const AdminPage = () => {
               <div className="chart-row">
                 <div className="chart-container full-width">
                   <h2>Monthly Income Trend</h2>
-                  <Line data={totalIncomeChartData} options={totalIncomeChartOptions} />
+                  <Bar data={totalIncomeChartData} options={totalIncomeChartOptions} />
                 </div>
               </div>
               

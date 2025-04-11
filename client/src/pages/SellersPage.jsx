@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
-import "../styles/SellerPage.scss";
 import Footer from "../component/Footer";
 import { 
   FaEdit, 
@@ -22,6 +22,7 @@ import {
   FaDollarSign,
   FaThermometerHalf
 } from "react-icons/fa";
+import "../styles/SellerPage.scss";
 
 const SellersPage = () => {
   const [showForm, setShowForm] = useState(false);
@@ -40,7 +41,6 @@ const SellersPage = () => {
     ordersCount: 0,
     productsCount: 0
   });
-  // Add these state variables near your other useState declarations
   const [showTraceability, setShowTraceability] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [editingTraceability, setEditingTraceability] = useState(false);
@@ -69,6 +69,7 @@ const SellersPage = () => {
   });
 
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
   // Fetch products from backend
   useEffect(() => {
@@ -446,110 +447,6 @@ const SellersPage = () => {
           </div>
         </div>
 
-        {/* Supply Chain Section - Moved inside the component return */}
-        <div className="supply-chain-section">
-          <h2>
-            Supply Chain Visibility
-            <a href="#" onClick={(e) => {
-              e.preventDefault();
-              navigate("/supply-chain");
-            }}>View All</a>
-          </h2>
-          
-          <div className="supply-chain-overview">
-            <div className="chain-step">
-              <div className="step-icon">
-                <FaSeedling />
-              </div>
-              <div className="step-info">
-                <h4>Raw Materials</h4>
-                <small>Sourced from local farms</small>
-              </div>
-            </div>
-            
-            <div className="flow-arrow">
-              <FaArrowRight />
-            </div>
-            
-            <div className="chain-step">
-              <div className="step-icon">
-                <FaLeaf />
-              </div>
-              <div className="step-info">
-                <h4>Growers</h4>
-                <small>Sustainable farming</small>
-              </div>
-            </div>
-            
-            <div className="flow-arrow">
-              <FaArrowRight />
-            </div>
-            
-            <div className="chain-step">
-              <div className="step-icon">
-                <FaBox />
-              </div>
-              <div className="step-info">
-                <h4>Packaging</h4>
-                <small>Eco-friendly materials</small>
-              </div>
-            </div>
-            
-            <div className="flow-arrow">
-              <FaArrowRight />
-            </div>
-            
-            <div className="chain-step">
-              <div className="step-icon">
-                <FaStore />
-              </div>
-              <div className="step-info">
-                <h4>Your Store</h4>
-                <small>Ready for customers</small>
-              </div>
-            </div>
-          </div>
-          
-          <div className="product-grid">
-            {products.slice(0, 3).map((product) => (
-              <div
-                className="product-card"
-                key={`trace-${product._id}`}
-                onClick={() => handleTraceabilityClick(product)}
-              >
-                <div className="product-image">
-                  <img
-                    src={`http://localhost:3001${product.img}`}
-                    alt={product.name}
-                  />
-                </div>
-                <div className="product-info">
-                  <h3>{product.name}</h3>
-                  <p className="stock">View complete supply chain</p>
-                  <button className="trace-btn">
-                    View Traceability
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="sustainability-info">
-            <div className="sustainability-card">
-              <h4>Carbon Footprint</h4>
-              <p>Low - locally sourced materials</p>
-            </div>
-            <div className="sustainability-card">
-              <h4>Water Usage</h4>
-              <p>Optimized irrigation systems</p>
-            </div>
-            <div className="sustainability-card">
-              <h4>Packaging</h4>
-              <p>Recyclable materials</p>
-            </div>
-          </div>
-        </div>
-
         {showForm && (
           <div className="form-overlay">
             <div className="add-product-form">
@@ -751,16 +648,9 @@ const SellersPage = () => {
                     {!editingTraceability ? (
                       <div className="materials-list">
                         <div className="material-item">
-                          <img src="/assets/ecofriendlly.jpg" alt="Eco Packaging" />
                           <div className="material-info">
                             <h5>{traceabilityData.packaging?.name || "Eco-Friendly Packaging"}</h5>
                             <p>Material: {traceabilityData.packaging?.material || "Recycled Paper"}</p>
-                            <div className="supplier-info">
-                              <div className="supplier-icon">
-                                <FaUsers />
-                              </div>
-                              Provided by: {traceabilityData.packaging?.provider || "GreenWrap Solutions"}
-                            </div>
                             <div className="eco-badge">
                               <FaRecycle /> 100% Recyclable
                             </div>
@@ -770,27 +660,11 @@ const SellersPage = () => {
                     ) : (
                       <div className="edit-traceability-form">
                         <div className="form-group">
-                          <label>Packaging Name:</label>
-                          <input 
-                            type="text" 
-                            value={traceabilityData.packaging?.name || "Eco-Friendly Packaging"}
-                            onChange={(e) => handleTraceabilityChange('packaging', 'name', e.target.value)}
-                          />
-                        </div>
-                        <div className="form-group">
                           <label>Material:</label>
                           <input 
                             type="text" 
                             value={traceabilityData.packaging?.material || "Recycled Paper"}
                             onChange={(e) => handleTraceabilityChange('packaging', 'material', e.target.value)}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Provider:</label>
-                          <input 
-                            type="text" 
-                            value={traceabilityData.packaging?.provider || "GreenWrap Solutions"}
-                            onChange={(e) => handleTraceabilityChange('packaging', 'provider', e.target.value)}
                           />
                         </div>
                       </div>
@@ -805,61 +679,56 @@ const SellersPage = () => {
                   </div>
                   <div className="step-content">
                     <h4>Final Product</h4>
-                    <div className="materials-list">
-                      <div className="material-item">
-                        <img 
-                          src={`http://localhost:3001${selectedProduct.img}`} 
-                          alt={selectedProduct.name} 
-                        />
-                        <div className="material-info">
-                          <h5>{selectedProduct.name}</h5>
-                          <p>Price: Rs. {selectedProduct.price}</p>
-                          <p>Stock: {selectedProduct.stock} units</p>
-                          <div className="supplier-info">
-                            <div className="supplier-icon">
-                              <FaStore />
-                            </div>
-                            Sold by: Your Flower Shop
-                          </div>
-                          <div className="carbon-footprint">
-                            <div className="carbon-icon">
-                              <FaLeaf />
-                            </div>
-                            Carbon Footprint: Low
-                          </div>
+                    <div className="material-item">
+                      <img 
+                        src={`http://localhost:3001${selectedProduct.img}`} 
+                        alt={selectedProduct.name} 
+                      />
+                      <div>
+                        <p><strong>{selectedProduct.name}</strong></p>
+                        <p>Sold by: {user?.firstName || ''} {user?.lastName || ''}</p>
+                        <p>Quality Checked: 
+                          {!editingTraceability ? (
+                            <span className={selectedProduct.qualityChecked ? "status-yes" : "status-no"}>
+                              {selectedProduct.qualityChecked ? "Yes" : "No"}
+                            </span>
+                          ) : (
+                            <select
+                              value={selectedProduct.qualityChecked}
+                              onChange={(e) => {
+                                const updatedProduct = { ...selectedProduct, qualityChecked: e.target.value === 'true' };
+                                setSelectedProduct(updatedProduct);
+                              }}
+                            >
+                              <option value="true">Yes</option>
+                              <option value="false">No</option>
+                            </select>
+                          )}
+                        </p>
+                        <p>Date Added: {new Date(selectedProduct.createdAt).toLocaleDateString()}</p>
+                        <div className="carbon-footprint-selector">
+                          <label>Carbon Footprint:</label>
+                          {!editingTraceability ? (
+                            <span className={`footprint-badge ${selectedProduct.carbonFootprint?.toLowerCase() || 'low'}`}>
+                              {selectedProduct.carbonFootprint || 'Low'}
+                            </span>
+                          ) : (
+                            <select
+                              value={selectedProduct.carbonFootprint || 'Low'}
+                              onChange={(e) => {
+                                const updatedProduct = { ...selectedProduct, carbonFootprint: e.target.value };
+                                setSelectedProduct(updatedProduct);
+                              }}
+                            >
+                              <option value="Low">Low</option>
+                              <option value="Medium">Medium</option>
+                              <option value="High">High</option>
+                            </select>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              
-              {/* Add a footer with sustainability information - Simplified */}
-              <div className="modal-footer">
-                <div className="sustainability-metrics">
-                  <div className="metric">
-                    <div className="metric-icon">
-                      <FaRecycle />
-                    </div>
-                    <div className="metric-info">
-                      <h5>Recyclable Packaging</h5>
-                      <p>100% recyclable materials used</p>
-                    </div>
-                  </div>
-                  <div className="metric">
-                    <div className="metric-icon">
-                      <FaLeaf />
-                    </div>
-                    <div className="metric-info">
-                      <h5>Carbon Footprint</h5>
-                      <p>30% lower than industry average</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="traceability-actions">
-                  <button className="print-btn" onClick={() => window.print()}>
-                    Print Traceability Report
-                  </button>
                 </div>
               </div>
             </div>

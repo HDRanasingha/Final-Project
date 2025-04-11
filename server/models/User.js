@@ -1,23 +1,29 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       required: true,
+      min: 2,
+      max: 50,
     },
     lastName: {
       type: String,
       required: true,
+      min: 2,
+      max: 50,
     },
     email: {
       type: String,
       required: true,
+      max: 50,
       unique: true,
     },
     password: {
       type: String,
       required: true,
+      min: 5,
     },
     profileImagePath: {
       type: String,
@@ -25,31 +31,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'user', 'supplier', 'grower', 'seller'],
-      default: 'user', // Default role is 'user'
+      enum: ["admin", "user", "seller", "grower", "supplier"],
+      default: "user",
     },
-    
-    growers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Grower",
-      },
-    ],
-    suppliers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Supplier",
-      },
-    ],
-    sellers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Seller",
-      },
-    ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", UserSchema);
 module.exports = User;
