@@ -38,8 +38,7 @@ const SellersPage = () => {
   const [stats, setStats] = useState({
     revenue: 0,
     ordersCount: 0,
-    productsCount: 0,
-    customersCount: 0
+    productsCount: 0
   });
   // Add these state variables near your other useState declarations
   const [showTraceability, setShowTraceability] = useState(false);
@@ -103,12 +102,8 @@ const SellersPage = () => {
     const fetchOrdersSummary = async () => {
       try {
         const token = localStorage.getItem("token");
-        
-        // Get the current user's ID from localStorage
         const user = JSON.parse(localStorage.getItem("user"));
         const sellerId = user?._id;
-        
-        console.log("Current seller ID:", sellerId);
         
         if (!sellerId) {
           console.error("Seller ID not found");
@@ -120,64 +115,77 @@ const SellersPage = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         
-        console.log("Orders API response:", ordersResponse.data);
-        
         if (ordersResponse.data && ordersResponse.data.length > 0) {
-          // Filter orders for this seller only
-          const sellerOrders = ordersResponse.data.filter(order => {
-            return order.items && order.items.some(item => 
-              item.listerId === sellerId
-            );
-          });
+          const currentDate = new Date();
+          const currentMonth = currentDate.getMonth();
+          const currentYear = currentDate.getFullYear();
           
-          console.log("Filtered seller orders:", sellerOrders);
+          // Get start dates for current and previous month
+          const currentMonthStart = new Date(currentYear, currentMonth, 1);
+          const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
           
-          // Calculate seller's total revenue
-          let totalRevenue = 0;
+          // Filter orders for current seller
+          const sellerOrders = ordersResponse.data.filter(order => 
+            order.items && order.items.some(item => item.listerId === sellerId)
+          );
+          
+          // Calculate current month and previous month metrics
+          let currentMonthRevenue = 0;
+          let previousMonthRevenue = 0;
+          let currentMonthOrders = 0;
+          let previousMonthOrders = 0;
           
           sellerOrders.forEach(order => {
-            order.items.forEach(item => {
-              if (item.listerId === sellerId) {
-                totalRevenue += item.price * item.quantity;
-              }
-            });
-          });
-          
-          // Count unique customers
-          const customerIds = new Set();
-          sellerOrders.forEach(order => {
-            if (order.customer && order.customer.customerId) {
-              customerIds.add(order.customer.customerId);
+            const orderDate = new Date(order.createdAt);
+            const orderRevenue = order.items
+              .filter(item => item.listerId === sellerId)
+              .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            if (orderDate >= currentMonthStart) {
+              currentMonthRevenue += orderRevenue;
+              currentMonthOrders++;
+            } else if (orderDate >= previousMonthStart && orderDate < currentMonthStart) {
+              previousMonthRevenue += orderRevenue;
+              previousMonthOrders++;
             }
           });
           
-          // Update stats
+          // Calculate growth percentages
+          const revenueGrowth = previousMonthRevenue === 0 
+            ? 100 
+            : Math.round(((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100);
+          
+          const ordersGrowth = previousMonthOrders === 0 
+            ? 100 
+            : Math.round(((currentMonthOrders - previousMonthOrders) / previousMonthOrders) * 100);
+          
+          // Update stats with calculated values
           setStats({
-            revenue: totalRevenue,
-            ordersCount: sellerOrders.length,
+            revenue: currentMonthRevenue,
+            ordersCount: currentMonthOrders,
             productsCount: products.length,
-            customersCount: customerIds.size,
-            revenueGrowth: 0,
-            ordersGrowth: 0,
-            customersGrowth: 0,
+            revenueGrowth: revenueGrowth,
+            ordersGrowth: ordersGrowth,
             newProducts: 0
           });
           
           console.log("Updated seller stats:", {
-            revenue: totalRevenue,
-            ordersCount: sellerOrders.length,
-            productsCount: products.length,
-            customersCount: customerIds.size
+            currentMonthRevenue,
+            previousMonthRevenue,
+            revenueGrowth,
+            currentMonthOrders,
+            previousMonthOrders,
+            ordersGrowth
           });
         }
       } catch (err) {
         console.error("Error fetching orders:", err);
-        // Use default values if the API call fails
         setStats(prev => ({
           ...prev,
           revenue: 0,
           ordersCount: 0,
-          customersCount: 0
+          revenueGrowth: 0,
+          ordersGrowth: 0
         }));
       }
     };
@@ -390,17 +398,6 @@ const SellersPage = () => {
               <FaChartLine /> +{stats.newProducts || 0} new this month
             </div>
           </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon customers">
-              <FaUsers />
-            </div>
-            <div className="stat-value">{stats.customersCount}</div>
-            <div className="stat-label">Customers</div>
-            <div className={`stat-change ${stats.customersGrowth >= 0 ? 'positive' : 'negative'}`}>
-              <FaChartLine /> {stats.customersGrowth >= 0 ? '+' : ''}{stats.customersGrowth || 0}% from last month
-            </div>
-          </div>
         </div>
         
         <div className="inventory-section">
@@ -408,7 +405,7 @@ const SellersPage = () => {
           <div className="product-grid">
             {products.map((product) => (
               <div
-                className="product-card"
+                className={`product-card ${product.stock === 0 ? 'sold-out' : ''}`}
                 key={product._id}
                 onClick={() => handleCardClick(product._id)}
               >

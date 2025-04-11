@@ -209,6 +209,7 @@ $orange: #FF9800; // Add this if $orange is not defined in variables.scss
           object-fit: cover;
           transition: transform 0.5s ease;
         }
+
       }
 
       &:hover .product-image img {
@@ -308,6 +309,26 @@ $orange: #FF9800; // Add this if $orange is not defined in variables.scss
     align-items: center;
     z-index: 1000;
     padding: 1rem;
+    overflow-y: auto;
+
+    /* Scrollbar Styles */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.4);
+      }
+    }
   }
 
   .add-product-form {
@@ -315,8 +336,29 @@ $orange: #FF9800; // Add this if $orange is not defined in variables.scss
     border-radius: 12px;
     width: 100%;
     max-width: 500px;
+    max-height: 90vh;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+
+    /* Scrollbar Styles */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $pinkred;
+      border-radius: 4px;
+
+      &:hover {
+        background: darken($pinkred, 10%);
+      }
+    }
 
     h3 {
       color: $blue;
@@ -1343,4 +1385,5 @@ $orange: #FF9800; // Add this if $orange is not defined in variables.scss
     }
   }
 }
+  
   
