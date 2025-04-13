@@ -2,7 +2,7 @@
 
 .chatbot-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f9f5f7; // Lighter pink background to match wishlist page
   display: flex;
   flex-direction: column;
 }
@@ -35,7 +35,7 @@
 }
 
 .chatbot-header {
-  background: linear-gradient(135deg, $pinkred, darken($pinkred, 15%));
+  background: linear-gradient(135deg, #FF5B8D, #FF3868); // Updated to match pink palette
   color: white;
   padding: 1.5rem 2rem;
   display: flex;
@@ -92,7 +92,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  background-color: #f9f9f9;
+  background-color: #f9f5f7; // Updated to match pink palette
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f0f0f0' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   
   &::-webkit-scrollbar {
@@ -105,11 +105,11 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(255, 91, 141, 0.3); // Updated to match pink palette
     border-radius: 10px;
     
     &:hover {
-      background: rgba(0, 0, 0, 0.25);
+      background: rgba(255, 56, 104, 0.4); // Updated to match pink palette
     }
   }
 }
@@ -132,7 +132,7 @@
 
 .user-message {
   align-self: flex-end;
-  background: linear-gradient(135deg, $blue, darken($blue, 10%));
+  background: linear-gradient(135deg, #FF5B8D, #FF3868); // Updated to match pink palette
   color: white;
   border-bottom-right-radius: 4px;
   
@@ -143,7 +143,7 @@
     right: -8px;
     width: 16px;
     height: 16px;
-    background: linear-gradient(135deg, $blue, darken($blue, 10%));
+    background: linear-gradient(135deg, #FF5B8D, #FF3868); // Updated to match pink palette
     clip-path: polygon(0 0, 0% 100%, 100% 100%);
     transform: rotate(-45deg);
     border-radius: 0 0 0 4px;
@@ -204,8 +204,8 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 
     &:focus {
-      border-color: $pinkred;
-      box-shadow: 0 0 0 3px rgba($pinkred, 0.2);
+      border-color: #FF5B8D; // Updated to match pink palette
+      box-shadow: 0 0 0 3px rgba(255, 91, 141, 0.2); // Updated to match pink palette
     }
     
     &::placeholder {
@@ -214,7 +214,7 @@
   }
 
   button {
-    background: linear-gradient(135deg, $pinkred, darken($pinkred, 10%));
+    background: linear-gradient(135deg, #FF5B8D, #FF3868); // Updated to match pink palette
     color: white;
     border: none;
     border-radius: 50%;
@@ -226,16 +226,16 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
-    box-shadow: 0 3px 8px rgba($pinkred, 0.4);
+    box-shadow: 0 3px 8px rgba(255, 91, 141, 0.4); // Updated to match pink palette
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 5px 12px rgba($pinkred, 0.5);
+      box-shadow: 0 5px 12px rgba(255, 56, 104, 0.5); // Updated to match pink palette
     }
 
     &:active {
       transform: translateY(1px);
-      box-shadow: 0 2px 5px rgba($pinkred, 0.4);
+      box-shadow: 0 2px 5px rgba(255, 56, 104, 0.4); // Updated to match pink palette
     }
 
     &:disabled {
@@ -256,7 +256,7 @@
       height: 10px;
       width: 10px;
       margin: 0 3px;
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: rgba(255, 91, 141, 0.5); // Updated to match pink palette
       border-radius: 50%;
       display: inline-block;
       animation: bounce 1.5s infinite ease-in-out both;
@@ -285,7 +285,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     
     h3 {
-      color: $pinkred;
+      color: #FF5B8D; // Updated to match pink palette
       margin-top: 0;
       margin-bottom: 1rem;
       font-size: 1.2rem;
@@ -335,28 +335,13 @@
     margin: 1.5rem auto;
   }
   
-  .chatbot-container {
-    height: 60vh;
-  }
-  
   .chatbot-info {
     width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    
-    .info-card {
-      flex: 1;
-      min-width: 250px;
-    }
   }
   
-  .chatbot-header {
-    padding: 1.2rem 1.5rem;
-    
-    .header-text {
-      h1 {
-        font-size: 1.5rem;
-      }
+  .header-text {
+    h1 {
+      font-size: 1.5rem;
     }
   }
 }

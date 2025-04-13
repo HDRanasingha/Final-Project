@@ -12,7 +12,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(255, 91, 141, 0.08); // Updated to pink shadow
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.95);
@@ -35,12 +35,12 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    border: 1px solid rgba($grey, 0.5);
+    border: 1px solid rgba(255, 91, 141, 0.2); // Updated to pink border
     border-radius: 30px;
     padding: 10px 20px;
     height: 45px;
     transition: all 0.3s ease-in-out;
-    background-color: rgba(248, 249, 250, 0.8);
+    background-color: rgba(249, 245, 247, 0.8); // Updated to light pink background
     width: 300px;
     backdrop-filter: blur(5px);
 
@@ -50,15 +50,16 @@
       width: 100%;
       font-size: 1rem;
       background-color: transparent;
-      color: $blue;
+      color: #333; // Updated text color
       
       &::placeholder {
-        color: rgba(160, 174, 192, 0.8);
+        color: rgba(255, 91, 141, 0.5); // Updated placeholder color
       }
     }
 
     &:hover {
       @include shadow;
+      border-color: #FF5B8D; // Updated hover border color
     }
 
     @include lg {
@@ -71,18 +72,18 @@
     align-items: center;
     gap: 12px;
     padding: 8px 16px 8px 8px;
-    border: 1px solid rgba($grey, 0.5);
+    border: 1px solid rgba(255, 91, 141, 0.3); // Updated border color
     border-radius: 30px;
     background-color: white;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
-    color: $blue;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    color: #333; // Updated text color
+    box-shadow: 0 2px 10px rgba(255, 91, 141, 0.05); // Updated shadow color
 
     &:hover {
       @include shadow;
-      border-color: $pinkred;
+      border-color: #FF5B8D; // Updated hover border color
       transform: translateY(-2px);
       background-color: rgba(255, 255, 255, 0.95);
     }
@@ -106,7 +107,7 @@
     padding: 12px 0;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 10px 30px rgba(255, 91, 141, 0.15); // Updated shadow color
     z-index: 9999;
     animation: fadeIn 0.3s ease-in-out;
     overflow: hidden;
@@ -119,13 +120,13 @@
     a {
       padding: 10px 15px;
       text-decoration: none;
-      color: $blue;
+      color: #333; // Updated text color
       font-weight: 600;
       transition: background 0.3s, color 0.3s;
 
       &:hover {
-        color: $pinkred;
-        background-color: rgba(217, 213, 213, 0.2);
+        color: #FF3868; // Updated hover text color
+        background-color: rgba(255, 91, 141, 0.1); // Updated hover background
       }
     }
   }
@@ -176,19 +177,18 @@
       margin-top: 20px;
       font-size: 1rem;
       padding: 12px 24px;
-      background-color: white;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 6px;
-      color: #333;
+      background: linear-gradient(135deg, #FF5B8D, #FF3868); // Updated button gradient
+      border: none;
+      border-radius: 30px;
+      color: white;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 10px rgba(255, 56, 104, 0.3); // Updated shadow
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.9);
-        transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(255, 56, 104, 0.4); // Updated hover shadow
       }
     }
   }
@@ -215,8 +215,6 @@
   }
 
   .feature {
-    text-align: center;
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -232,7 +230,7 @@
     h3 {
       font-size: 1.3rem;
       font-weight: 600;
-      color: #333;
+      color: #1a2b4a; // Updated heading color
       margin-bottom: 0.8rem;
       
       @media (max-width: 768px) {
@@ -270,7 +268,7 @@
 .item-card {
   background: white;
   border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 6px rgba(255, 91, 141, 0.1); // Updated shadow color
   overflow: hidden;
   width: 250px;
   text-align: center;
@@ -280,26 +278,25 @@
 
   &:hover {
     transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(255, 91, 141, 0.15); // Updated hover shadow
   }
 
   .sold-out {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: red;
+    background-color: #FF5B8D; // Updated to pink
     color: white;
     padding: 5px 10px;
     font-weight: bold;
     z-index: 1;
+    border-radius: 0 0 10px 0;
   }
 
   .wishlist-container {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
+    right: 0;
     padding-right: 1rem;
     padding-top: 1rem;
     justify-content: flex-end;
@@ -309,11 +306,15 @@
 
   .wishlist-icon {
     font-size: 22px;
-    color: black;
+    color: #ccc;
     transition: color 0.3s ease-in-out;
 
     &.active {
-      color: red;
+      color: #FF3868; // Updated to pink
+    }
+    
+    &:hover {
+      color: #FF5B8D; // Updated hover color
     }
   }
 
@@ -325,6 +326,7 @@
 
   h3 {
     margin: 10px 0;
+    color: #1a2b4a; // Updated heading color
   }
 
   p {
@@ -333,7 +335,7 @@
   }
 
   button {
-    background: #ff4081;
+    background: #FF5B8D; // Updated button color
     color: white;
     border: none;
     padding: 10px;
@@ -342,7 +344,7 @@
     transition: background 0.3s;
 
     &:hover {
-      background: #e03572;
+      background: #FF3868; // Updated hover color
     }
   }
 }
@@ -354,7 +356,7 @@
   text-align: center;
   margin-bottom: 2rem;
   font-size: 1.5rem;
-  color: #333;
+  color: #1a2b4a; // Updated heading color
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -374,19 +376,17 @@
 /* Add this new animation for the cart count */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba($pinkred, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 91, 141, 0.4); // Updated to pink
   }
   70% {
-    box-shadow: 0 0 0 6px rgba($pinkred, 0);
+    box-shadow: 0 0 0 6px rgba(255, 91, 141, 0); // Updated to pink
   }
   100% {
-    box-shadow: 0 0 0 0 rgba($pinkred, 0);
+    box-shadow: 0 0 0 0 rgba(255, 91, 141, 0); // Updated to pink
   }
 }
 
-// Add this to your existing Navbar.scss file, after your existing styles
-
-/* Weather Widget Styles */
+/* Weather Widget */
 .weather-widget {
   display: flex;
   align-items: center;
@@ -394,7 +394,7 @@
   padding: 6px 12px;
   border-radius: 30px;
   background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(160, 174, 192, 0.5);
+  border: 1px solid rgba(255, 91, 141, 0.2); // Updated border color
   transition: all 0.3s ease;
   cursor: default;
   margin-right: 10px;
@@ -402,17 +402,17 @@
   &:hover {
     background-color: rgba(255, 255, 255, 0.95);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(255, 91, 141, 0.1); // Updated shadow color
   }
   
   .weather-icon {
     font-size: 1.8rem;
-    color: #E91E63;
+    color: #FF5B8D; // Updated icon color
     display: flex;
     align-items: center;
     
     svg {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      filter: drop-shadow(0 2px 4px rgba(255, 91, 141, 0.2)); // Updated shadow color
     }
   }
   
@@ -463,8 +463,7 @@
   
   .feature {
     flex: 0 0 auto;
-    width: 33.333%;
-    min-width: 200px;
+    width: 33.33%;
     padding: 0 10px;
     margin-bottom: 0;
   }
@@ -478,6 +477,24 @@
       flex: 0 0 auto;
       width: 75%;
       min-width: 200px;
+    }
+  }
+}
+
+// Add this to your existing styles
+
+.MuiBadge-badge {
+  background-color: #FF3868 !important; // Pink color to match your theme
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.navbar__cart {
+  position: relative;
+  
+  &:hover {
+    .MuiBadge-badge {
+      transform: scale(1.1);
     }
   }
 }

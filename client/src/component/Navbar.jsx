@@ -32,7 +32,29 @@ import {
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Add this near the top of your component, with other state declarations
   const [cartCount, setCartCount] = useState(0);
+  
+  // Add this useEffect to listen for cart updates
+  useEffect(() => {
+    // Function to update cart count
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const count = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+      setCartCount(count);
+    };
+    
+    // Update cart count when component mounts
+    updateCartCount();
+    
+    // Listen for cart updates
+    window.addEventListener('cartUpdated', updateCartCount);
+    
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
   const [flowers, setFlowers] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [products, setProducts] = useState([]); 

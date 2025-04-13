@@ -150,8 +150,6 @@ const FlowerDetailsPage = () => {
             {/* Conditionally show action buttons */}
             {shouldShowButtons() && (
               <div className="action-buttons">
-                {/* Removed Add to Cart button */}
-                
                 <button 
                   className="buy-now-button" 
                   onClick={handleBuyNow}
@@ -160,15 +158,22 @@ const FlowerDetailsPage = () => {
                   {flower.stock === 0 ? "Out of Stock" : "Buy Now"}
                 </button>
                 
+                {/* Replace both wishlist buttons with a single one */}
                 <button 
-                  className="wishlist-button" 
+                  className={`add-to-wishlist-btn ${inWishlist ? 'in-wishlist' : ''}`}
                   onClick={handleWishlistToggle}
                 >
-                  {inWishlist ? 
-                    <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
-                    <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
-                  } 
-                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  {inWishlist ? (
+                    <>
+                      <FaHeart className="heart-icon" />
+                      Remove from Wishlist
+                    </>
+                  ) : (
+                    <>
+                      <FaRegHeart className="heart-icon" />
+                      Add to Wishlist
+                    </>
+                  )}
                 </button>
               </div>
             )}

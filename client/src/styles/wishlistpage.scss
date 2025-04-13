@@ -178,9 +178,16 @@
             color: #FF3868;
             border: none;
             
-            &:hover {
-              background: #FFB5C2;
+            &:hover:not([disabled]) {
+              background: #FFB6C1;
               box-shadow: 0 4px 12px rgba(255, 56, 104, 0.2);
+            }
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+              background: #f0f0f0;
+              color: #999;
             }
           }
           

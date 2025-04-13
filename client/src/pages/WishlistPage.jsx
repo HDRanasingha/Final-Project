@@ -30,6 +30,12 @@ const WishlistPage = () => {
   };
 
   const addToCart = (item) => {
+    // Check if item is out of stock
+    if (item.stock === 0) {
+      alert("This item is sold out and cannot be added to cart.");
+      return;
+    }
+    
     // Get existing cart or initialize empty array
     const existingCart = JSON.parse(localStorage.getItem('cart')) || [];
     
@@ -52,7 +58,10 @@ const WishlistPage = () => {
       localStorage.setItem('cart', JSON.stringify(newCart));
     }
     
-    alert('Item added to cart!');
+    // Dispatch a custom event to notify the Navbar component
+    window.dispatchEvent(new Event('cartUpdated'));
+    
+    alert("Item added to cart successfully!");
   };
 
   return (
@@ -102,8 +111,10 @@ const WishlistPage = () => {
                     <button 
                       className="add-to-cart" 
                       onClick={() => addToCart(item)}
+                      disabled={item.stock === 0}
+                      style={item.stock === 0 ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
                     >
-                      Add to Cart
+                      {item.stock === 0 ? "Sold Out" : "Add to Cart"}
                     </button>
                     <button 
                       className="remove-btn" 

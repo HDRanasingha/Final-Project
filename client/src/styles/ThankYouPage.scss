@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: #f9f5f7; // Light pink background matching cart page
   
   .thank-you-container {
     flex: 1;
@@ -16,14 +16,14 @@
       width: 100%;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px rgba(255, 91, 141, 0.08); // Pink shadow matching other components
       padding: 3rem;
       text-align: center;
       
       .success-icon {
         width: 80px;
         height: 80px;
-        background: #28a745;
+        background: linear-gradient(45deg, #FF5B8D, #FF3868); // Pink gradient matching cart page
         color: white;
         font-size: 40px;
         border-radius: 50%;
@@ -31,26 +31,27 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        box-shadow: 0 5px 15px rgba(255, 91, 141, 0.3); // Pink shadow
       }
       
       h1 {
         font-size: 2.2rem;
-        color: #333;
+        color: #1a2b4a; // Dark blue color for headings
         margin-bottom: 1rem;
       }
       
       .order-confirmation {
         font-size: 1.2rem;
-        color: #666;
+        color: #4b5563;
         margin-bottom: 1.5rem;
       }
       
       .order-details {
-        background-color: #f8f9fa;
+        background-color: #FFF0F5; // Light pink background
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
+        border: 1px dashed rgba(255, 91, 141, 0.3); // Dashed pink border
         
         p {
           margin: 0.5rem 0;
@@ -59,7 +60,7 @@
         
         .highlight {
           font-weight: bold;
-          color: #28a745;
+          color: #FF3868; // Pink color for highlights
         }
       }
       
@@ -69,17 +70,37 @@
         
         h3 {
           font-size: 1.4rem;
-          color: #333;
+          color: #1a2b4a;
           margin-bottom: 1rem;
         }
         
         ul {
-          padding-left: 1.5rem;
+          padding-left: 0;
+          list-style-type: none;
           
           li {
             margin-bottom: 0.8rem;
-            color: #555;
+            color: #4b5563;
             font-size: 1.1rem;
+            position: relative;
+            padding-left: 30px;
+            
+            &:before {
+              content: '✓';
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 20px;
+              height: 20px;
+              background: linear-gradient(45deg, #FF5B8D, #FF3868);
+              color: white;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 0.8rem;
+              font-weight: bold;
+            }
           }
         }
       }
@@ -94,31 +115,35 @@
           padding: 0.8rem 1.5rem;
           font-size: 1rem;
           font-weight: 600;
-          border-radius: 6px;
+          border-radius: 8px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
           
           &.primary-button {
-            background-color: #28a745;
+            background: linear-gradient(90deg, #FF5B8D, #FF3868); // Pink gradient
             color: white;
             border: none;
+            box-shadow: 0 4px 15px rgba(255, 91, 141, 0.25);
             
             &:hover {
-              background-color: #218838;
               transform: translateY(-2px);
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 8px 20px rgba(255, 91, 141, 0.35);
+            }
+            
+            &:active {
+              transform: translateY(0);
             }
           }
           
           &.secondary-button {
             background-color: white;
-            color: #333;
-            border: 1px solid #ddd;
+            color: #1a2b4a;
+            border: 1px solid rgba(255, 91, 141, 0.3);
             
             &:hover {
-              background-color: #f8f9fa;
+              background-color: rgba(255, 91, 141, 0.05);
               transform: translateY(-2px);
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 4px 8px rgba(255, 91, 141, 0.1);
             }
           }
         }
