@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/CartPage.scss";
+import { FaShoppingCart, FaPlus, FaMinus, FaTrash, FaArrowRight, FaHome } from "react-icons/fa";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
@@ -48,14 +49,21 @@ const CartPage = () => {
       <div className="cart-container">
         <h1 className="cart-title">Shopping Cart</h1>
         {cart.length === 0 ? (
-          <p className="empty-cart">Your cart is empty!</p>
+          <div className="empty-cart">
+            <img src="/images/empty-cart.png" alt="Empty Cart" />
+            <p>Your cart is empty!</p>
+            <p>Add some beautiful flowers to your cart and make someone's day special.</p>
+            <Link to="/" className="continue-shopping">
+              <FaHome /> Continue Shopping
+            </Link>
+          </div>
         ) : (
           <>
             <table className="cart-table">
               <thead>
                 <tr>
                   <th>Image</th>
-                  <th>Product Name</th>
+                  <th>Product</th>
                   <th>Price (Rs.)</th>
                   <th>Quantity</th>
                   <th>Subtotal (Rs.)</th>
@@ -66,26 +74,49 @@ const CartPage = () => {
                 {cart.map((item) => (
                   <tr key={item._id}>
                     <td>
-                      <img src={`http://localhost:3001${item.img}`} alt={item.name} className="cart-item-img" />
+                      <img
+                        src={item.img ? `http://localhost:3001/${item.img.replace(/\\/g, '/')}` : "/images/placeholder.png"}
+                        alt={item.name}
+                        className="cart-item-img"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/images/placeholder.png";
+                        }}
+                      />
                     </td>
-                    <td>{item.name}</td>
-                    <td>{item.price.toFixed(2)}</td>
+                    <td className="product-name">{item.name}</td>
+                    <td className="price">{item.price.toFixed(2)}</td>
                     <td>
                       <div className="quantity-controls">
-                        <button onClick={() => handleQuantityChange(item._id, item.quantity - 1)}>-</button>
+                        <button
+                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                        >
+                          <FaMinus />
+                        </button>
                         <input
                           type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item._id, Number(e.target.value))}
                           min="1"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleQuantityChange(item._id, parseInt(e.target.value) || 1)
+                          }
                         />
-                        <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                        <button
+                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                        >
+                          <FaPlus />
+                        </button>
                       </div>
                     </td>
-                    <td>{(item.price * item.quantity).toFixed(2)}</td>
+                    <td className="subtotal">
+                      {(item.price * item.quantity).toFixed(2)}
+                    </td>
                     <td>
-                      <button className="remove-btn" onClick={() => handleRemoveItem(item._id)}>
-                        Remove
+                      <button
+                        className="remove-btn"
+                        onClick={() => handleRemoveItem(item._id)}
+                      >
+                        <FaTrash />
                       </button>
                     </td>
                   </tr>
@@ -94,14 +125,25 @@ const CartPage = () => {
             </table>
 
             <div className="cart-summary">
-              <h3>Cart Summary</h3>
+              <h3>Order Summary</h3>
               <div className="summary-details">
-                <p>Subtotal:</p>
-                <span>Rs. {total.toFixed(2)}</span>
+                <span className="label">Subtotal</span>
+                <span className="value">Rs. {total.toFixed(2)}</span>
+              </div>
+              <div className="summary-details">
+                <span className="label">Shipping</span>
+                <span className="value">Calculated at checkout</span>
+              </div>
+              <div className="summary-details total">
+                <span className="label">Total</span>
+                <span className="value">Rs. {total.toFixed(2)}</span>
               </div>
               <button className="checkout-button" onClick={handleCheckout}>
-                Proceed to Checkout
+                Proceed to Checkout <FaArrowRight />
               </button>
+              <Link to="/" className="continue-shopping">
+                Continue Shopping
+              </Link>
             </div>
           </>
         )}
