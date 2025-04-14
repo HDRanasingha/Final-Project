@@ -1,10 +1,22 @@
 @import "./variables.scss";
 
+/* Color Variables - Pink Palette */
+$primary-color: #FF5B8D; // Vibrant pink for primary actions
+$secondary-color: #FF3868; // Deeper pink for accents
+$tertiary-color: #FFC2D1; // Light pink for subtle accents
+$background-color: #FFF5F8; // Soft pink background
+$text-color: #1a2b4a; // Rich dark blue for text
+$light-text-color: #64748b; // Softer gray for secondary text
+$border-color: #FFDCE5; // Delicate pink border
+$white: #ffffff; // Pure white
+
 .profile-details-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: $background-color;
+  background-image: linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 100%);
+  font-family: 'Nunito', sans-serif;
 }
 
 .profile-container {
@@ -21,23 +33,40 @@
   
   h1 {
     font-size: 2.2rem;
-    color: #333;
+    color: $text-color;
     margin-bottom: 0.5rem;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, $primary-color, $secondary-color);
+      border-radius: 3px;
+    }
   }
   
   p {
-    color: #666;
+    color: $light-text-color;
     font-size: 1.1rem;
   }
 }
 
 .profile-content {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  background-color: $white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(255, 91, 141, 0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid $border-color;
   
   @media (min-width: 768px) {
     flex-direction: row;
@@ -45,14 +74,15 @@
 }
 
 .profile-image-section {
-  padding: 2rem;
+  padding: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f8f9fa;
+  background-color: rgba(255, 91, 141, 0.03);
   
   @media (min-width: 768px) {
     width: 35%;
+    border-right: 1px solid $border-color;
   }
 }
 
@@ -68,23 +98,28 @@
   height: 180px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 4px solid $white;
+  box-shadow: 0 8px 25px rgba(255, 91, 141, 0.2);
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
 }
 
 .profile-image-placeholder {
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background-color: $pinkred;
-  color: white;
+  background-color: $primary-color;
+  color: $white;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 3rem;
   font-weight: bold;
-  border: 4px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 4px solid $white;
+  box-shadow: 0 8px 25px rgba(255, 91, 141, 0.2);
 }
 
 .image-upload {
@@ -95,29 +130,31 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #f0f0f0;
+  background-color: $tertiary-color;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   
   &:hover {
-    background-color: #e0e0e0;
+    background-color: darken($tertiary-color, 5%);
+    transform: translateY(-2px);
   }
   
   svg {
     font-size: 1.2rem;
-    color: #555;
+    color: $secondary-color;
   }
   
   span {
     font-size: 0.9rem;
-    color: #555;
+    color: $text-color;
+    font-weight: 500;
   }
 }
 
 .profile-details-section {
-  padding: 2rem;
+  padding: 2.5rem;
   flex: 1;
   
   form {
@@ -134,32 +171,44 @@
   
   label {
     font-size: 0.9rem;
-    color: #666;
+    color: $light-text-color;
     font-weight: 500;
+    letter-spacing: 0.3px;
   }
   
   input {
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    border: 1px solid $border-color;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     
     &:focus {
       outline: none;
-      border-color: $pinkred;
-      box-shadow: 0 0 0 2px rgba($pinkred, 0.2);
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(255, 91, 141, 0.1);
     }
     
     &:disabled {
       background-color: #f8f9fa;
       cursor: not-allowed;
     }
+    
+    &:not(:disabled) {
+      background-color: $white;
+      cursor: text;
+    }
+
+    &:disabled {
+      background-color: #f8f9fa;
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
   }
   
   .role-field {
     background-color: #f8f9fa;
-    color: #666;
+    color: $text-color;
     font-weight: 500;
   }
 }
@@ -167,34 +216,37 @@
 .error-message {
   color: #dc3545;
   font-size: 0.9rem;
-  padding: 0.5rem;
+  padding: 0.8rem;
   background-color: rgba(#dc3545, 0.1);
-  border-radius: 4px;
+  border-radius: 8px;
+  border-left: 3px solid #dc3545;
 }
 
 .success-message {
   color: #28a745;
   font-size: 0.9rem;
-  padding: 0.5rem;
+  padding: 0.8rem;
   background-color: rgba(#28a745, 0.1);
-  border-radius: 4px;
+  border-radius: 8px;
+  border-left: 3px solid #28a745;
 }
 
 .profile-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
   
   button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.8rem 1.5rem;
-    border-radius: 6px;
+    padding: 0.9rem 1.5rem;
+    border-radius: 10px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     
     svg {
       font-size: 1.2rem;
@@ -202,42 +254,63 @@
   }
   
   .edit-button {
-    background-color: $pinkred;
-    color: white;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    color: $white;
     border: none;
+    box-shadow: 0 4px 15px rgba(255, 91, 141, 0.3);
     
     &:hover {
-      background-color: darken($pinkred, 10%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(255, 91, 141, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
     }
   }
   
   .save-button {
-    background-color: #28a745;
-    color: white;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    color: $white;
     border: none;
+    box-shadow: 0 4px 15px rgba(255, 91, 141, 0.3);
     
     &:hover {
-      background-color: darken(#28a745, 10%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(255, 91, 141, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
     }
     
     &:disabled {
-      background-color: #6c757d;
+      background: linear-gradient(to right, #cccccc, #aaaaaa);
+      box-shadow: none;
       cursor: not-allowed;
+      transform: none;
     }
   }
   
   .cancel-button {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #ddd;
+    background-color: $white;
+    color: $text-color;
+    border: 1px solid $border-color;
     
     &:hover {
-      background-color: #e9ecef;
+      background-color: #f8f9fa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
     }
     
     &:disabled {
       opacity: 0.7;
       cursor: not-allowed;
+      transform: none;
     }
   }
 }
@@ -265,19 +338,8 @@
   .profile-actions {
     flex-direction: column;
   }
-}
-
-.form-group {
-  input {
-    &:not(:disabled) {
-      background-color: white;
-      cursor: text;
-    }
-
-    &:disabled {
-      background-color: #f8f9fa;
-      cursor: not-allowed;
-      opacity: 0.8;
-    }
+  
+  .profile-details-section {
+    padding: 1.5rem;
   }
 }
