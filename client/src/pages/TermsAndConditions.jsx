@@ -1,11 +1,13 @@
 import React from 'react';
 import '../styles/TermsAndConditions.scss';
+import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 
 const TermsAndConditions = () => {
   return (
-    <div>
     <div className="terms-page">
+      <Navbar />
+      
       <section className="terms-header">
         <h1>Terms and Conditions</h1>
         <p>Last Updated: February 2025</p>
@@ -59,7 +61,7 @@ const TermsAndConditions = () => {
           For inquiries, please contact us at <a href="mailto:support@flowerscm.com">support@flowerscm.com</a>.
         </p>
       </section>
-</div>
+      
       <Footer />
     </div>
   );

@@ -1,11 +1,13 @@
 import React from 'react';
 import '../styles/PrivacyPolicy.scss';
+import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 
 const PrivacyPolicy = () => {
   return (
-    <div>
     <div className="privacy-page">
+      <Navbar />
+      
       <section className="privacy-header">
         <h1>Privacy Policy</h1>
         <p>Effective Date: February 2025</p>
@@ -73,7 +75,7 @@ const PrivacyPolicy = () => {
           If you have any questions about this policy, contact us at <a href="mailto:privacy@flowerscm.com">privacy@flowerscm.com</a>.
         </p>
       </section>
-</div>
+      
       <Footer />
     </div>
   );

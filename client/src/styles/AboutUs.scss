@@ -1,117 +1,207 @@
+@import "./variables.scss";
+
+/* Color Variables - Pink Palette */
+$primary-color: #FF5B8D; // Vibrant pink for primary actions
+$secondary-color: #FF3868; // Deeper pink for accents
+$tertiary-color: #FFC2D1; // Light pink for subtle accents
+$background-color: #FFF5F8; // Soft pink background
+$text-color: #1a2b4a; // Rich dark blue for text
+$light-text-color: #64748b; // Softer gray for secondary text
+$border-color: #FFDCE5; // Delicate pink border
+$white: #ffffff; // Pure white
+
 .about-us-page {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f8f8f8;
-  }
+  font-family: 'Nunito', sans-serif;
+  padding: 0; /* Changed from 20px to 0 to remove padding that affects navbar */
+  background-color: $background-color;
+  background-image: linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   
+  /* Add this to ensure content appears below navbar */
   .about-header {
+    margin-top: 20px; /* Add space below navbar */
     text-align: center;
     padding: 40px 0;
-    background-color: #004d00;
+    background: linear-gradient(90deg, $primary-color, $secondary-color);
     color: white;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(255, 91, 141, 0.2);
+    margin-left: 20px;
+    margin-right: 20px;
   }
+}
+
+.about-header h1 {
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.about-header p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-mission, .about-vision, .about-approach {
+  margin: 40px 20px; /* Added horizontal margins */
+}
+
+.about-mission h2, .about-vision h2, .about-approach h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: $text-color;
+  position: relative;
+  padding-bottom: 10px;
   
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    border-radius: 3px;
+  }
+}
+
+.about-mission p, .about-vision p, .about-approach p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: $light-text-color;
+}
+
+.about-approach {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.approach-items {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.approach-item {
+  width: 30%;
+  background-color: $white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(255, 91, 141, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 91, 141, 0.15);
+  }
+}
+
+.approach-item h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: $primary-color;
+  font-weight: 600;
+}
+
+.approach-item p {
+  font-size: 1rem;
+  color: $light-text-color;
+  line-height: 1.6;
+}
+
+.about-team {
+  background-color: $white;
+  padding: 50px 0;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(255, 91, 141, 0.08);
+  margin: 40px 0;
+}
+
+.about-team h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: $text-color;
+  position: relative;
+  padding-bottom: 15px;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, $primary-color, $secondary-color);
+    border-radius: 3px;
+  }
+}
+
+.team-members {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.team-member {
+  text-align: center;
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-8px);
+  }
+}
+
+.team-member img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 4px solid $primary-color;
+  box-shadow: 0 5px 15px rgba(255, 91, 141, 0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(255, 91, 141, 0.25);
+  }
+}
+
+.team-member h3 {
+  margin-top: 15px;
+  font-size: 1.3rem;
+  color: $primary-color;
+  font-weight: 600;
+}
+
+.team-member p {
+  font-size: 1rem;
+  color: $light-text-color;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
   .about-header h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-  }
-  
-  .about-header p {
-    font-size: 1.2rem;
-  }
-  
-  .about-mission, .about-vision, .about-approach {
-    margin: 40px 0;
-  }
-  
-  .about-mission h2, .about-vision h2, .about-approach h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  .about-mission p, .about-vision p, .about-approach p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #333;
-  }
-  
-  .about-approach {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
+    font-size: 2.2rem;
   }
   
   .approach-items {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
   }
-  
+
   .approach-item {
-    width: 30%;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 20px;
   }
-  
-  .approach-item h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #004d00;
-  }
-  
-  .approach-item p {
-    font-size: 1rem;
-    color: #555;
-  }
-  
-  .about-team {
-    background-color: #f2f2f2;
-    padding: 40px 0;
-  }
-  
+
   .team-members {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
   }
-  
-  .team-member {
-    text-align: center;
-  }
-  
-  .team-member img {
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border: 4px solid #004d00;
-  }
-  
-  .team-member h3 {
-    margin-top: 10px;
-    font-size: 1.2rem;
-    color: #004d00;
-  }
-  
-  .team-member p {
-    font-size: 1rem;
-    color: gray;
-  }
-  
-  @media (max-width: 768px) {
-    .about-approach {
-      flex-direction: column;
-    }
-  
-    .approach-item {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  
-    .team-members {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
+}
   

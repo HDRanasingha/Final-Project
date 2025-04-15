@@ -1,11 +1,13 @@
 import React from 'react';
 import '../styles/AboutUs.scss';
+import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 
 const AboutUs = () => {
   return (
-    <div>
     <div className="about-us-page">
+      <Navbar />
+      
       <section className="about-header">
         <h1>About FlowerSCM</h1>
         <p>Your trusted partner in fresh flower supply chain management, optimizing logistics and inventory with real-time solutions.</p>
@@ -48,22 +50,17 @@ const AboutUs = () => {
         <h2>Meet Our Team</h2>
         <div className="team-members">
           <div className="team-member">
-            <img src="/assets/member.jpg" alt="Team Member 1" />
+            <img src="/assets/member.jpg" alt="Hashini Ranasingha" />
             <h3>Hashini Ranasingha</h3>
-            <p>Bsc.Hons In Computer Science</p>
-            <p>An Undergraduate Student at the  University of Plymouth</p>
+            <p>BSc.Hons in Computer Science</p>
+            <p>An Undergraduate Student at the University of Plymouth</p>
           </div>
-          
         </div>
-        
       </section>
-
+      
+      <Footer />
     </div>
-    <Footer />
-    </div>
-  
   );
-  
 };
 
 export default AboutUs;
