@@ -135,17 +135,24 @@ const ProductDetailsPage = () => {
                 </button>
                 
                 <button 
-                  className="wishlist-button" 
+                  className={`add-to-wishlist-btn ${inWishlist ? 'in-wishlist' : ''}`}
                   onClick={handleWishlistToggle}
                 >
-                  {inWishlist ? 
-                    <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
-                    <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
-                  } 
-                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  {inWishlist ? (
+                    <>
+                      <FaHeart className="heart-icon" />
+                      Remove from Wishlist
+                    </>
+                  ) : (
+                    <>
+                      <FaRegHeart className="heart-icon" />
+                      Add to Wishlist
+                    </>
+                  )}
                 </button>
               </div>
             )}
+            
             
             {/* Show edit button if user is the owner */}
             {isOwner() && (

@@ -148,11 +148,9 @@ const ItemDetailsPage = () => {
             
             <p className="total-price">Total: Rs. {totalPrice}</p>
             
-            {/* Conditionally show action buttons */}
-            {shouldShowButtons() && (
+           {/* Conditionally show action buttons */}
+           {shouldShowButtons() && (
               <div className="action-buttons">
-                {/* Removed Add to Cart button */}
-                
                 <button 
                   className="buy-now-button" 
                   onClick={handleBuyNow}
@@ -162,14 +160,20 @@ const ItemDetailsPage = () => {
                 </button>
                 
                 <button 
-                  className="wishlist-button" 
+                  className={`add-to-wishlist-btn ${inWishlist ? 'in-wishlist' : ''}`}
                   onClick={handleWishlistToggle}
                 >
-                  {inWishlist ? 
-                    <FaHeart style={{color: 'white', marginRight: '5px'}} /> : 
-                    <FaRegHeart style={{color: 'white', marginRight: '5px'}} />
-                  } 
-                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  {inWishlist ? (
+                    <>
+                      <FaHeart className="heart-icon" />
+                      Remove from Wishlist
+                    </>
+                  ) : (
+                    <>
+                      <FaRegHeart className="heart-icon" />
+                      Add to Wishlist
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -177,7 +181,12 @@ const ItemDetailsPage = () => {
             {/* Show edit button if user is the owner */}
             {isOwner() && (
               <div className="action-buttons">
-                
+                <button 
+                  className="edit-item-button"
+                  onClick={() => navigate(`/edit-item/${item._id}`)}
+                >
+                  Edit Item
+                </button>
               </div>
             )}
           </div>
