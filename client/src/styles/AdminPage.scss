@@ -1,11 +1,23 @@
 /* Color Variables */
-$primary-color: #3b82f6; // Blue for primary actions
-$secondary-color: #f59e0b; // Orange for accents
-$background-color: #f8fafc; // Light gray background
-$text-color: #1e293b; // Dark gray for primary text
+$primary-color: #FF5B8D; // Pink for primary actions
+$secondary-color: #FF3868; // Deeper pink for accents
+$background-color: #f9f5f7; // Light pink background
+$text-color: #1a2b4a; // Dark blue for primary text
 $light-text-color: #64748b; // Medium gray for secondary text
-$border-color: #e2e8f0; // Light border color
+$border-color: #f0e4e8; // Light pink border color
 $white: #ffffff; // White for cards and content areas
+
+/* Chart Colors */
+$chart-colors: (
+  processing: #f59e0b,    // Orange for processing
+  shipped: #3b82f6,       // Blue for shipped
+  delivered: #10b981,     // Green for delivered
+  cancelled: $secondary-color, // Pink for cancelled
+  received: #8b5cf6,      // Purple for received
+  growers: #4ade80,       // Light green for growers
+  suppliers: #3b82f6,     // Blue for suppliers
+  sellers: #f59e0b        // Orange for sellers
+);
 
 /* Admin Page */
 .admin-page {
@@ -31,7 +43,7 @@ $white: #ffffff; // White for cards and content areas
   width: 260px;
   background-color: $white;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(255, 91, 141, 0.1);
   height: fit-content;
   position: sticky;
   top: 24px;
@@ -70,7 +82,7 @@ $white: #ffffff; // White for cards and content areas
       }
 
       &:hover {
-        background-color: $background-color;
+        background-color: rgba(255, 91, 141, 0.05);
         color: $primary-color;
         svg {
           color: $primary-color;
@@ -94,7 +106,7 @@ $white: #ffffff; // White for cards and content areas
   flex: 1;
   background-color: $white;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(255, 91, 141, 0.1);
   padding: 24px;
   overflow: hidden;
 
@@ -128,7 +140,7 @@ $white: #ffffff; // White for cards and content areas
         &:focus {
           outline: none;
           border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+          box-shadow: 0 0 0 3px rgba(255, 91, 141, 0.1);
         }
       }
 
@@ -153,7 +165,7 @@ $white: #ffffff; // White for cards and content areas
     .stat-card {
       background-color: $white;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 16px rgba(255, 91, 141, 0.08);
       padding: 24px;
       display: flex;
       align-items: center;
@@ -219,7 +231,7 @@ $white: #ffffff; // White for cards and content areas
     }
 
     th {
-      background-color: $background-color;
+      background-color: rgba(255, 91, 141, 0.05);
       font-weight: 600;
       color: $text-color;
     }
@@ -229,34 +241,64 @@ $white: #ffffff; // White for cards and content areas
     }
 
     tr:hover {
-      background-color: $background-color;
+      background-color: rgba(255, 91, 141, 0.02);
     }
 
     .role-badge, .status-badge {
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 500;
-      color: $white;
+      display: inline-block;
+      text-align: center;
     }
 
     .role-badge {
-      &.admin { background-color: #dc2626; }
-      &.supplier { background-color: #2563eb; }
-      &.grower { background-color: #059669; }
-      &.seller { background-color: #d97706; }
-      &.user { background-color: #7c3aed; }
+      &.admin { 
+        background-color: rgba($secondary-color, 0.15); 
+        color: $secondary-color;
+      }
+      &.supplier { 
+        background-color: rgba(#3b82f6, 0.15); 
+        color: #3b82f6;
+      }
+      &.grower { 
+        background-color: rgba(#10b981, 0.15); 
+        color: #10b981;
+      }
+      &.seller { 
+        background-color: rgba(#f59e0b, 0.15); 
+        color: #f59e0b;
+      }
+      &.user { 
+        background-color: rgba(#8b5cf6, 0.15); 
+        color: #8b5cf6;
+      }
     }
 
     .status-badge {
-      &.processing { background-color: #f59e0b; }
-      &.shipped { background-color: #3b82f6; }
-      &.delivered { background-color: #10b981; }
-      &.cancelled { background-color: #dc2626; }
+      &.processing { 
+        background-color: rgba(#f59e0b, 0.15); 
+        color: #f59e0b;
+      }
+      &.shipped { 
+        background-color: rgba(#3b82f6, 0.15); 
+        color: #3b82f6;
+      }
+      &.delivered { 
+        background-color: rgba(#10b981, 0.15); 
+        color: #10b981;
+      }
+      &.cancelled { 
+        background-color: rgba($secondary-color, 0.15); 
+        color: $secondary-color;
+      }
      
       /* Add these new selectors to match the actual text in your application */
-      &.received-warehouse { background-color: #7c3aed; }
-      &[class*="received"] { background-color: #7c3aed; }
+      &.received-warehouse, &[class*="received"] { 
+        background-color: rgba(#8b5cf6, 0.15); 
+        color: #8b5cf6;
+      }
     }
 
     .actions {
@@ -275,7 +317,7 @@ $white: #ffffff; // White for cards and content areas
         gap: 4px;
 
         &.edit { background-color: $primary-color; }
-        &.delete { background-color: #dc2626; }
+        &.delete { background-color: $secondary-color; }
       }
     }
 
@@ -306,7 +348,7 @@ $white: #ffffff; // White for cards and content areas
     background-color: $white;
     padding: 24px;
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(255, 91, 141, 0.1);
     width: 400px;
 
     h3 {
@@ -331,6 +373,12 @@ $white: #ffffff; // White for cards and content areas
         border: 1px solid $border-color;
         border-radius: 4px;
         font-size: 0.95rem;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba(255, 91, 141, 0.1);
+        }
       }
     }
 
@@ -339,21 +387,32 @@ $white: #ffffff; // White for cards and content areas
       gap: 12px;
 
       .btn-save {
-        background-color: $primary-color;
+        background: linear-gradient(to right, $primary-color, $secondary-color);
         color: $white;
         padding: 8px 16px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(255, 91, 141, 0.2);
+        }
       }
 
       .btn-cancel {
-        background-color: $light-text-color;
-        color: $white;
+        background-color: #f1f5f9;
+        color: $text-color;
         padding: 8px 16px;
-        border: none;
+        border: 1px solid $border-color;
         border-radius: 4px;
         cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #e2e8f0;
+        }
       }
     }
   }
@@ -373,13 +432,59 @@ $white: #ffffff; // White for cards and content areas
   .chart-container {
     background-color: $white;
     border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(255, 91, 141, 0.08);
     padding: 24px;
+    border: 1px solid $border-color;
 
     h2 {
       margin-bottom: 16px;
       font-size: 1.25rem;
       color: $text-color;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 10px;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(to right, $primary-color, $secondary-color);
+        border-radius: 3px;
+      }
+    }
+    
+    /* Chart Legend */
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 0.85rem;
+        color: $light-text-color;
+        
+        .color-indicator {
+          width: 12px;
+          height: 12px;
+          border-radius: 3px;
+          margin-right: 6px;
+          
+          &.processing { background-color: map-get($chart-colors, processing); }
+          &.shipped { background-color: map-get($chart-colors, shipped); }
+          &.delivered { background-color: map-get($chart-colors, delivered); }
+          &.cancelled { background-color: map-get($chart-colors, cancelled); }
+          &.received { background-color: map-get($chart-colors, received); }
+          &.growers { background-color: map-get($chart-colors, growers); }
+          &.suppliers { background-color: map-get($chart-colors, suppliers); }
+          &.sellers { background-color: map-get($chart-colors, sellers); }
+        }
+      }
     }
   }
 
@@ -391,6 +496,7 @@ $white: #ffffff; // White for cards and content areas
       margin-bottom: 16px;
       font-size: 1.25rem;
       color: $text-color;
+      font-weight: 600;
     }
 
     .order-items-container {
@@ -403,12 +509,19 @@ $white: #ffffff; // White for cards and content areas
         border: 1px solid $border-color;
         border-radius: 8px;
         padding: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 2px 8px rgba(255, 91, 141, 0.08);
+        transition: transform 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 4px 12px rgba(255, 91, 141, 0.12);
+        }
 
         h4 {
           margin: 0 0 8px;
           font-size: 1rem;
           color: $text-color;
+          font-weight: 600;
         }
 
         p {
@@ -423,11 +536,30 @@ $white: #ffffff; // White for cards and content areas
   /* Analytics Summary */
   .stats-summary {
     padding: 24px;
+    background-color: $white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(255, 91, 141, 0.08);
+    border: 1px solid $border-color;
+    margin-bottom: 24px;
 
     h2 {
       margin-bottom: 16px;
       font-size: 1.25rem;
       color: $text-color;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 10px;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(to right, $primary-color, $secondary-color);
+        border-radius: 3px;
+      }
     }
 
     .summary-items {
