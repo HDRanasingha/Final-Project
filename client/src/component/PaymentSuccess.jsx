@@ -80,6 +80,7 @@ const PaymentSuccess = () => {
           You will receive an email confirmation shortly.
         </p>
         
+        // Inside your return statement, after the action buttons:
         <div className="action-buttons">
           <button className="continue-shopping" onClick={handleContinueShopping}>
             Continue Shopping
@@ -88,6 +89,32 @@ const PaymentSuccess = () => {
             View My Orders
           </button>
         </div>
+        
+        {/* Add this new section for tracking orders */}
+        {orderDetails && orderDetails.orderId && (
+          <div className="order-id-container">
+            <span className="order-id">Order ID: {orderDetails.orderId}</span>
+            <button 
+              className="copy-button"
+              onClick={() => {
+                navigator.clipboard.writeText(orderDetails.orderId);
+                alert("Order ID copied to clipboard!");
+              }}
+            >
+              Copy ID
+            </button>
+          </div>
+        )}
+        
+        // Replace the existing track order link with this button
+        {orderDetails && orderDetails.orderId && (
+          <a 
+            href={`/track-order?orderId=${orderDetails.orderId}`} 
+            className="track-my-order-button"
+          >
+            Track My Order
+          </a>
+        )}
       </div>
     </div>
   );
