@@ -225,5 +225,388 @@
   }
 }
 
+/* Color Variables - Pink Palette */
+$primary-color: #FF5B8D; // Vibrant pink for primary actions
+$secondary-color: #FF3868; // Deeper pink for accents
+$tertiary-color: #FFC2D1; // Light pink for subtle accents
+$background-color: #FFF5F8; // Soft pink background
+$text-color: #1a2b4a; // Rich dark blue for text
+$light-text-color: #64748b; // Softer gray for secondary text
+$border-color: #FFDCE5; // Delicate pink border
+$white: #ffffff; // Pure white
+
+/* Status Colors */
+$success-color: #4ade80; // Green for positive indicators
+$warning-color: #f59e0b; // Orange for warnings
+$danger-color: #ef4444; // Red for errors/alerts
+
+/* Supplier Dashboard Styles */
+.seller-dashboard {
+  background-color: $background-color;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 100%;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      color: $text-color;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background-color: $primary-color;
+        color: $white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: $secondary-color;
+        }
+
+        &.view-orders-btn {
+          background-color: $text-color;
+          
+          &:hover {
+            background-color: darken($text-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .stat-card {
+      background-color: $white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid $border-color;
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: $white;
+
+        &.revenue {
+          background-color: $primary-color;
+        }
+
+        &.orders {
+          background-color: $text-color;
+        }
+
+        &.products {
+          background-color: $success-color;
+        }
+      }
+
+      .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $text-color;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: $light-text-color;
+        margin-bottom: 0.75rem;
+      }
+
+      .stat-change {
+        font-size: 0.75rem;
+        font-weight: 600;
+        
+        &.positive {
+          color: $success-color;
+        }
+        
+        &.negative {
+          color: $danger-color;
+        }
+      }
+    }
+  }
+
+  &__products {
+    h2 {
+      color: $text-color;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+
+      .product-card {
+        background-color: $white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: relative;
+        border: 1px solid $border-color;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .sold-out-badge {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background-color: $danger-color;
+          color: $white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          z-index: 1;
+        }
+
+        .product-image {
+          height: 180px;
+          overflow: hidden;
+          cursor: pointer;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+
+            &:hover {
+              transform: scale(1.05);
+            }
+          }
+        }
+
+        .product-info {
+          padding: 1rem;
+
+          h3 {
+            color: $text-color;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+
+          .product-price {
+            color: $primary-color;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+          }
+
+          .product-stock {
+            color: $light-text-color;
+            font-size: 0.875rem;
+          }
+        }
+
+        .product-actions {
+          display: flex;
+          padding: 0.75rem 1rem;
+          border-top: 1px solid $border-color;
+          gap: 0.5rem;
+
+          button {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &.edit-btn {
+              background-color: $tertiary-color;
+              color: $text-color;
+
+              &:hover {
+                background-color: darken($tertiary-color, 5%);
+              }
+            }
+
+            &.delete-btn {
+              background-color: rgba($danger-color, 0.1);
+              color: $danger-color;
+
+              &:hover {
+                background-color: rgba($danger-color, 0.2);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modal-content {
+    background-color: $white;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      color: $text-color;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-weight: 600;
+          color: $text-color;
+        }
+
+        input, textarea {
+          padding: 0.75rem;
+          border: 1px solid $border-color;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: border-color 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+          }
+        }
+
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+
+        .image-preview {
+          margin-top: 0.5rem;
+          
+          img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            object-fit: contain;
+          }
+
+          p {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: $light-text-color;
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+
+        button {
+          flex: 1;
+          padding: 0.75rem;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+
+          &.submit-btn {
+            background-color: $primary-color;
+            color: $white;
+
+            &:hover {
+              background-color: $secondary-color;
+            }
+          }
+
+          &.cancel-btn {
+            background-color: #f1f5f9;
+            color: $text-color;
+
+            &:hover {
+              background-color: #e2e8f0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 
   
