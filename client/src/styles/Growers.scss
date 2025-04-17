@@ -1,24 +1,31 @@
 @import "./variables.scss";
 @import "./breakpoints.scss";
 
-// Define missing variables if they're not in variables.scss
-$orange: #FF9800; // Add this if $orange is not defined in variables.scss
-$blue: #1a2b4a;
-$pinkred: #FF5B8D;
-$green: #10b981;
+// Color Variables
+$pink-50: #FFF0F3;  // Lightest pink - Background
+$pink-100: #FFD6E0; // Light pink - Borders and hover states
+$pink-200: #FF7A9C; // Medium pink - Secondary elements
+$pink-300: #FF4777; // Dark pink - Primary actions
+$pink-400: #FF0047; // Deepest pink - Emphasis
+
+// Update existing variables
+$blue: $pink-300;
+$pinkred: $pink-400;
+$green: #4CAF50;
+$grey: #6B7280;
 
 .seller-dashboard {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: $pink-50;
   font-family: 'Poppins', sans-serif;
 
   &__container {
     flex: 1;
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 1rem;
+    padding: 2rem;
   }
 
   &__header {
@@ -28,10 +35,13 @@ $green: #10b981;
     margin-bottom: 2rem;
 
     h1 {
-      color: $blue;
+      color: $pink-400;
+      font-size: 2.25rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, $pink-300, $pink-400);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin: 0;
-      font-size: 2rem;
-      font-weight: 600;
     }
 
     .actions {
@@ -42,25 +52,27 @@ $green: #10b981;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        background-color: $pinkred;
+        background: linear-gradient(45deg, $pink-300, $pink-400);
+        box-shadow: 0 4px 15px rgba($pink-300, 0.2);
         color: white;
         border: none;
         padding: 0.75rem 1.25rem;
         border-radius: 8px;
         cursor: pointer;
         font-weight: 500;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
 
         &:hover {
-          background-color: darken($pinkred, 10%);
           transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba($pink-300, 0.3);
+          background: linear-gradient(45deg, $pink-400, $pink-300);
         }
 
         &.view-orders-btn {
-          background-color: $blue;
+          background: linear-gradient(45deg, $pink-200, $pink-300);
 
           &:hover {
-            background-color: lighten($blue, 10%);
+            background: linear-gradient(45deg, $pink-300, $pink-200);
           }
         }
       }
@@ -74,17 +86,18 @@ $green: #10b981;
     margin-bottom: 2rem;
 
     .stat-card {
-      background-color: white;
+      background: white;
+      border: 1px solid $pink-100;
       border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 8px 20px rgba($pink-100, 0.2);
       display: flex;
       flex-direction: column;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 12px 25px rgba($pink-200, 0.25);
       }
 
       .stat-icon {
@@ -96,38 +109,35 @@ $green: #10b981;
         justify-content: center;
         margin-bottom: 1rem;
         font-size: 1.5rem;
+        background: linear-gradient(45deg, $pink-100, $pink-200);
 
         &.revenue {
-          background-color: rgba($pinkred, 0.1);
-          color: $pinkred;
+          background: linear-gradient(45deg, rgba($pink-300, 0.1), rgba($pink-400, 0.1));
+          color: $pink-400;
         }
 
         &.orders {
-          background-color: rgba($blue, 0.1);
-          color: $blue;
+          background: linear-gradient(45deg, rgba($pink-200, 0.1), rgba($pink-300, 0.1));
+          color: $pink-300;
         }
 
         &.products {
-          background-color: rgba($green, 0.1);
+          background: linear-gradient(45deg, rgba($green, 0.1), rgba($green, 0.2));
           color: $green;
-        }
-
-        &.customers {
-          background-color: rgba($orange, 0.1);
-          color: $orange;
         }
       }
 
       .stat-value {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 700;
-        color: $blue;
+        color: $pink-400;
         margin-bottom: 0.5rem;
       }
 
       .stat-label {
         font-size: 0.9rem;
-        color: #64748b;
+        color: $grey;
+        font-weight: 500;
         margin-bottom: 0.75rem;
       }
 
@@ -139,28 +149,31 @@ $green: #10b981;
 
         &.positive {
           color: $green;
+          font-weight: 600;
         }
 
         &.negative {
-          color: $pinkred;
+          color: $pink-400;
+          font-weight: 600;
         }
       }
     }
   }
 
   &__products {
-    background-color: white;
+    background: white;
+    border: 1px solid $pink-100;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 20px rgba($pink-100, 0.15);
     margin-bottom: 2rem;
 
     h2 {
-      font-size: 1.3rem;
-      color: $blue;
+      color: $pink-400;
+      font-size: 1.5rem;
+      font-weight: 700;
       margin-top: 0;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
+      margin-bottom: 2rem;
     }
 
     .products-grid {
@@ -170,23 +183,26 @@ $green: #10b981;
     }
 
     .product-card {
-      background-color: white;
+      background: white;
+      border: 1px solid $pink-100;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 15px rgba($pink-100, 0.2);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       position: relative;
 
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 12px 25px rgba($pink-200, 0.25);
+        border-color: $pink-200;
       }
 
       .sold-out-badge {
         position: absolute;
         top: 10px;
         right: 10px;
-        background-color: rgba($pinkred, 0.9);
+        background: linear-gradient(45deg, $pink-300, $pink-400);
+        box-shadow: 0 4px 10px rgba($pink-400, 0.3);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -204,34 +220,35 @@ $green: #10b981;
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.3s ease;
+          transition: transform 0.5s ease;
 
           &:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
           }
         }
       }
 
       .product-info {
         padding: 1rem;
-        border-bottom: 1px solid #f1f1f1;
+        border-bottom: 1px solid $pink-100;
 
         h3 {
           margin: 0 0 0.5rem;
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           font-weight: 600;
-          color: $blue;
+          color: $pink-400;
         }
 
         .product-price {
           font-weight: 700;
-          color: $pinkred;
+          color: $pink-300;
           margin: 0 0 0.5rem;
+          font-size: 1.1rem;
         }
 
         .product-stock {
           font-size: 0.9rem;
-          color: #64748b;
+          color: $grey;
           margin: 0;
         }
       }
@@ -260,32 +277,26 @@ $green: #10b981;
           }
 
           &.edit-btn {
-            background-color: rgba($green, 0.1);
+            background: linear-gradient(45deg, rgba($green, 0.1), rgba($green, 0.2));
             color: $green;
 
             &:hover {
-              background-color: $green;
+              background: $green;
               color: white;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba($green, 0.3);
             }
           }
 
           &.delete-btn {
-            background-color: rgba($pinkred, 0.1);
-            color: $pinkred;
+            background: linear-gradient(45deg, rgba($pink-400, 0.1), rgba($pink-400, 0.2));
+            color: $pink-400;
 
             &:hover {
-              background-color: $pinkred;
+              background: $pink-400;
               color: white;
-            }
-          }
-
-          &.trace-btn {
-            background-color: rgba($blue, 0.1);
-            color: $blue;
-
-            &:hover {
-              background-color: $blue;
-              color: white;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba($pink-400, 0.3);
             }
           }
         }
@@ -307,17 +318,19 @@ $green: #10b981;
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  background-color: white;
+  background: white;
+  border: 1px solid $pink-100;
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
   padding: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 35px rgba($pink-300, 0.2);
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -329,20 +342,20 @@ $green: #10b981;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $pinkred;
+    background: linear-gradient(45deg, $pink-300, $pink-400);
     border-radius: 4px;
 
     &:hover {
-      background: darken($pinkred, 10%);
+      background: linear-gradient(45deg, $pink-400, $pink-300);
     }
   }
 
   h2 {
-    color: $blue;
+    color: $pink-400;
     margin-top: 0;
     margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: 700;
   }
 
   .form-group {
@@ -351,23 +364,24 @@ $green: #10b981;
     label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: $blue;
+      font-weight: 600;
+      color: $pink-400;
     }
 
     input, textarea {
       width: 100%;
       padding: 0.75rem;
-      border: 1px solid #e2e8f0;
+      border: 1px solid $pink-100;
       border-radius: 8px;
       font-family: inherit;
       font-size: 1rem;
       transition: border-color 0.2s ease;
+      background: white;
 
       &:focus {
         outline: none;
-        border-color: $pinkred;
-        box-shadow: 0 0 0 3px rgba($pinkred, 0.1);
+        border-color: $pink-300;
+        box-shadow: 0 0 0 3px rgba($pink-300, 0.1);
       }
     }
 
@@ -385,12 +399,15 @@ $green: #10b981;
         max-height: 200px;
         border-radius: 8px;
         object-fit: contain;
+        border: 2px solid $pink-100;
+        padding: 0.5rem;
+        background: white;
       }
 
       p {
         margin-top: 0.5rem;
         font-size: 0.9rem;
-        color: #64748b;
+        color: $grey;
       }
     }
   }
@@ -410,20 +427,24 @@ $green: #10b981;
       transition: all 0.2s ease;
 
       &.submit-btn {
-        background-color: $pinkred;
+        background: linear-gradient(45deg, $pink-300, $pink-400);
+        box-shadow: 0 4px 15px rgba($pink-300, 0.2);
         color: white;
 
         &:hover {
-          background-color: darken($pinkred, 10%);
+          background: linear-gradient(45deg, $pink-400, $pink-300);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba($pink-300, 0.3);
         }
       }
 
       &.cancel-btn {
-        background-color: #e2e8f0;
-        color: #64748b;
+        background: $pink-50;
+        color: $pink-400;
 
         &:hover {
-          background-color: darken(#e2e8f0, 10%);
+          background: $pink-100;
+          transform: translateY(-2px);
         }
       }
     }
@@ -549,6 +570,10 @@ $green: #10b981;
 // Responsive adjustments
 @media (max-width: 768px) {
   .seller-dashboard {
+    &__container {
+      padding: 1rem;
+    }
+
     &__header {
       flex-direction: column;
       align-items: flex-start;
@@ -557,21 +582,49 @@ $green: #10b981;
       .actions {
         width: 100%;
         justify-content: space-between;
+
+        button {
+          flex: 1;
+          text-align: center;
+          justify-content: center;
+        }
       }
     }
 
     &__stats {
-      grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+      .stat-card {
+        margin-bottom: 1rem;
+      }
     }
 
     &__products {
-      .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+      .product-card {
+        margin-bottom: 1rem;
       }
     }
   }
 
   .modal-content {
+    margin: 1rem;
     padding: 1.5rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.seller-dashboard {
+  &__stats .stat-card,
+  &__products .product-card {
+    animation: fadeIn 0.5s ease-out;
   }
 }

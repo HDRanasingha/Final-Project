@@ -226,23 +226,24 @@
 }
 
 /* Color Variables - Pink Palette */
-$primary-color: #FF5B8D; // Vibrant pink for primary actions
-$secondary-color: #FF3868; // Deeper pink for accents
-$tertiary-color: #FFC2D1; // Light pink for subtle accents
-$background-color: #FFF5F8; // Soft pink background
-$text-color: #1a2b4a; // Rich dark blue for text
-$light-text-color: #64748b; // Softer gray for secondary text
-$border-color: #FFDCE5; // Delicate pink border
-$white: #ffffff; // Pure white
+$pink-50: #FFF0F3;  // Lightest pink
+$pink-100: #FFD6E0; // Light pink
+$pink-200: #FF7A9C; // Medium pink
+$pink-300: #FF4777; // Dark pink
+$pink-400: #FF0047; // Deepest pink
 
-/* Status Colors */
-$success-color: #4ade80; // Green for positive indicators
-$warning-color: #f59e0b; // Orange for warnings
-$danger-color: #ef4444; // Red for errors/alerts
+$text-color: #1a2b4a;
+$light-text: #64748b;
+$border-color: #e2e8f0;
+$white: #ffffff;
+
+$success-color: #4ade80;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
 
 /* Supplier Dashboard Styles */
 .seller-dashboard {
-  background-color: $background-color;
+  background-color: $pink-50;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -264,6 +265,7 @@ $danger-color: #ef4444; // Red for errors/alerts
       color: $text-color;
       font-size: 2rem;
       font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .actions {
@@ -275,23 +277,26 @@ $danger-color: #ef4444; // Red for errors/alerts
         align-items: center;
         gap: 0.5rem;
         padding: 0.75rem 1.25rem;
-        background-color: $primary-color;
+        background-color: $pink-300;
         color: $white;
         border: none;
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
         &:hover {
-          background-color: $secondary-color;
+          background-color: $pink-400;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         &.view-orders-btn {
-          background-color: $text-color;
+          background-color: $pink-200;
           
           &:hover {
-            background-color: darken($text-color, 10%);
+            background-color: darken($pink-200, 10%);
           }
         }
       }
@@ -312,7 +317,13 @@ $danger-color: #ef4444; // Red for errors/alerts
       display: flex;
       flex-direction: column;
       position: relative;
-      border: 1px solid $border-color;
+      border: 1px solid $pink-100;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
 
       .stat-icon {
         width: 48px;
@@ -323,18 +334,20 @@ $danger-color: #ef4444; // Red for errors/alerts
         justify-content: center;
         margin-bottom: 1rem;
         font-size: 1.5rem;
-        color: $white;
 
         &.revenue {
-          background-color: $primary-color;
+          background-color: rgba($pink-300, 0.1);
+          color: $pink-300;
         }
 
         &.orders {
-          background-color: $text-color;
+          background-color: rgba($pink-200, 0.1);
+          color: $pink-200;
         }
 
         &.products {
-          background-color: $success-color;
+          background-color: rgba($pink-100, 0.1);
+          color: $pink-100;
         }
       }
 
@@ -347,31 +360,57 @@ $danger-color: #ef4444; // Red for errors/alerts
 
       .stat-label {
         font-size: 0.875rem;
-        color: $light-text-color;
+        color: $light-text;
         margin-bottom: 0.75rem;
       }
 
       .stat-change {
         font-size: 0.75rem;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
         
         &.positive {
           color: $success-color;
+          background-color: rgba($success-color, 0.1);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          display: inline-flex;
         }
         
         &.negative {
           color: $danger-color;
+          background-color: rgba($danger-color, 0.1);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          display: inline-flex;
         }
       }
     }
   }
 
   &__products {
+    background-color: $white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
     h2 {
       color: $text-color;
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, $pink-100, transparent);
+      }
     }
 
     .products-grid {
@@ -385,7 +424,7 @@ $danger-color: #ef4444; // Red for errors/alerts
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         position: relative;
-        border: 1px solid $border-color;
+        border: 1px solid $pink-100;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         &:hover {
@@ -397,19 +436,21 @@ $danger-color: #ef4444; // Red for errors/alerts
           position: absolute;
           top: 10px;
           right: 10px;
-          background-color: $danger-color;
+          background-color: $pink-400;
           color: $white;
           padding: 0.25rem 0.75rem;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 600;
           z-index: 1;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .product-image {
           height: 180px;
           overflow: hidden;
           cursor: pointer;
+          background-color: $pink-50;
 
           img {
             width: 100%;
@@ -434,21 +475,42 @@ $danger-color: #ef4444; // Red for errors/alerts
           }
 
           .product-price {
-            color: $primary-color;
+            color: $pink-300;
             font-weight: 700;
             margin-bottom: 0.25rem;
+            font-size: 1.1rem;
           }
 
           .product-stock {
-            color: $light-text-color;
+            color: $light-text;
             font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+
+            &::before {
+              content: '';
+              display: inline-block;
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background-color: $success-color;
+            }
+
+            &.low::before {
+              background-color: $warning-color;
+            }
+
+            &.out::before {
+              background-color: $danger-color;
+            }
           }
         }
 
         .product-actions {
           display: flex;
           padding: 0.75rem 1rem;
-          border-top: 1px solid $border-color;
+          border-top: 1px solid $pink-100;
           gap: 0.5rem;
 
           button {
@@ -463,14 +525,15 @@ $danger-color: #ef4444; // Red for errors/alerts
             justify-content: center;
             gap: 0.25rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
 
             &.edit-btn {
-              background-color: $tertiary-color;
-              color: $text-color;
+              background-color: $pink-50;
+              color: $pink-300;
 
               &:hover {
-                background-color: darken($tertiary-color, 5%);
+                background-color: $pink-100;
+                color: $pink-400;
               }
             }
 
@@ -479,7 +542,8 @@ $danger-color: #ef4444; // Red for errors/alerts
               color: $danger-color;
 
               &:hover {
-                background-color: rgba($danger-color, 0.2);
+                background-color: $danger-color;
+                color: $white;
               }
             }
           }
