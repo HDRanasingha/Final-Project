@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import { CheckCircle, ShoppingBag, Timeline } from "@mui/icons-material";
 import "../styles/PaymentSucsess.scss";
 
 const PaymentSuccess = () => {
@@ -31,20 +31,68 @@ const PaymentSuccess = () => {
   return (
     <div className="payment-success">
       <Navbar />
-      <div className="thank-you-container">
-        <h1>🎉 Thank You for Your Order!</h1>
-        {orderId ? (
-          <>
-            <p>Your Order ID: <strong>{orderId}</strong></p>
-            <p>Use this Order ID to <strong>track your order</strong>.</p>
-            <button onClick={() => navigate(`/track-order?orderId=${orderId}`)}>Track My Order</button>
-          </>
-        ) : (
-          <>
-            <p>Your order has been placed successfully!</p>
-            <button onClick={() => navigate("/track-order")}>Track My Orders</button>
-          </>
-        )}
+      <div className="success-container">
+        <div className="success-card">
+          <div className="success-icon">
+            <CheckCircle />
+          </div>
+          
+          <h1>Payment Successful!</h1>
+          
+          {orderId && (
+            <div className="order-id-container">
+              <span className="order-id">Order ID: {orderId}</span>
+              <button 
+                className="copy-button"
+                onClick={() => navigator.clipboard.writeText(orderId)}
+              >
+                Copy ID
+              </button>
+            </div>
+          )}
+          
+          <div className="success-message">
+            <CheckCircle />
+            <p>
+              Thank you for your purchase! Your payment has been processed successfully.
+              You will receive an email confirmation shortly.
+            </p>
+          </div>
+          
+          <div className="order-details">
+            <div className="order-info">
+              <p>
+                <span>Status</span>
+                <span className="status-badge">Confirmed</span>
+              </p>
+              {orderId && (
+                <p>
+                  <span>Order ID</span>
+                  <span>{orderId}</span>
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <div className="action-info">
+            Track your order or continue shopping
+          </div>
+          
+          <div className="action-buttons">
+            <button 
+              className="continue-shopping"
+              onClick={() => navigate("/shop")}
+            >
+              <ShoppingBag /> Continue Shopping
+            </button>
+            <button 
+              className="track-order"
+              onClick={() => navigate(`/track-order${orderId ? `?orderId=${orderId}` : ''}`)}
+            >
+              <Timeline /> Track Order
+            </button>
+          </div>
+        </div>
       </div>
       <Footer />
     </div>
