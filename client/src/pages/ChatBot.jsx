@@ -1,19 +1,34 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, SmartToy } from "@mui/icons-material";
+import { Send, SmartToy, Delete } from "@mui/icons-material";
 import "../styles/ChatBot.scss";
 import Footer from "../component/Footer";
 import Navbar from "../component/Navbar";
 
 const ChatBot = () => {
-  const [messages, setMessages] = useState([
-    {
-      text: "Hello! I'm FlowerSCM Assistant. How can I help you today with your flower supply chain needs?",
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Initialize messages from localStorage based on user role
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem(`chatMessages_${user?.role || 'guest'}`);
+    return savedMessages ? JSON.parse(savedMessages) : [{
+      text: user?.role 
+        ? `Hello ${user.firstName}! I'm FlowerSCM Assistant. How can I help you today with your ${user.role} needs?`
+        : "Hello! I'm FlowerSCM Assistant. How can I help you today?",
       sender: "bot",
-    },
-  ]);
+    }];
+  });
+
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Save messages to localStorage based on user role
+  useEffect(() => {
+    localStorage.setItem(`chatMessages_${user?.role || 'guest'}`, JSON.stringify(messages));
+  }, [messages, user]);
 
   // Auto-scroll to bottom of messages
   useEffect(() => {
@@ -31,13 +46,16 @@ const ChatBot = () => {
     setIsLoading(true);
 
     try {
-      // Make API call to your backend which will handle the Gemini API
       const response = await fetch("http://localhost:3001/api/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ 
+          message: input,
+          userId: user?._id,
+          role: user?.role || 'guest'
+        }),
       });
 
       if (!response.ok) {
@@ -65,6 +83,16 @@ const ChatBot = () => {
     }
   };
 
+  const clearChatHistory = () => {
+    setMessages([{
+      text: user?.role 
+        ? `Hello ${user.firstName}! I'm FlowerSCM Assistant. How can I help you today with your ${user.role} needs?`
+        : "Hello! I'm FlowerSCM Assistant. How can I help you today?",
+      sender: "bot",
+    }]);
+    localStorage.removeItem(`chatMessages_${user?.role || 'guest'}`);
+  };
+
   return (
     <div className="chatbot-page">
       <Navbar />
@@ -78,6 +106,12 @@ const ChatBot = () => {
               <h1>FlowerSCM Assistant</h1>
               <p>Your personal guide to flowers, orders, and services</p>
             </div>
+            {user && (
+              <button className="clear-chat-btn" onClick={clearChatHistory}>
+                <Delete />
+                <span>Clear Chat</span>
+              </button>
+            )}
           </div>
 
           <div className="chat-messages">
@@ -121,17 +155,43 @@ const ChatBot = () => {
           <div className="info-card">
             <h3>How can I help you?</h3>
             <ul>
-              <li>Learn about flower varieties and care</li>
-              <li>Get information about ordering and delivery</li>
-              <li>Find out about our services and products</li>
-              <li>Get assistance with your account</li>
+              {user?.role === 'seller' && (
+                <>
+                  <li>Manage your products and inventory</li>
+                  <li>Track your sales and orders</li>
+                  <li>Get insights about your business</li>
+                </>
+              )}
+              {user?.role === 'grower' && (
+                <>
+                  <li>Track your flower production</li>
+                  <li>Manage your supply chain</li>
+                  <li>Get growing tips and advice</li>
+                </>
+              )}
+              {user?.role === 'supplier' && (
+                <>
+                  <li>Manage your supplies and inventory</li>
+                  <li>Track your orders and deliveries</li>
+                  <li>Get supplier-specific information</li>
+                </>
+              )}
+              {!user && (
+                <>
+                  <li>Learn about flower varieties and care</li>
+                  <li>Get information about ordering and delivery</li>
+                  <li>Find out about our services and products</li>
+                </>
+              )}
             </ul>
           </div>
           
           <div className="info-card">
             <h3>Quick Tips</h3>
             <p>Be specific with your questions for better answers.</p>
-            <p>You can ask about seasonal flowers, care instructions, or order status.</p>
+            {user?.role && (
+              <p>You can ask about your {user.role}-specific tasks and information.</p>
+            )}
           </div>
         </div>
       </div>
