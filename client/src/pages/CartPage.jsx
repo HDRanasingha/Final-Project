@@ -50,7 +50,7 @@ const CartPage = () => {
         <h1 className="cart-title">Shopping Cart</h1>
         {cart.length === 0 ? (
           <div className="empty-cart">
-            <img src="/images/empty-cart.png" alt="Empty Cart" />
+            <img src="/assets/empty-cart.jpeg" alt="Empty Cart" />
             <p>Your cart is empty!</p>
             <p>Add some beautiful flowers to your cart and make someone's day special.</p>
             <Link to="/" className="continue-shopping">

@@ -4,6 +4,7 @@ const Order = require("../models/Order");
 const Flower = require("../models/Flower");
 const Product = require("../models/Product");
 const Item = require("../models/Item");
+const mongoose = require("mongoose");
 
 // Get all orders
 router.get("/", async (req, res) => {
@@ -99,8 +100,43 @@ router.get("/total-income", async (req, res) => {
 
 router.post("/success", async (req, res) => {
   const { orderId, items, total, customer, status } = req.body;
+  const session = await mongoose.startSession();
 
   try {
+    session.startTransaction();
+
+    // First validate stock availability for all items
+    for (const item of items) {
+      let stockAvailable = false;
+      
+      // Check Flower stock
+      const flower = await Flower.findById(item.listerId);
+      if (flower && flower.stock >= item.quantity) {
+        stockAvailable = true;
+      }
+      
+      // Check Product stock if not found in Flower
+      if (!stockAvailable) {
+        const product = await Product.findById(item.listerId);
+        if (product && product.stock >= item.quantity) {
+          stockAvailable = true;
+        }
+      }
+      
+      // Check Item stock if not found in Product
+      if (!stockAvailable) {
+        const generalItem = await Item.findById(item.listerId);
+        if (generalItem && generalItem.stock >= item.quantity) {
+          stockAvailable = true;
+        }
+      }
+
+      if (!stockAvailable) {
+        throw new Error(`Insufficient stock for item: ${item.name}`);
+      }
+    }
+
+    // Create new order
     const newOrder = new Order({
       orderId,
       items,
@@ -109,36 +145,66 @@ router.post("/success", async (req, res) => {
       status,
     });
 
-    await newOrder.save();
+    await newOrder.save({ session });
 
-    // reduce stock for flowers
-    items.forEach(async (item) => {
-      await Flower.findOneAndUpdate(
-        { growerId: item.listerId, stock: { $gte: item.quantity } },
-        { $inc: { stock: -item.quantity } }
+    // Update stock for each item
+    for (const item of items) {
+      let updated = false;
+      
+      // Try updating flower stock
+      const flowerUpdate = await Flower.findOneAndUpdate(
+        { _id: item.listerId, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+        { session, new: true }
       );
-    });
 
-     // reduce stock for products
-     items.forEach(async (item) => {
-      await Product.findOneAndUpdate(
-        { sellerId: item.listerId, stock: { $gte: item.quantity } },
-        { $inc: { stock: -item.quantity } }
-      );
-    });
+      if (flowerUpdate) {
+        console.log(`Updated Flower stock for ${item.name}. New stock: ${flowerUpdate.stock}`);
+        updated = true;
+      }
 
-   // reduce stock for items
-   items.forEach(async (item) => {
-    await Item.findOneAndUpdate(
-      { supplierId: item.listerId, stock: { $gte: item.quantity } },
-      { $inc: { stock: -item.quantity } }
-    );
-  });
+      // If not a flower, try updating product stock
+      if (!updated) {
+        const productUpdate = await Product.findOneAndUpdate(
+          { _id: item.listerId, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { session, new: true }
+        );
 
+        if (productUpdate) {
+          console.log(`Updated Product stock for ${item.name}. New stock: ${productUpdate.stock}`);
+          updated = true;
+        }
+      }
+
+      // If not a product, try updating item stock
+      if (!updated) {
+        const itemUpdate = await Item.findOneAndUpdate(
+          { _id: item.listerId, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { session, new: true }
+        );
+
+        if (itemUpdate) {
+          console.log(`Updated Item stock for ${item.name}. New stock: ${itemUpdate.stock}`);
+        } else {
+          throw new Error(`Failed to update stock for item: ${item.name}`);
+        }
+      }
+    }
+
+    await session.commitTransaction();
     res.status(200).json({ message: "Order placed successfully!" });
+
   } catch (error) {
+    await session.abortTransaction();
     console.error("Error placing order:", error);
-    res.status(500).json({ error: "Failed to place order" });
+    res.status(400).json({ 
+      error: error.message || "Failed to place order",
+      details: error.message.includes("Insufficient stock") ? "Some items are out of stock" : "Transaction failed"
+    });
+  } finally {
+    session.endSession();
   }
 });
 

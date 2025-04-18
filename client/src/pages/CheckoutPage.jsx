@@ -100,7 +100,7 @@ const CheckoutPage = () => {
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        listerId: item.growerId?._id || item.sellerId?._id || item.supplierId?._id
+        listerId: item._id
       });
     });
 
