@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { Delete } from '@mui/icons-material';
 import '../styles/Messages.scss';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
@@ -12,8 +13,10 @@ const formatTime = (timestamp) => {
 };
 
 const Messages = () => {
-  const [messages, setMessages] = useState([]); // Ensure messages is initialized as an array
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [contextMenu, setContextMenu] = useState(null);
+  const [deletingMessageId, setDeletingMessageId] = useState(null);
   const currentUser = useSelector((state) => state.user);
   const messagesEndRef = useRef(null);
   const socket = useRef(null);
@@ -26,8 +29,16 @@ const Messages = () => {
 
     // Listen for new messages from the server
     socket.current.on('new_message', (message) => {
-      console.log('Received new message via socket:', message);
       setMessages(prevMessages => [...prevMessages, message]);
+    });
+
+    // Listen for deleted messages
+    socket.current.on('message_deleted', (messageId) => {
+      setDeletingMessageId(messageId);
+      setTimeout(() => {
+        setMessages(prevMessages => prevMessages.filter(msg => msg._id !== messageId));
+        setDeletingMessageId(null);
+      }, 300); // Match the animation duration
     });
 
     return () => {
@@ -42,8 +53,7 @@ const Messages = () => {
   const fetchMessages = async () => {
     try {
       const response = await axios.get('http://localhost:3001/api/messages');
-      console.log('Fetched messages:', response.data); // Log response data
-      setMessages(Array.isArray(response.data) ? response.data : []); // Ensure response data is an array
+      setMessages(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -58,26 +68,61 @@ const Messages = () => {
     if (!newMessage.trim()) return;
 
     try {
-        const messageData = {
-            text: newMessage,
-            sender: currentUser._id,
-            timestamp: Date.now()
-        };
+      const messageData = {
+        text: newMessage,
+        sender: currentUser._id,
+        timestamp: Date.now()
+      };
 
-        const response = await axios.post('http://localhost:3001/api/messages', messageData);
-        
-        // Clear the input field
-        setNewMessage('');
-        
-        // Emit the message through socket
-        socket.current.emit('send_message', response.data);
-        
-        // Note: We don't need to add the message to the state here
-        // because it will come back through the socket broadcast
+      const response = await axios.post('http://localhost:3001/api/messages', messageData);
+      setNewMessage('');
+      socket.current.emit('send_message', response.data);
     } catch (error) {
-        console.error('Error sending message:', error);
+      console.error('Error sending message:', error);
     }
   };
+
+  const handleContextMenu = (e, message) => {
+    e.preventDefault();
+    if (message.sender === currentUser._id) {
+      setContextMenu({
+        x: e.clientX,
+        y: e.clientY,
+        messageId: message._id
+      });
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      setDeletingMessageId(messageId);
+      await axios.delete(`http://localhost:3001/api/messages/${messageId}`);
+      socket.current.emit('delete_message', messageId);
+      setContextMenu(null);
+      
+      // Remove the message from UI after animation
+      setTimeout(() => {
+        setMessages(prevMessages => prevMessages.filter(msg => msg._id !== messageId));
+        setDeletingMessageId(null);
+      }, 300); // Match the animation duration
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      setDeletingMessageId(null);
+    }
+  };
+
+  const handleClickOutside = (e) => {
+    if (contextMenu && !e.target.closest('.context-menu')) {
+      setContextMenu(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [contextMenu]);
 
   return (
     <div className="messages-page">
@@ -91,7 +136,10 @@ const Messages = () => {
           {Array.isArray(messages) && messages.map((message, index) => (
             <div 
               key={index} 
-              className={`message-item ${message.sender === currentUser?._id ? 'sent' : 'received'}`}
+              className={`message-item ${message.sender === currentUser?._id ? 'sent' : 'received'} ${
+                deletingMessageId === message._id ? 'deleting' : ''
+              }`}
+              onContextMenu={(e) => handleContextMenu(e, message)}
             >
               <div className="message-avatar">
                 <img 
@@ -111,6 +159,25 @@ const Messages = () => {
           ))}
           <div ref={messagesEndRef} />
         </div>
+        
+        {contextMenu && (
+          <div 
+            className="context-menu"
+            style={{
+              position: 'fixed',
+              top: contextMenu.y,
+              left: contextMenu.x,
+            }}
+          >
+            <button 
+              className="delete-button"
+              onClick={() => handleDeleteMessage(contextMenu.messageId)}
+            >
+              <Delete />
+              <span>Delete Message</span>
+            </button>
+          </div>
+        )}
         
         <form className="message-input-form" onSubmit={handleSendMessage}>
           <input
