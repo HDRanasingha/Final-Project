@@ -130,6 +130,53 @@
       }
     }
   }
+
+  &__main-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-left: 2rem;
+    
+    @include sm {
+      display: none; // Hide on small screens
+    }
+    
+    .nav-link {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      position: relative;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: #FF5B8D;
+      }
+      
+      // Underline effect on hover
+      &::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: #FF5B8D;
+        transition: width 0.3s ease;
+      }
+      
+      &:hover::after {
+        width: 100%;
+      }
+    }
+  }
+  
+  &__icons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+  }
 }
 
 /* Hero Section */
@@ -482,7 +529,6 @@
 }
 
 // Add this to your existing styles
-
 .MuiBadge-badge {
   background-color: #FF3868 !important; // Pink color to match your theme
   color: white !important;

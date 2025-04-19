@@ -178,17 +178,9 @@ const ItemDetailsPage = () => {
               </div>
             )}
             
-            {/* Show edit button if user is the owner */}
-            {isOwner() && (
-              <div className="action-buttons">
-                <button 
-                  className="edit-item-button"
-                  onClick={() => navigate(`/edit-item/${item._id}`)}
-                >
-                  Edit Item
-                </button>
-              </div>
-            )}
+           
+             
+          
           </div>
         </div>
       </div>
