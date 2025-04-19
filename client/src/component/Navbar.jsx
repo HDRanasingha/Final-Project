@@ -367,124 +367,130 @@ const Navbar = () => {
           </IconButton>
         </form>
   
-        {/* Message Icon with Unread Count - Only show for logged in users */}
-        {user && (
-          <IconButton onClick={handleMessageClick} className="navbar__messages">
-            <Badge badgeContent={unreadMessages} color="error">
-              <Message sx={{ color: "#333" }} />
-            </Badge>
-          </IconButton>
-        )}
-        
-        {/* Supply Chain Nav - Only show for admin users */}
-        {user && user.role === 'admin' && (
-          <div className="navbar__supply-chain">
-            <SupplyChainNav />
-          </div>
-        )}
-        
-        {/* Inventory Alerts - Only show for appropriate roles */}
-        {user && ['grower', 'seller', 'supplier', 'admin'].includes(user.role) && (
-          <div className="navbar__alerts">
-            <IconButton onClick={toggleAlertsDropdown}>
-              <Badge badgeContent={inventoryAlerts.length} color="error">
-                <Notifications sx={{ color: "#333" }} />
+        {/* Main Navigation Links - Added for professional look */}
+        <div className="navbar__main-links">
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/about-us" className="nav-link">About Us</Link>
+          <Link to="/tracking" className="nav-link">Order Tracking</Link>
+          <Link to="/chatbot" className="nav-link">ChatBot</Link>
+          {user && user.role === 'admin' && (
+            <div className="navbar__supply-chain">
+              <SupplyChainNav />
+            </div>
+          )}
+        </div>
+  
+        {/* Right-side Icons */}
+        <div className="navbar__icons">
+          {/* Message Icon with Unread Count - Only show for logged in users */}
+          {user && (
+            <IconButton onClick={handleMessageClick} className="navbar__messages">
+              <Badge badgeContent={unreadMessages} color="error">
+                <Message sx={{ color: "#333" }} />
               </Badge>
             </IconButton>
-            
-            {/* Alerts Dropdown */}
-            {showAlerts && (
-              <div className="alerts-dropdown">
-                <h3>Inventory Alerts</h3>
-                {inventoryAlerts.length === 0 ? (
-                  <p className="no-alerts">No low stock items</p>
-                ) : (
-                  <>
-                    <div className="alerts-list">
-                      {inventoryAlerts.map(alert => (
-                        <div 
-                          key={`${alert.type}-${alert._id}`} 
-                          className="alert-item"
-                          onClick={() => handleAlertItemClick(alert)}
-                        >
-                          <div className="alert-icon">
-                            {alert.type === 'flower' ? '🌸' : alert.type === 'product' ? '📦' : '🛠️'}
-                          </div>
-                          <div className="alert-content">
-                            <p className="alert-name">{alert.name}</p>
-                            <p className="alert-stock">Stock: <span className="low-stock">{alert.stock}</span></p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <button 
-                      className="view-all-alerts"
-                      onClick={() => {
-                        navigate('/inventory-alerts');
-                        setShowAlerts(false);
-                      }}
-                    >
-                      View All
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-  
-        {/* Cart Icon with Item Count */}
-        <Link to="/cart" className="navbar__cart">
-          <IconButton>
-            <Badge badgeContent={cartCount} color="error">
-              <ShoppingCart sx={{ color: "#333" }} />
-            </Badge>
-          </IconButton>
-        </Link>
-  
-        {/* Account Button */}
-        <button
-          className="navbar__account-btn"
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          <Menu sx={{ color: "#333" }} />
-          {user?.profileImagePath ? (
-            <img
-              src={`http://localhost:3001/${user.profileImagePath.replace(
-                "public",
-                ""
-              )}`}
-              alt="Profile"
-              className="navbar__profile-photo"
-            />
-          ) : (
-            <Person sx={{ color: "#333" }} />
           )}
-        </button>
+          
+          {/* Inventory Alerts - Only show for appropriate roles */}
+          {user && ['grower', 'seller', 'supplier', 'admin'].includes(user.role) && (
+            <div className="navbar__alerts">
+              <IconButton onClick={toggleAlertsDropdown}>
+                <Badge badgeContent={inventoryAlerts.length} color="error">
+                  <Notifications sx={{ color: "#333" }} />
+                </Badge>
+              </IconButton>
+              
+              {/* Alerts Dropdown */}
+              {showAlerts && (
+                <div className="alerts-dropdown">
+                  <h3>Inventory Alerts</h3>
+                  {inventoryAlerts.length === 0 ? (
+                    <p className="no-alerts">No low stock items</p>
+                  ) : (
+                    <>
+                      <div className="alerts-list">
+                        {inventoryAlerts.map(alert => (
+                          <div 
+                            key={`${alert.type}-${alert._id}`} 
+                            className="alert-item"
+                            onClick={() => handleAlertItemClick(alert)}
+                          >
+                            <div className="alert-icon">
+                              {alert.type === 'flower' ? '🌸' : alert.type === 'product' ? '📦' : '🛠️'}
+                            </div>
+                            <div className="alert-content">
+                              <p className="alert-name">{alert.name}</p>
+                              <p className="alert-stock">Stock: <span className="low-stock">{alert.stock}</span></p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <button 
+                        className="view-all-alerts"
+                        onClick={() => {
+                          navigate('/inventory-alerts');
+                          setShowAlerts(false);
+                        }}
+                      >
+                        View All
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
   
-        {/* Updated Dropdown Menu - Make ChatBot and OrderTracking available to everyone */}
-        {isDropdownOpen && (
-          <div className="navbar__dropdown">
-            {!user ? (
-              <>
-                <Link to="/login">Log In</Link>
-                <Link to="/register">Sign Up</Link>
-                <Link to="/tracking">Order Tracking</Link>
-                <Link to="/chatbot">ChatBot</Link>
-                <Link to="/wishlist">Wishlist</Link>
-              </>
+          {/* Cart Icon with Item Count */}
+          <Link to="/cart" className="navbar__cart">
+            <IconButton>
+              <Badge badgeContent={cartCount} color="error">
+                <ShoppingCart sx={{ color: "#333" }} />
+              </Badge>
+            </IconButton>
+          </Link>
+  
+          {/* Account Button */}
+          <button
+            className="navbar__account-btn"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <Menu sx={{ color: "#333" }} />
+            {user?.profileImagePath ? (
+              <img
+                src={`http://localhost:3001/${user.profileImagePath.replace(
+                  "public",
+                  ""
+                )}`}
+                alt="Profile"
+                className="navbar__profile-photo"
+              />
             ) : (
-              <>
-                <Link to="/profile">Profile Details</Link>
-                <Link to="/chatbot">ChatBot</Link>
-                <Link to="/tracking">Order Tracking</Link>
-                <Link to="/" onClick={handleLogout}>
-                  Log Out
-                </Link>
-              </>
+              <Person sx={{ color: "#333" }} />
             )}
-          </div>
-        )}
+          </button>
+  
+          {/* Updated Dropdown Menu - Simplified with fewer items */}
+          {isDropdownOpen && (
+            <div className="navbar__dropdown">
+              {!user ? (
+                <>
+                  <Link to="/login">Log In</Link>
+                  <Link to="/register">Sign Up</Link>
+                  <Link to="/wishlist">Wishlist</Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/profile">Profile Details</Link>
+                  <Link to="/wishlist">Wishlist</Link>
+                  <Link to="/" onClick={handleLogout}>
+                    Log Out
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </nav>
   
       {/* Hero Section (Only on Home Page & Before Login) */}

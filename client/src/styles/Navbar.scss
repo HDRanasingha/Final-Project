@@ -544,3 +544,231 @@
     }
   }
 }
+
+// Add styles for alerts dropdown
+.navbar__alerts {
+  position: relative;
+  
+  .alerts-dropdown {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    width: 320px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(255, 91, 141, 0.15);
+    padding: 16px;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+    
+    h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      color: #333;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 8px;
+    }
+    
+    .no-alerts {
+      color: #666;
+      text-align: center;
+      padding: 16px 0;
+    }
+    
+    .alerts-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba(255, 91, 141, 0.5);
+        border-radius: 10px;
+      }
+    }
+    
+    .alert-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(255, 91, 141, 0.1);
+      }
+      
+      .alert-icon {
+        font-size: 1.5rem;
+        margin-right: 12px;
+      }
+      
+      .alert-content {
+        flex: 1;
+        
+        .alert-name {
+          margin: 0 0 4px 0;
+          font-weight: 500;
+          color: #333;
+        }
+        
+        .alert-stock {
+          margin: 0;
+          color: #666;
+          font-size: 0.9rem;
+          
+          .low-stock {
+            color: #FF3868;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    
+    .view-all-alerts {
+      width: 100%;
+      padding: 10px;
+      background-color: rgba(255, 91, 141, 0.1);
+      color: #FF3868;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(255, 91, 141, 0.2);
+      }
+    }
+  }
+}
+
+// Enhanced dropdown styling
+.navbar__dropdown {
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+    
+    .dropdown-icon {
+      margin-right: 12px;
+      font-size: 1.2rem;
+    }
+    
+    &:hover {
+      background-color: rgba(255, 91, 141, 0.1);
+      color: #FF3868;
+    }
+  }
+  
+  .dropdown-divider {
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin: 8px 0;
+  }
+  
+  .logout-item {
+    color: #FF3868;
+    
+    &:hover {
+      background-color: rgba(255, 59, 104, 0.1);
+    }
+  }
+}
+
+// Left, center, right layout for navbar
+.navbar {
+  &__left, &__right, &__center {
+    display: flex;
+    align-items: center;
+  }
+
+  &__left {
+    flex: 1;
+  }
+
+  &__center {
+    flex: 2;
+    justify-content: center;
+    
+    @include sm {
+      display: none;
+    }
+  }
+
+  &__right {
+    flex: 1;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  &__icon-button {
+    margin: 0 4px;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  &__account {
+    position: relative;
+    
+    .account-text {
+      @include sm {
+        display: none;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 992px) {
+  .navbar {
+    padding: 12px 30px;
+    
+    &__main-links {
+      gap: 1rem;
+      
+      .nav-link {
+        font-size: 0.9rem;
+      }
+    }
+    
+    &__account-btn {
+      padding: 6px 12px 6px 6px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    &__logo img {
+      width: 100px;
+    }
+    
+    &__account-btn {
+      padding: 6px;
+      
+      .navbar__profile-photo {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
+    
