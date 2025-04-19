@@ -1,10 +1,16 @@
-/* Color Variables */
-$primary-color: #FF5B8D; // Pink for primary actions
-$secondary-color: #FF3868; // Deeper pink for accents
-$background-color: #f9f5f7; // Light pink background
+/* Color Variables - Pink Palette */
+$pink-50: #FFF0F3;  // Lightest pink
+$pink-100: #FFD6E0; // Light pink
+$pink-200: #FF7A9C; // Medium pink
+$pink-300: #FF4777; // Dark pink
+$pink-400: #FF0047; // Deepest pink
+
+$primary-color: $pink-300; // Pink for primary actions
+$secondary-color: $pink-400; // Deeper pink for accents
+$background-color: $pink-50; // Light pink background
 $text-color: #1a2b4a; // Dark blue for primary text
 $light-text-color: #64748b; // Medium gray for secondary text
-$border-color: #f0e4e8; // Light pink border color
+$border-color: $pink-100; // Light pink border color
 $white: #ffffff; // White for cards and content areas
 
 /* Chart Colors */
@@ -194,10 +200,12 @@ $chart-colors: (
           background-color: $secondary-color;
         }
         &.revenue {
-          background-color: #10b981; // Green for revenue
+          // Change from green to pink-200 (medium pink)
+          background-color: $pink-200;
         }
         &.pending {
-          background-color: #f59e0b; // Orange for pending
+          // Change from orange to pink-300 (dark pink)
+          background-color: $pink-300;
         }
       }
 

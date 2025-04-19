@@ -486,23 +486,19 @@ $danger-color: #ef4444;
             font-size: 0.875rem;
             display: flex;
             align-items: center;
+            justify-content: center; // Center horizontally
             gap: 0.25rem;
-
-            &::before {
-              content: '';
-              display: inline-block;
-              width: 8px;
-              height: 8px;
-              border-radius: 50%;
-              background-color: $success-color;
-            }
-
-            &.low::before {
-              background-color: $warning-color;
-            }
-
-            &.out::before {
-              background-color: $danger-color;
+            margin: 0.5rem 0;
+            padding: 0.25rem 0.5rem;
+            background-color: rgba($pink-50, 0.7);
+            border-radius: 4px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            border: 1px solid $pink-100;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background-color: rgba($pink-100, 0.3);
             }
           }
         }
@@ -671,6 +667,7 @@ $danger-color: #ef4444;
     }
   }
 }
+
 
 
   
