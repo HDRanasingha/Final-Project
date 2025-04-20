@@ -92,7 +92,7 @@ const SearchResults = () => {
             
             {flowers.length > 0 && (
               <div className="results-section">
-                <h3>Flowers ({flowers.length})</h3>
+                <h3>Growers Flowers ({flowers.length})</h3>
                 <div className="flower-list">
                   {flowers.map((flower) => (
                     <div 
@@ -127,7 +127,7 @@ const SearchResults = () => {
             
             {products.length > 0 && (
               <div className="results-section">
-                <h3>Products ({products.length})</h3>
+                <h3>Sellers Flowers({products.length})</h3>
                 <div className="product-list">
                   {products.map((product) => (
                     <div className="product-card" key={product._id} onClick={() => handleCardClick(product._id, 'product')}>
@@ -145,7 +145,7 @@ const SearchResults = () => {
             
             {items.length > 0 && (
               <div className="results-section">
-                <h3>Items ({items.length})</h3>
+                <h3>Suppliers Flowers ({items.length})</h3>
                 <div className="item-list">
                   {items.map((item) => (
                     <div className="item-card" key={item._id} onClick={() => handleCardClick(item._id, 'item')}>

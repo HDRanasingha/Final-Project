@@ -8,8 +8,8 @@ import { FaRegHeart, FaHeart, FaThermometerHalf } from "react-icons/fa";
 import axios from "axios";
 import "../styles/Navbar.scss";
 import "../styles/Customers.scss";
-// Import SupplyChainNav component
-import SupplyChainNav from "./SupplyChainNav";
+// Remove this import
+// import SupplyChainNav from "./SupplyChainNav";
 // Import WeatherWidget component
 import WeatherWidget from "./WeatherWidget";
 import { 
@@ -373,11 +373,8 @@ const Navbar = () => {
           <Link to="/about-us" className="nav-link">About Us</Link>
           <Link to="/tracking" className="nav-link">Order Tracking</Link>
           <Link to="/chatbot" className="nav-link">ChatBot</Link>
-          {user && user.role === 'admin' && (
-            <div className="navbar__supply-chain">
-              <SupplyChainNav />
-            </div>
-          )}
+          
+        
         </div>
   
         {/* Right-side Icons */}
@@ -556,7 +553,7 @@ const Navbar = () => {
   
           {/* Sellers' Products Section */}
           <div className="product-list">
-            <h2>Sellers' Products</h2>
+            <h2>Sellers Flowers</h2>
             {products.map((product) => (
               <div className="product-card" key={product._id} onClick={() => handleProductCardClick(product._id)}>
                 {product.stock === 0 && <div className="sold-out">Sold Out</div>}
@@ -572,7 +569,7 @@ const Navbar = () => {
   
           {/* Supplier's Items Section */}
           <div className="item-list">
-            <h2>Supplier's Items</h2>
+            <h2>Suppliers Flowers</h2>
             {items.map((item) => (
               <div className="item-card" key={item._id} onClick={() => handleItemCardClick(item._id)}>
                 {item.stock === 0 && <div className="sold-out">Sold Out</div>}
