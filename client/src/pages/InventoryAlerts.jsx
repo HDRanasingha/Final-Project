@@ -132,9 +132,9 @@ const InventoryAlerts = () => {
                   >
                     <div className="alert-header">
                       <span className={`alert-type ${alert.type}`}>
-                        {alert.type === 'flower' ? '🌸 Flower' : 
-                         alert.type === 'product' ? '📦 Product' : 
-                         '🛠️ Supply Item'}
+                        {alert.type === 'flower' ? '🌸 Growers' : 
+                         alert.type === 'product' ? '📦 Sellers' : 
+                         '🛠️ Supplliers'}
                       </span>
                       <span className="alert-stock">Stock: <span className="stock-count">{alert.stock}</span></span>
                     </div>

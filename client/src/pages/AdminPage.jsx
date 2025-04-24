@@ -45,6 +45,7 @@ const AdminPage = () => {
   const [editUser, setEditUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [topSellers, setTopSellers] = useState([]);
+  const [topSellingItems, setTopSellingItems] = useState([]); // Add this line
   const [userRoles, setUserRoles] = useState({ growers: 0, suppliers: 0, sellers: 0 });
   const [orderStatuses, setOrderStatuses] = useState({ processing: 0, shipped: 0, delivered: 0, cancelled: 0, receivedWarehouse: 0 });
   const [monthlyIncome, setMonthlyIncome] = useState([]);
@@ -72,6 +73,7 @@ const AdminPage = () => {
       try {
         const res = await axios.get("http://localhost:3001/api/orders/top-sellers");
         setTopSellers(res.data);
+        setTopSellingItems(res.data); // Add this line to update both state variables
       } catch (err) {
         console.error("Error fetching top-selling items:", err);
       }
@@ -373,10 +375,17 @@ const AdminPage = () => {
     },
   };
 
-  // Summary stats for dashboard
+  // Summary stats for dashboard - update to exclude cancelled orders
   const totalUsers = users.length;
   const totalOrders = orders.length;
-  const totalRevenue = monthlyIncome.reduce((sum, month) => sum + month.totalIncome, 0);
+  
+  // Filter out cancelled orders before calculating revenue
+  const validOrders = orders.filter(order => order.status !== 'Cancelled');
+  const totalRevenue = validOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+  
+  // Alternative calculation using monthly income data if available
+  // const totalRevenue = monthlyIncome.reduce((sum, month) => sum + month.totalIncome, 0);
+  
   const pendingOrders = orders.filter(order => order.status === 'Processing').length;
 
   return (
@@ -489,7 +498,11 @@ const AdminPage = () => {
               <div className="chart-row">
                 <div className="chart-container">
                   <h2>Top Selling Items</h2>
-                  <Bar data={barChartData} options={barChartOptions} />
+                  {topSellingItems.length > 0 ? (
+                    <Bar data={barChartData} options={barChartOptions} />
+                  ) : (
+                    <div className="no-data-message">Loading top selling items data...</div>
+                  )}
                 </div>
                 <div className="chart-container">
                   <h2>User Distribution</h2>
@@ -683,7 +696,11 @@ const AdminPage = () => {
               <div className="chart-row">
                 <div className="chart-container">
                   <h2>Top Selling Items</h2>
-                  <Bar data={barChartData} options={barChartOptions} />
+                  {topSellingItems.length > 0 ? (
+                    <Bar data={barChartData} options={barChartOptions} />
+                  ) : (
+                    <div className="no-data-message">Loading top selling items data...</div>
+                  )}
                 </div>
                 <div className="chart-container">
                   <h2>Order Status Distribution</h2>

@@ -17,6 +17,8 @@ const PaymentGatewayPage = () => {
 
       if (response.ok) {
         setMessage("Payment Successful!");
+        // Clear the cart from localStorage after successful payment
+        localStorage.removeItem("cart");
         setTimeout(() => {
           navigate("/success"); // Redirect after payment
         }, 2000);

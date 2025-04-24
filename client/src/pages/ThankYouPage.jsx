@@ -17,12 +17,11 @@ const ThankYouPage = () => {
         <div className="thank-you-card">
           <div className="success-icon">✓</div>
           <h1>Thank You for Your Order!</h1>
-          <p className="order-confirmation">Your order has been successfully placed.</p>
+          
           
           {orderId && (
             <div className="order-details">
               <p>Order ID: <span className="highlight">{orderId}</span></p>
-              <p>A confirmation email has been sent to your registered email address.</p>
             </div>
           )}
           

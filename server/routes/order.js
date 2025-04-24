@@ -292,5 +292,26 @@ router.delete("/:orderId", async (req, res) => {
     res.status(500).json({ error: "Failed to cancel order" });
   }
 });
+// Get monthly income
+router.get("/monthly-income", async (req, res) => {
+  try {
+    const monthlyIncome = await Order.aggregate([
+      // Exclude cancelled orders
+      { $match: { status: { $ne: "Cancelled" } } },
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          totalIncome: { $sum: "$total" }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+    
+    res.status(200).json(monthlyIncome);
+  } catch (error) {
+    console.error("Error calculating monthly income:", error);
+    res.status(500).json({ error: "Failed to calculate monthly income" });
+  }
+});
 
 module.exports = router;

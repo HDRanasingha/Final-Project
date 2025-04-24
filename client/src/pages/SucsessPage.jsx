@@ -17,11 +17,15 @@ const PaymentSuccess = () => {
     
     if (urlOrderId) {
       setOrderId(urlOrderId);
+      // Clear cart when arriving at success page
+      localStorage.removeItem("cart");
     } else {
       // If not in URL, try to get from localStorage (for card payments)
       const storedOrderId = localStorage.getItem("pendingOrderId");
       if (storedOrderId) {
         setOrderId(storedOrderId);
+        // Clear cart when arriving at success page
+        localStorage.removeItem("cart");
         // Clear from localStorage after retrieving
         localStorage.removeItem("pendingOrderId");
       }
@@ -52,7 +56,6 @@ const PaymentSuccess = () => {
           )}
           
           <div className="success-message">
-            <CheckCircle />
             <p>
               Thank you for your purchase! Your payment has been processed successfully.
               You will receive an email confirmation shortly.

@@ -31,6 +31,15 @@ const CartPage = () => {
   const handleQuantityChange = (itemId, quantity) => {
     if (quantity < 1) return; // Prevents quantity from going below 1
 
+    // Find the item to check its stock
+    const item = cart.find(item => item._id === itemId);
+    
+    // Ensure quantity doesn't exceed available stock
+    if (item && quantity > item.stock) {
+      alert(`Cannot add more than ${item.stock} units of ${item.name} (available stock limit).`);
+      quantity = item.stock; // Set quantity to maximum available stock
+    }
+
     const updatedCart = cart.map((item) =>
       item._id === itemId ? { ...item, quantity: quantity } : item
     );
