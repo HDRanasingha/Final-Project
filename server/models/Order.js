@@ -7,8 +7,8 @@ const orderSchema = new mongoose.Schema({
       name: String,
       price: Number,
       quantity: Number,
-      listerId: Object,
-      
+      listerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      listerRole: { type: String, enum: ['grower', 'seller', 'supplier'] }
     }
   ],
   total: { type: Number, required: true },

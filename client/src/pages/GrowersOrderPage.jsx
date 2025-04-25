@@ -3,9 +3,19 @@ import axios from "axios";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
 import "../styles/GrowersOrders.scss";
-import { FaBox, FaCalendarAlt, FaUser, FaTag, FaMoneyBillWave } from "react-icons/fa";
+import {
+  FaBox,
+  FaCalendarAlt,
+  FaUser,
+  FaTag,
+  FaMoneyBillWave,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaCreditCard,
+  FaCity
+} from "react-icons/fa";
 
-const GrowersOrderPage = () => {
+const ReceivedOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -15,15 +25,20 @@ const GrowersOrderPage = () => {
 
   useEffect(() => {
     setLoading(true);
+    // Fetch all orders
     axios
-      .get("http://localhost:3001/api/orders", {
-        params: {
-          listerId,
-        },
-      })
+      .get("http://localhost:3001/api/orders")
       .then((res) => {
         if (Array.isArray(res.data)) {
-          setOrders(res.data);
+          // Filter orders to only include those where at least one item has the current user as listerId
+          const receivedOrders = res.data.filter(order => {
+            // Check if any item in this order has the current user as the listerId
+            return order.items.some(item => {
+              // Convert both to string for comparison since listerId might be stored as ObjectId
+              return String(item.listerId) === String(listerId);
+            });
+          });
+          setOrders(receivedOrders);
         } else {
           console.error("Invalid data format:", res.data);
         }
@@ -33,8 +48,8 @@ const GrowersOrderPage = () => {
   }, [listerId]);
 
   // Filter orders based on status
-  const filteredOrders = filter === "all" 
-    ? orders 
+  const filteredOrders = filter === "all"
+    ? orders
     : orders.filter(order => order.status === filter);
 
   // Calculate total revenue
@@ -50,8 +65,8 @@ const GrowersOrderPage = () => {
       <Navbar />
       <div className="dashboard-header">
         <div className="dashboard-title">
-          <h1>Your Orders Dashboard</h1>
-          <p>Manage and track all your flower orders</p>
+          <h1>Customer Orders Dashboard</h1>
+          <p>Manage and track orders placed by customers who purchased your products</p>
         </div>
         <div className="dashboard-stats">
           <div className="stat-card">
@@ -77,28 +92,28 @@ const GrowersOrderPage = () => {
 
       <div className="orders-container">
         <div className="orders-header">
-          <h2>Order Management</h2>
+          <h2>Customer Order Management</h2>
           <div className="filter-controls">
-            <button 
-              className={filter === "all" ? "active" : ""} 
+            <button
+              className={filter === "all" ? "active" : ""}
               onClick={() => setFilter("all")}
             >
               All Orders
             </button>
-            <button 
-              className={filter === "Processing" ? "active" : ""} 
+            <button
+              className={filter === "Processing" ? "active" : ""}
               onClick={() => setFilter("Processing")}
             >
               Processing
             </button>
-            <button 
-              className={filter === "Shipped" ? "active" : ""} 
+            <button
+              className={filter === "Shipped" ? "active" : ""}
               onClick={() => setFilter("Shipped")}
             >
               Shipped
             </button>
-            <button 
-              className={filter === "Delivered" ? "active" : ""} 
+            <button
+              className={filter === "Delivered" ? "active" : ""}
               onClick={() => setFilter("Delivered")}
             >
               Delivered
@@ -117,25 +132,49 @@ const GrowersOrderPage = () => {
               <li key={order._id} className="order-card">
                 <div className="order-header">
                   <h3>
-                    <FaBox className="icon" /> 
+                    <FaBox className="icon" />
                     Order ID: {order.orderId || order._id}
                   </h3>
                   <span className={`status-badge ${order.status?.toLowerCase()}`}>
                     {order.status || "Pending"}
                   </span>
                 </div>
-                
+
                 <div className="order-info">
-                  <p>
-                    <FaUser className="icon" /> 
-                    Customer: {order.customer?.name || "Unknown"}
-                  </p>
-                  <p>
-                    <FaCalendarAlt className="icon" /> 
-                    Ordered At: {order.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}
-                  </p>
+                  <div className="order-date">
+                    <p>
+                      <FaCalendarAlt className="icon" />
+                      Ordered At: {order.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}
+                    </p>
+                  </div>
+
+                  <div className="customer-details">
+                    <h4>Customer Information:</h4>
+                    <div className="customer-info-grid">
+                      <p>
+                        <FaUser className="icon" />
+                        Name: {order.customer?.name || "Unknown"}
+                      </p>
+                      <p>
+                        <FaPhone className="icon" />
+                        Phone: {order.customer?.phone || "N/A"}
+                      </p>
+                      <p>
+                        <FaMapMarkerAlt className="icon" />
+                        Address: {order.customer?.address || "N/A"}
+                      </p>
+                      <p>
+                        <FaCity className="icon" />
+                        Area: {order.customer?.area || "N/A"}
+                      </p>
+                      <p>
+                        <FaCreditCard className="icon" />
+                        Payment: {order.customer?.paymentMethod || "N/A"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                
+
                 <div className="order-items">
                   <h4>Items in this order:</h4>
                   <ul className="items-list">
@@ -163,7 +202,7 @@ const GrowersOrderPage = () => {
         ) : (
           <div className="no-orders">
             <FaBox className="empty-icon" />
-            <p>No {filter !== "all" ? filter.toLowerCase() : ""} orders found.</p>
+            <p>No {filter !== "all" ? filter.toLowerCase() : ""} customer orders found.</p>
           </div>
         )}
       </div>
@@ -172,4 +211,4 @@ const GrowersOrderPage = () => {
   );
 };
 
-export default GrowersOrderPage;
+export default ReceivedOrdersPage;

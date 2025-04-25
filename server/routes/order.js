@@ -40,6 +40,143 @@ router.get("/role/:role", async (req, res) => {
   }
 });
 
+// Get received orders (orders where the user's ID matches the listerId in the items)
+router.get("/received/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.query;
+
+    console.log(`Fetching received orders for user ${userId} with role ${role || 'unknown'} at ${new Date().toISOString()}`);
+
+    // Set cache control headers to prevent caching
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    // Ensure userId is valid
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+
+    // Import required models if not already imported
+    const Flower = require('../models/Flower');
+    const Product = require('../models/Product');
+    const Item = require('../models/Item');
+
+    // Find all orders first
+    const allOrders = await Order.find({})
+      .sort({ createdAt: -1 })
+      .lean() // Convert to plain JavaScript objects for better performance
+      .exec();
+
+    console.log(`Found ${allOrders.length} total orders in the system`);
+
+    // Process orders to only include those with items that belong to this user
+    const filteredOrders = [];
+    const userIdStr = userId.toString();
+
+    for (const order of allOrders) {
+      // Array to store items that belong to this user
+      const userItems = [];
+
+      // Check each item in the order
+      for (const item of order.items) {
+        if (!item.listerId) continue;
+
+        const itemId = item.listerId.toString();
+        let ownerFound = false;
+
+        // Check if it's a flower and belongs to this user
+        try {
+          const flower = await Flower.findById(itemId).lean().exec();
+          if (flower && flower.growerId) {
+            const growerId = flower.growerId.toString();
+            console.log(`Flower ${flower.name} (${itemId}) has growerId: ${growerId}, comparing with userId: ${userIdStr}`);
+
+            if (growerId === userIdStr) {
+              userItems.push(item);
+              ownerFound = true;
+              console.log(`Match found: Flower ${flower.name} belongs to user ${userIdStr}`);
+            }
+          }
+        } catch (err) {
+          console.log(`Error checking flower: ${err.message}`);
+        }
+
+        // If not found in flowers, check products
+        if (!ownerFound) {
+          try {
+            const product = await Product.findById(itemId).lean().exec();
+            if (product && product.sellerId) {
+              const sellerId = product.sellerId.toString();
+              console.log(`Product ${product.name} (${itemId}) has sellerId: ${sellerId}, comparing with userId: ${userIdStr}`);
+
+              if (sellerId === userIdStr) {
+                userItems.push(item);
+                ownerFound = true;
+                console.log(`Match found: Product ${product.name} belongs to user ${userIdStr}`);
+              }
+            }
+          } catch (err) {
+            console.log(`Error checking product: ${err.message}`);
+          }
+        }
+
+        // If not found in products, check items
+        if (!ownerFound) {
+          try {
+            const generalItem = await Item.findById(itemId).lean().exec();
+            if (generalItem && generalItem.supplierId) {
+              const supplierId = generalItem.supplierId.toString();
+              console.log(`Item ${generalItem.name} (${itemId}) has supplierId: ${supplierId}, comparing with userId: ${userIdStr}`);
+
+              if (supplierId === userIdStr) {
+                userItems.push(item);
+                ownerFound = true;
+                console.log(`Match found: Item ${generalItem.name} belongs to user ${userIdStr}`);
+              }
+            }
+          } catch (err) {
+            console.log(`Error checking item: ${err.message}`);
+          }
+        }
+      }
+
+      // Only include orders that have at least one item belonging to this user
+      if (userItems.length > 0) {
+        // Create a copy of the order with only the user's items
+        const filteredOrder = {
+          ...order,
+          items: userItems
+        };
+
+        filteredOrders.push(filteredOrder);
+      }
+    }
+
+    console.log(`Filtered to ${filteredOrders.length} orders for user ${userId} with role ${role || 'unknown'}`);
+
+    // Log the most recent filtered order for debugging
+    if (filteredOrders.length > 0) {
+      console.log(`Most recent filtered order: ${filteredOrders[0].orderId} (created: ${filteredOrders[0].createdAt})`);
+      console.log(`Items in most recent filtered order: ${filteredOrders[0].items.length}`);
+
+      // Log some details about the items in the most recent filtered order
+      filteredOrders[0].items.forEach((item, i) => {
+        console.log(`Item ${i + 1}: ${item.name}, ListerId: ${item.listerId}, Role: ${item.listerRole || 'unknown'}`);
+      });
+    } else {
+      console.log(`No filtered orders found for user ${userId}`);
+    }
+
+    // Return the filtered orders with only items belonging to this user
+    res.status(200).json(filteredOrders);
+  } catch (error) {
+    console.error("Error fetching received orders:", error);
+    res.status(500).json({ error: "Failed to fetch received orders" });
+  }
+});
+
 // Get top-selling items
 router.get("/top-sellers", async (req, res) => {
   try {
@@ -108,13 +245,13 @@ router.post("/success", async (req, res) => {
     // First validate stock availability for all items
     for (const item of items) {
       let stockAvailable = false;
-      
+
       // Check Flower stock
       const flower = await Flower.findById(item.listerId);
       if (flower && flower.stock >= item.quantity) {
         stockAvailable = true;
       }
-      
+
       // Check Product stock if not found in Flower
       if (!stockAvailable) {
         const product = await Product.findById(item.listerId);
@@ -122,7 +259,7 @@ router.post("/success", async (req, res) => {
           stockAvailable = true;
         }
       }
-      
+
       // Check Item stock if not found in Product
       if (!stockAvailable) {
         const generalItem = await Item.findById(item.listerId);
@@ -136,10 +273,41 @@ router.post("/success", async (req, res) => {
       }
     }
 
-    // Create new order
+    // Ensure each item has a listerRole field based on the item type
+    const itemsWithRoles = items.map(async (item) => {
+      let listerRole = null;
+
+      // Check if it's a flower (grower)
+      const flower = await Flower.findById(item.listerId);
+      if (flower) {
+        listerRole = "grower";
+      } else {
+        // Check if it's a product (seller)
+        const product = await Product.findById(item.listerId);
+        if (product) {
+          listerRole = "seller";
+        } else {
+          // Check if it's an item (supplier)
+          const generalItem = await Item.findById(item.listerId);
+          if (generalItem) {
+            listerRole = "supplier";
+          }
+        }
+      }
+
+      return {
+        ...item,
+        listerRole: listerRole || "unknown"
+      };
+    });
+
+    // Wait for all role determinations to complete
+    const processedItems = await Promise.all(itemsWithRoles);
+
+    // Create new order with processed items
     const newOrder = new Order({
       orderId,
-      items,
+      items: processedItems,
       total,
       customer,
       status,
@@ -150,7 +318,7 @@ router.post("/success", async (req, res) => {
     // Update stock for each item
     for (const item of items) {
       let updated = false;
-      
+
       // Try updating flower stock
       const flowerUpdate = await Flower.findOneAndUpdate(
         { _id: item.listerId, stock: { $gte: item.quantity } },
@@ -199,7 +367,7 @@ router.post("/success", async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error("Error placing order:", error);
-    res.status(400).json({ 
+    res.status(400).json({
       error: error.message || "Failed to place order",
       details: error.message.includes("Insufficient stock") ? "Some items are out of stock" : "Transaction failed"
     });
@@ -283,7 +451,7 @@ router.delete("/:orderId", async (req, res) => {
   );
 });
 
-     
+
 
 
     res.status(200).json({ message: "Order canceled successfully!" });
@@ -306,7 +474,7 @@ router.get("/monthly-income", async (req, res) => {
       },
       { $sort: { _id: 1 } }
     ]);
-    
+
     res.status(200).json(monthlyIncome);
   } catch (error) {
     console.error("Error calculating monthly income:", error);

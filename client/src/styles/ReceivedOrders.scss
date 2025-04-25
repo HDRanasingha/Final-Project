@@ -9,7 +9,7 @@ $light-text-color: #64748b; // Softer gray for secondary text
 $border-color: #f0e4e8; // Delicate pink border
 $white: #ffffff; // Pure white
 
-.growers-orders-page {
+.received-orders-page {
   min-height: 100vh;
   background-color: $background-color;
   font-family: 'Inter', sans-serif;
@@ -20,24 +20,34 @@ $white: #ffffff; // Pure white
     background-color: $white;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px rgba(255, 91, 141, 0.08);
+    box-shadow: 0 8px 20px rgba(255, 91, 141, 0.06);
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 2rem;
-
+  
     .dashboard-title {
+      position: relative;
+      padding-left: 1rem;
+      
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10%;
+        height: 80%;
+        width: 4px;
+        background: linear-gradient(to bottom, $primary-color, $secondary-color);
+        border-radius: 2px;
+      }
+      
       h1 {
         font-size: 1.8rem;
         font-weight: 700;
         color: $text-color;
         margin-bottom: 0.5rem;
-      }
-
-      p {
-        color: $light-text-color;
-        font-size: 1rem;
       }
     }
 
@@ -66,12 +76,31 @@ $white: #ffffff; // Pure white
             font-size: 1.5rem;
             font-weight: 700;
             margin: 0;
+
+            &.revenue-amount {
+              font-size: 1.7rem;
+              color: white;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+              animation: pulse 2s infinite;
+            }
           }
 
           p {
             margin: 0;
             opacity: 0.8;
             font-size: 0.9rem;
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.8;
+          }
+          100% {
+            opacity: 1;
           }
         }
 
@@ -91,23 +120,32 @@ $white: #ffffff; // Pure white
     padding: 0 1.5rem 3rem;
 
     .orders-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
 
-      h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: $text-color;
-        margin: 0;
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: $text-color;
+          margin: 0;
+        }
+
+
       }
+
+
 
       .filter-controls {
         display: flex;
         gap: 0.5rem;
+        flex-wrap: wrap;
 
         button {
           padding: 0.5rem 1rem;
@@ -139,7 +177,7 @@ $white: #ffffff; // Pure white
       justify-content: center;
       padding: 3rem;
 
-      .spinner {
+      .loading-spinner {
         width: 40px;
         height: 40px;
         border: 4px solid rgba($primary-color, 0.1);
@@ -156,6 +194,29 @@ $white: #ffffff; // Pure white
       p {
         color: $light-text-color;
       }
+    }
+
+    // Error Container
+    .error-container {
+      background-color: $white;
+      border-radius: 10px;
+      padding: 3rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(255, 91, 141, 0.08);
+
+      .error-icon {
+        font-size: 3rem;
+        color: $secondary-color;
+        margin-bottom: 1rem;
+      }
+
+      .error-message {
+        color: $text-color;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+      }
+
+
     }
 
     // No Orders State
@@ -175,7 +236,10 @@ $white: #ffffff; // Pure white
       p {
         color: $light-text-color;
         font-size: 1.1rem;
+        margin-bottom: 1.5rem;
       }
+
+
     }
 
     // Order List
@@ -189,13 +253,25 @@ $white: #ffffff; // Pure white
 
       .order-card {
         background-color: $white;
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 2px 10px rgba(255, 91, 141, 0.08);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        border: 1px solid rgba($border-color, 0.8);
+        
+        &:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(to right, $primary-color, $secondary-color);
+        }
 
         &:hover {
-          transform: translateY(-5px);
+          transform: translateY(-3px);
           box-shadow: 0 5px 15px rgba(255, 91, 141, 0.12);
         }
 
@@ -324,43 +400,85 @@ $white: #ffffff; // Pure white
             .item-card {
               padding: 0.8rem;
               background-color: rgba($primary-color, 0.03);
-              border-radius: 8px;
+              border-radius: 10px;
               margin-bottom: 0.8rem;
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-
+              border: 1px solid rgba($primary-color, 0.08);
+              
               .item-info {
                 .item-name {
-                  margin: 0 0 0.5rem;
+                  margin: 0 0 0.6rem;
                   font-weight: 600;
                   color: $text-color;
                   display: flex;
                   align-items: center;
-
+                  background-color: rgba($primary-color, 0.08);
+                  padding: 0.6rem 0.8rem;
+                  border-radius: 6px;
+                  font-size: 0.95rem;
+                  
                   .icon {
-                    margin-right: 0.5rem;
                     color: $primary-color;
+                    margin-right: 0.5rem;
+                    font-size: 1rem;
                   }
                 }
-
+                
                 .item-details {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 1rem;
-
+                  display: grid;
+                  grid-template-columns: repeat(3, 1fr);
+                  gap: 0.5rem;
+                  
                   p {
                     margin: 0;
-                    font-size: 0.8rem;
-                    color: $light-text-color;
+                    padding: 0.5rem;
+                    background-color: $white;
+                    border-radius: 6px;
+                    font-size: 0.85rem;
+                    text-align: center;
+                    border: 1px solid rgba($border-color, 0.5);
+                    
+                    strong {
+                      display: block;
+                      color: $light-text-color;
+                      font-size: 0.7rem;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      margin-bottom: 0.2rem;
+                    }
                   }
-
+                  
                   .item-total {
+                    grid-column: span 3;
                     font-weight: 600;
-                    color: $text-color;
+                    color: $primary-color;
+                    background-color: rgba($primary-color, 0.05);
+                    padding: 0.5rem;
+                    border-radius: 6px;
+                    text-align: center;
+                    margin-top: 0.3rem;
                   }
                 }
+              }
+            }
+          }
+
+          .order-subtotal {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background-color: rgba($primary-color, 0.05);
+            border-radius: 8px;
+            
+            p {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 700;
+              color: $primary-color;
+              font-size: 1.1rem;
+              margin: 0;
+              
+              .icon {
+                margin-right: 0.5rem;
               }
             }
           }
@@ -372,7 +490,7 @@ $white: #ffffff; // Pure white
 
 // Responsive adjustments
 @media (max-width: 768px) {
-  .growers-orders-page {
+  .received-orders-page {
     .dashboard-header {
       padding: 1.5rem;
       flex-direction: column;
@@ -393,8 +511,10 @@ $white: #ffffff; // Pure white
       padding: 0 1rem 2rem;
 
       .orders-header {
-        flex-direction: column;
-        align-items: flex-start;
+        .header-top {
+          flex-direction: column;
+          align-items: flex-start;
+        }
 
         .filter-controls {
           width: 100%;

@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
-import { 
-  FaEdit, 
-  FaTrash, 
-  FaPlus, 
-  FaChartLine, 
-  FaBoxOpen, 
-  FaShoppingCart, 
-  FaUsers, 
-  FaSeedling, 
-  FaLeaf, 
-  FaBox, 
-  FaStore, 
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaChartLine,
+  FaBoxOpen,
+  FaShoppingCart,
+  FaUsers,
+  FaSeedling,
+  FaLeaf,
+  FaBox,
+  FaStore,
   FaTruck,
   FaDollarSign
 } from "react-icons/fa";
@@ -53,8 +53,8 @@ const GrowersPage = () => {
           },
         });
         setFlowers(res.data);
-        setStats(prev => ({ 
-          ...prev, 
+        setStats(prev => ({
+          ...prev,
           flowersCount: res.data.length,
           newFlowers: res.data.filter(flower => {
             const flowerDate = new Date(flower.createdAt);
@@ -63,8 +63,12 @@ const GrowersPage = () => {
             return flowerDate >= monthStart;
           }).length
         }));
+
+        console.log("Flowers count updated:", res.data.length);
+        return Promise.resolve(); // Ensure this function returns a promise
       } catch (err) {
         console.error("Error fetching flowers:", err);
+        return Promise.reject(err); // Return rejected promise on error
       }
     };
 
@@ -74,62 +78,72 @@ const GrowersPage = () => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
         const growerId = user?._id;
-        
+
         if (!growerId) {
           console.error("Grower ID not found");
           return;
         }
-        
-        // Fetch all orders
-        const ordersResponse = await axios.get("http://localhost:3001/api/orders", {
+
+        console.log("Fetching orders for grower ID:", growerId);
+
+        // Use the dedicated endpoint for received orders
+        const ordersResponse = await axios.get(`http://localhost:3001/api/orders/received/${growerId}`, {
+          params: {
+            role: "grower",
+            _t: new Date().getTime() // Add timestamp to prevent caching
+          },
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
+        console.log("Received orders response:", ordersResponse.data);
+
         if (ordersResponse.data && ordersResponse.data.length > 0) {
           const currentDate = new Date();
           const currentMonth = currentDate.getMonth();
           const currentYear = currentDate.getFullYear();
-          
+
           // Get start dates for current and previous month
           const currentMonthStart = new Date(currentYear, currentMonth, 1);
           const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
-          
-          // Filter orders for current grower
-          const growerOrders = ordersResponse.data.filter(order => 
-            order.items && order.items.some(item => item.listerId === growerId)
-          );
-          
+
+          // These orders are already filtered for the current grower by the server
+          const growerOrders = ordersResponse.data;
+          console.log(`Found ${growerOrders.length} orders for this grower`);
+
           // Calculate current month and previous month metrics
           let currentMonthRevenue = 0;
           let previousMonthRevenue = 0;
           let currentMonthOrders = 0;
           let previousMonthOrders = 0;
-          
+
           growerOrders.forEach(order => {
             const orderDate = new Date(order.createdAt);
-            const orderRevenue = order.items
-              .filter(item => item.listerId === growerId)
-              .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+            // Calculate total revenue from all items in this order (already filtered by server)
+            const orderRevenue = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            console.log(`Order ${order.orderId || order._id} date: ${orderDate}, revenue: ${orderRevenue}`);
+
             if (orderDate >= currentMonthStart) {
               currentMonthRevenue += orderRevenue;
               currentMonthOrders++;
+              console.log(`Added to current month: ${orderRevenue}`);
             } else if (orderDate >= previousMonthStart && orderDate < currentMonthStart) {
               previousMonthRevenue += orderRevenue;
               previousMonthOrders++;
+              console.log(`Added to previous month: ${orderRevenue}`);
             }
           });
-          
+
           // Calculate percentage changes
-          const revenueChange = previousMonthRevenue === 0 
-            ? 100 
+          const revenueChange = previousMonthRevenue === 0
+            ? 100
             : ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
-          
-          const ordersChange = previousMonthOrders === 0 
-            ? 100 
+
+          const ordersChange = previousMonthOrders === 0
+            ? 100
             : ((currentMonthOrders - previousMonthOrders) / previousMonthOrders) * 100;
-          
-          // Update stats state
+
+          // Update stats state while preserving flower count and new flowers
           setStats(prev => ({
             ...prev,
             revenue: currentMonthRevenue,
@@ -138,14 +152,23 @@ const GrowersPage = () => {
             ordersChange: ordersChange.toFixed(2),
             totalOrders: growerOrders.length
           }));
+
+          console.log("Updated stats:", {
+            revenue: currentMonthRevenue,
+            ordersCount: currentMonthOrders,
+            flowersCount: stats.flowersCount,
+            newFlowers: stats.newFlowers
+          });
         }
       } catch (err) {
         console.error("Error fetching orders summary:", err);
       }
     };
 
-    fetchFlowers();
-    fetchOrdersSummary();
+    // First fetch flowers, then fetch orders to ensure flower count is set first
+    fetchFlowers().then(() => {
+      fetchOrdersSummary();
+    });
   }, []);
 
   // Handle input changes
@@ -256,7 +279,7 @@ const GrowersPage = () => {
   return (
     <div className="seller-dashboard">
       <Navbar />
-      
+
       <div className="seller-dashboard__container">
         <div className="seller-dashboard__header">
           <h1>Grower Dashboard</h1>
@@ -272,7 +295,7 @@ const GrowersPage = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="seller-dashboard__stats">
           <div className="stat-card">
             <div className="stat-icon revenue">
@@ -286,7 +309,7 @@ const GrowersPage = () => {
               </div>
             )}
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon orders">
               <FaShoppingCart />
@@ -299,7 +322,7 @@ const GrowersPage = () => {
               </div>
             )}
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon products">
               <FaSeedling />
@@ -313,10 +336,10 @@ const GrowersPage = () => {
             )}
           </div>
         </div>
-        
+
         <div className="seller-dashboard__products">
           <h2>Manage Your Flowers</h2>
-          
+
           <div className="products-grid">
             {flowers.map((flower) => (
               <div className="product-card" key={flower._id}>
@@ -342,7 +365,7 @@ const GrowersPage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Add/Edit Flower Form */}
       {showForm && (
         <div className="modal-overlay">
@@ -359,7 +382,7 @@ const GrowersPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Stock (Bunches)</label>
                 <input
@@ -371,7 +394,7 @@ const GrowersPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Price (Rs.)</label>
                 <input
@@ -383,7 +406,7 @@ const GrowersPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Description</label>
                 <textarea
@@ -393,7 +416,7 @@ const GrowersPage = () => {
                   required
                 ></textarea>
               </div>
-              
+
               <div className="form-group">
                 <label>Image</label>
                 <input
@@ -415,7 +438,7 @@ const GrowersPage = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="form-actions">
                 <button type="submit" className="submit-btn">
                   {editFlower ? "Update Flower" : "Add Flower"}
@@ -436,7 +459,7 @@ const GrowersPage = () => {
           </div>
         </div>
       )}
-      
+
       <Footer />
     </div>
   );

@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
-import { 
-  FaEdit, 
-  FaTrash, 
-  FaPlus, 
-  FaChartLine, 
-  FaBoxOpen, 
-  FaShoppingCart, 
-  FaUsers, 
-  FaSeedling, 
-  FaLeaf, 
-  FaBox, 
-  FaStore, 
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaChartLine,
+  FaBoxOpen,
+  FaShoppingCart,
+  FaUsers,
+  FaSeedling,
+  FaLeaf,
+  FaBox,
+  FaStore,
   FaTruck,
   FaDollarSign
 } from "react-icons/fa";
@@ -53,8 +53,8 @@ const SupplierPage = () => {
           },
         });
         setItems(res.data);
-        setStats(prev => ({ 
-          ...prev, 
+        setStats(prev => ({
+          ...prev,
           itemsCount: res.data.length,
           newItems: res.data.filter(item => {
             const itemDate = new Date(item.createdAt);
@@ -63,8 +63,12 @@ const SupplierPage = () => {
             return itemDate >= monthStart;
           }).length
         }));
+
+        console.log("Items count updated:", res.data.length);
+        return Promise.resolve(); // Ensure this function returns a promise
       } catch (err) {
         console.error("Error fetching items:", err);
+        return Promise.reject(err); // Return rejected promise on error
       }
     };
 
@@ -74,68 +78,55 @@ const SupplierPage = () => {
         const token = localStorage.getItem("token");
         const userData = JSON.parse(localStorage.getItem("user"));
         const supplierId = userData?._id;
-        
+
         if (!supplierId) {
           console.error("Supplier ID not found");
           return;
         }
-        
-        console.log("Current supplier ID:", supplierId);
-        
-        // Fetch all orders
-        const ordersResponse = await axios.get("http://localhost:3001/api/orders", {
+
+        console.log("Fetching orders for supplier ID:", supplierId);
+
+        // Use the dedicated endpoint for received orders
+        const ordersResponse = await axios.get(`http://localhost:3001/api/orders/received/${supplierId}`, {
+          params: {
+            role: "supplier",
+            _t: new Date().getTime() // Add timestamp to prevent caching
+          },
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
+        console.log("Received orders response:", ordersResponse.data);
+
         if (ordersResponse.data && ordersResponse.data.length > 0) {
-          console.log("Total orders fetched:", ordersResponse.data.length);
-          
-          // Filter orders for current supplier
-          // Based on the Order model, we need to check items.listerId
-          const supplierOrders = ordersResponse.data.filter(order => {
-            return order.items && order.items.some(item => {
-              // Check if listerId matches supplierId (could be string or object)
-              if (typeof item.listerId === 'object') {
-                return item.listerId?._id === supplierId;
-              } else {
-                return item.listerId === supplierId;
-              }
-            });
-          });
-          
-          console.log("Filtered supplier orders:", supplierOrders.length);
-          
+          console.log("Total filtered orders fetched:", ordersResponse.data.length);
+
+          // These orders are already filtered for the current supplier by the server
+          const supplierOrders = ordersResponse.data;
+          console.log(`Found ${supplierOrders.length} orders for this supplier`);
+
           const currentDate = new Date();
           const currentMonth = currentDate.getMonth();
           const currentYear = currentDate.getFullYear();
-          
+
           // Get start dates for current and previous month
           const currentMonthStart = new Date(currentYear, currentMonth, 1);
           const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
-          
+
           // Calculate current month and previous month metrics
           let currentMonthRevenue = 0;
           let previousMonthRevenue = 0;
           let currentMonthOrders = 0;
           let previousMonthOrders = 0;
-          
+
           supplierOrders.forEach(order => {
             const orderDate = new Date(order.createdAt);
-            
-            // Calculate revenue only from items belonging to this supplier
-            const orderRevenue = order.items
-              .filter(item => {
-                if (typeof item.listerId === 'object') {
-                  return item.listerId?._id === supplierId;
-                } else {
-                  return item.listerId === supplierId;
-                }
-              })
-              .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
+            // Calculate total revenue from all items in this order (already filtered by server)
+            const orderRevenue = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
             console.log(`Order ${order.orderId} date:`, orderDate);
             console.log(`Order ${order.orderId} revenue for this supplier:`, orderRevenue);
-            
+
             if (orderDate >= currentMonthStart) {
               currentMonthRevenue += orderRevenue;
               currentMonthOrders++;
@@ -146,12 +137,12 @@ const SupplierPage = () => {
               console.log("Added to previous month");
             }
           });
-          
+
           console.log("Current month revenue:", currentMonthRevenue);
           console.log("Previous month revenue:", previousMonthRevenue);
           console.log("Current month orders:", currentMonthOrders);
           console.log("Previous month orders:", previousMonthOrders);
-          
+
           // Calculate percentage changes with proper handling for zero values
           let revenueChange = 0;
           if (previousMonthRevenue === 0) {
@@ -159,15 +150,15 @@ const SupplierPage = () => {
           } else {
             revenueChange = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
           }
-          
+
           let ordersChange = 0;
           if (previousMonthOrders === 0) {
             ordersChange = currentMonthOrders > 0 ? 100 : 0;
           } else {
             ordersChange = ((currentMonthOrders - previousMonthOrders) / previousMonthOrders) * 100;
           }
-          
-          // Update stats state
+
+          // Update stats state while preserving item count and new items
           setStats(prev => ({
             ...prev,
             revenue: currentMonthRevenue,
@@ -176,6 +167,13 @@ const SupplierPage = () => {
             ordersChange: ordersChange.toFixed(2),
             totalOrders: supplierOrders.length
           }));
+
+          console.log("Updated supplier stats:", {
+            revenue: currentMonthRevenue,
+            ordersCount: currentMonthOrders,
+            itemsCount: stats.itemsCount,
+            newItems: stats.newItems
+          });
         } else {
           console.log("No orders found");
         }
@@ -184,8 +182,10 @@ const SupplierPage = () => {
       }
     };
 
-    fetchItems();
-    fetchOrdersSummary();
+    // First fetch items, then fetch orders to ensure item count is set first
+    fetchItems().then(() => {
+      fetchOrdersSummary();
+    });
   }, []);
 
   // Handle input changes
@@ -296,7 +296,7 @@ const SupplierPage = () => {
   return (
     <div className="seller-dashboard">
       <Navbar />
-      
+
       <div className="seller-dashboard__container">
         <div className="seller-dashboard__header">
           <h1>Supplier Dashboard</h1>
@@ -312,7 +312,7 @@ const SupplierPage = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="seller-dashboard__stats">
           <div className="stat-card">
             <div className="stat-icon revenue">
@@ -326,7 +326,7 @@ const SupplierPage = () => {
               </div>
             )}
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon orders">
               <FaShoppingCart />
@@ -339,7 +339,7 @@ const SupplierPage = () => {
               </div>
             )}
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon products">
               <FaBox />
@@ -353,10 +353,10 @@ const SupplierPage = () => {
             )}
           </div>
         </div>
-        
+
         <div className="seller-dashboard__products">
           <h2>Manage Your Items</h2>
-          
+
           <div className="products-grid">
             {items.map((item) => (
               <div className="product-card" key={item._id}>
@@ -382,7 +382,7 @@ const SupplierPage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Add/Edit Item Form */}
       {showForm && (
         <div className="modal-overlay">
@@ -399,7 +399,7 @@ const SupplierPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Stock (Bunches)</label>
                 <input
@@ -411,7 +411,7 @@ const SupplierPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Price (Rs.)</label>
                 <input
@@ -423,7 +423,7 @@ const SupplierPage = () => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Description</label>
                 <textarea
@@ -433,7 +433,7 @@ const SupplierPage = () => {
                   required
                 ></textarea>
               </div>
-              
+
               <div className="form-group">
                 <label>Image</label>
                 <input
@@ -455,7 +455,7 @@ const SupplierPage = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="form-actions">
                 <button type="submit" className="submit-btn">
                   {editItem ? "Update Item" : "Add Item"}
@@ -476,7 +476,7 @@ const SupplierPage = () => {
           </div>
         </div>
       )}
-      
+
       <Footer />
     </div>
   );

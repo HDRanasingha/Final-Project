@@ -23,7 +23,7 @@ import ProtectedRoute from './component/ProtectedRoute';
 import PaymentGatewayPage from './pages/PaymentGatewayPage';
 import SucsessPage from './pages/SucsessPage';
 import CancelPage from './pages/CancelPage';
-import GrowersOrderPage from './pages/GrowersOrderPage';
+import ReceivedOrdersPage from './pages/ReceivedOrdersPage';
 import AdminPage from './pages/AdminPage';
 import AboutUs from './pages/AboutUs';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -85,9 +85,9 @@ function App() {
         <Route path="/payment-gateway" element={<PaymentGatewayPage />} />
         <Route path="/payment-success" element={<SucsessPage />} />
         <Route path="/payment-cancel" element={<CancelPage />} />
-        <Route path="/recived/orders" element={<GrowersOrderPage />} />
+        <Route path="/recived/orders" element={<ReceivedOrdersPage />} />
         <Route path="/profile" element={<ProfileDetails />} /> {/* Add route for profile details */}
-       
+
         <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions/>} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -97,15 +97,15 @@ function App() {
         {/* Add this route in your Routes component */}
         <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/messages" element={<Messages />} />
-        
-        
+
+
         {/* Add the new route */}
         <Route path="/inventory-alerts" element={
           <ProtectedRoute>
             <InventoryAlerts />
           </ProtectedRoute>
         } />
-       
+
       </Routes>
     </BrowserRouter>
   );

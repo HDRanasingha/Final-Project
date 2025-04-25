@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
-import { 
-  FaEdit, 
-  FaTrash, 
-  FaPlus, 
-  FaChartLine, 
-  FaBoxOpen, 
-  FaShoppingCart, 
-  FaUsers, 
-  FaSeedling, 
-  FaLeaf, 
-  FaBox, 
-  FaStore, 
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaChartLine,
+  FaBoxOpen,
+  FaShoppingCart,
+  FaUsers,
+  FaSeedling,
+  FaLeaf,
+  FaBox,
+  FaStore,
   FaTruck,
   FaRecycle,
   FaArrowRight,
@@ -84,8 +84,8 @@ const SellersPage = () => {
         });
         console.log("Products data:", res.data);
         setProducts(res.data);
-        setStats(prev => ({ 
-          ...prev, 
+        setStats(prev => ({
+          ...prev,
           productsCount: res.data.length,
           newProducts: res.data.filter(product => {
             const productDate = new Date(product.createdAt);
@@ -94,8 +94,12 @@ const SellersPage = () => {
             return productDate >= monthStart;
           }).length
         }));
+
+        console.log("Products count updated:", res.data.length);
+        return Promise.resolve(); // Ensure this function returns a promise
       } catch (err) {
         console.error("Error fetching products:", err);
+        return Promise.reject(err); // Return rejected promise on error
       }
     };
 
@@ -105,71 +109,80 @@ const SellersPage = () => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
         const sellerId = user?._id;
-        
+
         if (!sellerId) {
           console.error("Seller ID not found");
           return;
         }
-        
-        // Fetch all orders
-        const ordersResponse = await axios.get("http://localhost:3001/api/orders", {
+
+        console.log("Fetching orders for seller ID:", sellerId);
+
+        // Use the dedicated endpoint for received orders
+        const ordersResponse = await axios.get(`http://localhost:3001/api/orders/received/${sellerId}`, {
+          params: {
+            role: "seller",
+            _t: new Date().getTime() // Add timestamp to prevent caching
+          },
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
+        console.log("Received orders response:", ordersResponse.data);
+
         if (ordersResponse.data && ordersResponse.data.length > 0) {
           const currentDate = new Date();
           const currentMonth = currentDate.getMonth();
           const currentYear = currentDate.getFullYear();
-          
+
           // Get start dates for current and previous month
           const currentMonthStart = new Date(currentYear, currentMonth, 1);
           const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
-          
-          // Filter orders for current seller
-          const sellerOrders = ordersResponse.data.filter(order => 
-            order.items && order.items.some(item => item.listerId === sellerId)
-          );
-          
+
+          // These orders are already filtered for the current seller by the server
+          const sellerOrders = ordersResponse.data;
+          console.log(`Found ${sellerOrders.length} orders for this seller`);
+
           // Calculate current month and previous month metrics
           let currentMonthRevenue = 0;
           let previousMonthRevenue = 0;
           let currentMonthOrders = 0;
           let previousMonthOrders = 0;
-          
+
           sellerOrders.forEach(order => {
             const orderDate = new Date(order.createdAt);
-            const orderRevenue = order.items
-              .filter(item => item.listerId === sellerId)
-              .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+            // Calculate total revenue from all items in this order (already filtered by server)
+            const orderRevenue = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            console.log(`Order ${order.orderId || order._id} date: ${orderDate}, revenue: ${orderRevenue}`);
+
             if (orderDate >= currentMonthStart) {
               currentMonthRevenue += orderRevenue;
               currentMonthOrders++;
+              console.log(`Added to current month: ${orderRevenue}`);
             } else if (orderDate >= previousMonthStart && orderDate < currentMonthStart) {
               previousMonthRevenue += orderRevenue;
               previousMonthOrders++;
+              console.log(`Added to previous month: ${orderRevenue}`);
             }
           });
-          
+
           // Calculate growth percentages
-          const revenueGrowth = previousMonthRevenue === 0 
-            ? 100 
+          const revenueGrowth = previousMonthRevenue === 0
+            ? 100
             : Math.round(((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100);
-          
-          const ordersGrowth = previousMonthOrders === 0 
-            ? 100 
+
+          const ordersGrowth = previousMonthOrders === 0
+            ? 100
             : Math.round(((currentMonthOrders - previousMonthOrders) / previousMonthOrders) * 100);
-          
-          // Update stats with calculated values
-          setStats({
+
+          // Update stats with calculated values while preserving product count
+          setStats(prev => ({
+            ...prev,
             revenue: currentMonthRevenue,
             ordersCount: currentMonthOrders,
-            productsCount: products.length,
             revenueGrowth: revenueGrowth,
-            ordersGrowth: ordersGrowth,
-            newProducts: 0
-          });
-          
+            ordersGrowth: ordersGrowth
+          }));
+
           console.log("Updated seller stats:", {
             currentMonthRevenue,
             previousMonthRevenue,
@@ -191,8 +204,10 @@ const SellersPage = () => {
       }
     };
 
-    fetchProducts();
-    fetchOrdersSummary();
+    // First fetch products, then fetch orders to ensure product count is set first
+    fetchProducts().then(() => {
+      fetchOrdersSummary();
+    });
   }, []);
 
   // Handle input changes
@@ -300,7 +315,7 @@ const SellersPage = () => {
   const handleCardClick = (productId) => {
     navigate(`/product/${productId}`);
   };
-  
+
   // Add these functions inside the component
   const handleTraceabilityClick = (product) => {
     setSelectedProduct(product);
@@ -310,7 +325,7 @@ const SellersPage = () => {
   const handleCloseTraceability = () => {
     setShowTraceability(false);
   };
-  
+
   // Add these missing functions
   const handleTraceabilityChange = (section, field, value) => {
     setTraceabilityData(prev => ({
@@ -347,7 +362,7 @@ const SellersPage = () => {
   return (
     <div className="seller-dashboard">
       <Navbar />
-      
+
       <div className="seller-dashboard__container">
         <div className="seller-dashboard__header">
           <h1>Seller Dashboard</h1>
@@ -365,7 +380,7 @@ const SellersPage = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="seller-dashboard__stats">
           <div className="stat-card">
             <div className="stat-icon revenue">
@@ -377,7 +392,7 @@ const SellersPage = () => {
               <FaChartLine /> {stats.revenueGrowth >= 0 ? '+' : ''}{stats.revenueGrowth || 0}% from last month
             </div>
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon orders">
               <FaShoppingCart />
@@ -388,7 +403,7 @@ const SellersPage = () => {
               <FaChartLine /> {stats.ordersGrowth >= 0 ? '+' : ''}{stats.ordersGrowth || 0}% from last month
             </div>
           </div>
-          
+
           <div className="stat-card">
             <div className="stat-icon products">
               <FaBoxOpen />
@@ -400,7 +415,7 @@ const SellersPage = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="inventory-section">
           <h2>Manage Flower Inventory</h2>
           <div className="product-grid">
@@ -542,7 +557,7 @@ const SellersPage = () => {
             </div>
           </div>
         )}
-        
+
         {/* Traceability Modal - Simplified version */}
         {showTraceability && selectedProduct && (
           <div className="product-traceability-modal">
@@ -551,15 +566,15 @@ const SellersPage = () => {
                 <h3>Supply Chain: {selectedProduct.name}</h3>
                 <div className="modal-actions">
                   {!editingTraceability ? (
-                    <button 
-                      className="edit-traceability-btn" 
+                    <button
+                      className="edit-traceability-btn"
                       onClick={() => setEditingTraceability(true)}
                     >
                       <FaEdit /> Edit Supply Chain
                     </button>
                   ) : (
-                    <button 
-                      className="save-traceability-btn" 
+                    <button
+                      className="save-traceability-btn"
                       onClick={saveTraceabilityData}
                     >
                       Save Changes
@@ -607,29 +622,29 @@ const SellersPage = () => {
                       <div className="edit-traceability-form">
                         <div className="form-group">
                           <label>Facility Name:</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value="Cold Storage Facility"
                           />
                         </div>
                         <div className="form-group">
                           <label>Min Temperature (°C):</label>
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
                             value="18"
                           />
                         </div>
                         <div className="form-group">
                           <label>Max Temperature (°C):</label>
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
                             value="25"
                           />
                         </div>
                         <div className="form-group">
                           <label>Current Temperature (°C):</label>
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
                             value="22"
                           />
                         </div>
@@ -637,7 +652,7 @@ const SellersPage = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Packaging Section - Kept */}
                 <div className="journey-step">
                   <div className="step-icon">
@@ -661,8 +676,8 @@ const SellersPage = () => {
                       <div className="edit-traceability-form">
                         <div className="form-group">
                           <label>Material:</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             value={traceabilityData.packaging?.material || "Recycled Paper"}
                             onChange={(e) => handleTraceabilityChange('packaging', 'material', e.target.value)}
                           />
@@ -671,7 +686,7 @@ const SellersPage = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Final Product Section - Kept */}
                 <div className="journey-step">
                   <div className="step-icon">
@@ -680,14 +695,14 @@ const SellersPage = () => {
                   <div className="step-content">
                     <h4>Final Product</h4>
                     <div className="material-item">
-                      <img 
-                        src={`http://localhost:3001${selectedProduct.img}`} 
-                        alt={selectedProduct.name} 
+                      <img
+                        src={`http://localhost:3001${selectedProduct.img}`}
+                        alt={selectedProduct.name}
                       />
                       <div>
                         <p><strong>{selectedProduct.name}</strong></p>
                         <p>Sold by: {user?.firstName || ''} {user?.lastName || ''}</p>
-                        <p>Quality Checked: 
+                        <p>Quality Checked:
                           {!editingTraceability ? (
                             <span className={selectedProduct.qualityChecked ? "status-yes" : "status-no"}>
                               {selectedProduct.qualityChecked ? "Yes" : "No"}
