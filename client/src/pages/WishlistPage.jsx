@@ -97,7 +97,7 @@ const WishlistPage = () => {
                 
                 <div className="item-details">
                   <h3>{item.name || "Product Name"}</h3>
-                  <p>Type: {item.itemType ? item.itemType.charAt(0).toUpperCase() + item.itemType.slice(1) : "Product"}</p>
+                  
                   <p>Price: Rs. {item.price || 0}</p>
                   <p>Stock: {item.stock || 0} {item.itemType === 'flower' ? 'Bunches' : 'Units'}</p>
                   
