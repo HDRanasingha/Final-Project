@@ -11,7 +11,7 @@ const User = require('../models/User');
 // IMPORTANT: In production, store this in environment variables
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 // Updated API URL to use the correct endpoint
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 router.post('/', async (req, res) => {
   try {

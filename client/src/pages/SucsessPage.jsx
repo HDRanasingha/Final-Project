@@ -84,7 +84,7 @@ const PaymentSuccess = () => {
           <div className="action-buttons">
             <button 
               className="continue-shopping"
-              onClick={() => navigate("/shop")}
+              onClick={() => navigate("/")}
             >
               <ShoppingBag /> Continue Shopping
             </button>
