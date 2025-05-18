@@ -91,7 +91,7 @@ const RegisterPage = () => {
             <div className="features">
               <div className="feature-item">
                 <span className="feature-icon">🌱</span>
-                <span>Connect with growers and suppliers</span>
+                <span>Connect with growers,suppliers and sellers</span>
               </div>
               <div className="feature-item">
                 <span className="feature-icon">🌿</span>

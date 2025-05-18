@@ -526,12 +526,12 @@ const Navbar = () => {
             <div className="feature">
               <img src="/assets/comunication.png" alt="Streamlined Communication" />
               <h3>Streamlined Communication</h3>
-              <p>Seamless chat integration with suppliers and buyers.</p>
+              <p>Seamless chat integration with Growers,suppliers and buyers.</p>
             </div>
             <div className="feature">
               <img src="/assets/logic.jpeg" alt="Optimized Logistics" />
               <h3>Optimized Logistics</h3>
-              <p>Reduce delays with AI-driven smart routing.</p>
+              <p>Check the status of your order.</p>
             </div>
           </section>
   
