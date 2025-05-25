@@ -21,17 +21,13 @@ A full-stack web application for a multi-role e-commerce platform focused on the
 - [Available Scripts](#available-scripts)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
-- [Testing](#testing)
-- [Contributing](#contributing)
-- [License](#license)
-- [Learn More](#learn-more)
 
 ---
 
 ## Features
 
 - **Secure Authentication**: JWT-based login with role-based access control using `jwt-decode`.
-- **Role-Based Dashboards**: Custom interfaces for Admin, Supplier, Seller, and Grower.
+- **Role-Based Dashboards**: Custom interfaces for Admin, Supplier, Seller, Customer and Grower.
 - **Order Management**: View, filter, update, and track orders with real-time updates via `socket.io`.
 - **Inventory Management**: Add, edit, and delete flower products with image uploads using Multer.
 - **Analytics & Reports**: Interactive charts for revenue, orders, and user metrics using `chart.js` and `recharts`.
