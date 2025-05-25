@@ -7,6 +7,7 @@
 A full-stack web application for a multi-role e-commerce platform focused on the supply chain management of fresh flowers. The platform supports **Admin**, **Supplier**, **Seller**,**Customer** and **Grower**  roles, providing role-based dashboards, analytics, order management, inventory tracking, and real-time updates.
 
 
+
 ---
 
 ## Table of Contents
@@ -21,6 +22,8 @@ A full-stack web application for a multi-role e-commerce platform focused on the
 - [Available Scripts](#available-scripts)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
+-[Learn more](#Learn-More)
+-[UserRole Login Credintionals ](#user-login-credintionals)
 
 ---
 
@@ -148,6 +151,10 @@ Final-Project/
    - `stripe`
    - `uuid`
    - `ws`
+   Or, you can install them individually with:
+   ```bash
+   npm install express mongoose cors dotenv multer multer-gridfs jsonwebtoken bcryptjs nodemailer socket.io stripe uuid ws
+   ```
 
 3. **Install client dependencies**:
    ```bash
@@ -179,6 +186,10 @@ Final-Project/
    - `@testing-library/react`
    - `@testing-library/user-event`
    - `web-vitals`
+
+   OR 
+
+   npm install react react-dom react-router-dom @reduxjs/toolkit react-redux redux-persist axios chart.js react-chartjs-2 recharts sass socket.io-client uuid @mui/material @mui/icons-material @emotion/react @emotion/styled react-icons jwt-decode @react-google-maps/api @testing-library/jest-dom @testing-library/react @testing-library/user-event web-vitals
 
 4. **Set up environment variables**:
    Create a `.env` file in the `server/` directory with the following:
@@ -278,4 +289,34 @@ Refer to the `server/routes/` directory or use [Postman](https://www.postman.com
 
 
 ---
+
+## User Login Credintionals
+
+1.Admin
+Email:hasinidilhara2001@gmail.com
+Password:2001
+
+2.Grower
+Email:growers@gmail.com
+Password:2001
+
+3.Seller
+Email:seller@gmail.com
+Password:2001
+
+4.Supplier
+Email:supplier@gmail.com
+Password:2001
+
+5.Customers
+They can do all activities without login.
+
+## Special Notes
+
+-Use this email and password to access the admin.
+       Email:hasinidilhara2001@gmail.com
+       Password:2001
+-If Stripe has stopped working, use a new Stripe secret key. Since they are free, they may expire.
+-If the chatbot is no longer working, enter a new GEMINI API KEY for env and its new GEMINI API URL for chatbot.js, as they are free and may expire.
+-If you have difficulty sending an email for low stock, please enter the email and the app password that is associated with it. The reason is that if the email contained in it changes the password associated with it, the app password will not be valid. An email cannot be sent then.
 
