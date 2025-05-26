@@ -315,6 +315,17 @@ They can do all activities without login.
 
 ## Special Notes
 
+-  use for server run
+    cd server press Enter key
+    then 
+    npm run dev
+
+- use for Client run
+  cd client press Enter
+  then
+  npm start
+
+
 - Use this email and password to access the admin.
        Email:hasinidilhara2001@gmail.com
        Password:2001
