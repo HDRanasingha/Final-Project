@@ -22,9 +22,9 @@ A full-stack web application for a multi-role e-commerce platform focused on the
 - [Available Scripts](#available-scripts)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
--[Learn more](#Learn-More)
--[UserRole Login Credintionals ](#user-login-credintionals)
--[Special Notes](#Special-notes)
+- [Learn more](#Learn-More)
+- [UserRole Login Credintionals ](#user-login-credintionals)
+- [Special Notes](#Special-notes)
 
 ---
 
