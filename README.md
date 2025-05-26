@@ -316,14 +316,14 @@ They can do all activities without login.
 ## Special Notes
 
 -  use for server run
-    cd server press Enter key
+    - cd server ,press Enter key
     then 
-    npm run dev
+    - npm run dev
 
 - use for Client run
-  cd client press Enter
+  - cd client, press Enter
   then
-  npm start
+  - npm start
 
 
 - Use this email and password to access the admin.
