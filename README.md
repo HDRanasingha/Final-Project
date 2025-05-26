@@ -24,6 +24,7 @@ A full-stack web application for a multi-role e-commerce platform focused on the
 - [API Endpoints](#api-endpoints)
 -[Learn more](#Learn-More)
 -[UserRole Login Credintionals ](#user-login-credintionals)
+-[Special Notes](#Special-notes)
 
 ---
 
@@ -128,8 +129,9 @@ Final-Project/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/Final-Project.git
+   git clone https://github.com/HDRanasingha/Final-Project.git
    cd Final-Project
+
    ```
 
 2. **Install server dependencies**:
@@ -319,4 +321,8 @@ They can do all activities without login.
 -If Stripe has stopped working, use a new Stripe secret key. Since they are free, they may expire.
 -If the chatbot is no longer working, enter a new GEMINI API KEY for env and its new GEMINI API URL for chatbot.js, as they are free and may expire.
 -If you have difficulty sending an email for low stock, please enter the email and the app password that is associated with it. The reason is that if the email contained in it changes the password associated with it, the app password will not be valid. An email cannot be sent then.
+-use test card for stripe card payment
+example:
+card number: visa card number 4242 4242 4242 4242
+you can add any date and cvc
 
